@@ -4,7 +4,7 @@
 - Build you own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
 - If it's gametime the kiosk will refresh every 60 seconds
 - If no game it will wait a few hours and retry
-- Only 1 NetWork Request is needed per update. 
+- Only 1 Network Request is needed per update to https://statsapi.mlb.com/. 
 
 #### Requirements
 
