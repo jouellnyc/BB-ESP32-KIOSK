@@ -2,6 +2,7 @@
 
 Build you own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
 
+#### Requirements
 
 - ESP32 CAM
 https://www.amazon.com/dp/B07WCFGMTF/
@@ -41,8 +42,8 @@ Using this setup, the FTDI supplies the power and allows for repl, if desired.
 
 #### References 
 
-PINS: https://stackoverflow.com/questions/71853347/interfacing-oled-to-esp32-cam
-PIN CONNECT: https://randomnerdtutorials.com/program-upload-code-esp32-cam/
-PIN MAP: https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
-OLED SETUP CODE: https://randomnerdtutorials.com/micropython-oled-display-esp32-esp8266/
+- PINS: https://stackoverflow.com/questions/71853347/interfacing-oled-to-esp32-cam
+- PIN CONNECT: https://randomnerdtutorials.com/program-upload-code-esp32-cam/
+- IN MAP: https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
+- OLED SETUP CODE: https://randomnerdtutorials.com/micropython-oled-display-esp32-esp8266/
 
