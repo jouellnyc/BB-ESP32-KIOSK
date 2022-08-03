@@ -21,6 +21,8 @@ https://www.amazon.com/Breadboard-Solderless-Prototype-PCB-Board
 
 - API: https://github.com/toddrob99/MLB-StatsAPI (Modified here)
 
+(NOTE: my_mlb_api.py was renamed from __init__.py in MLB-StatsApI and just barely modified.
+
 
 #### Steps
 
