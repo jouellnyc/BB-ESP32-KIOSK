@@ -1,7 +1,7 @@
 # MLB-ESP32
 
 #### ESP32 CAM MLB Mini Kiosk
-![ESP32-CAM-MLB-Kiosk](esp32-kiosk.png)
+![ESP32-CAM-MLB-Kiosk](esp32-kiosk.png =250x250)
 
 #### What 
 - Build you own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
@@ -89,8 +89,7 @@ to '/'
 - OLED SETUP CODE: https://randomnerdtutorials.com/micropython-oled-display-esp32-esp8266/
 
 #### TBD
-- Figure out how to get a clearer Picture of the Kiosk
-- Make the code better
+- Make the code better post current MicroPythonic issues
 - Using Scrolling for more information on the kiosk
 - Implement Push Button for Real Time update
 - Overcome UTC challenges
