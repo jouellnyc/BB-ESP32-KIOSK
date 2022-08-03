@@ -27,10 +27,12 @@ Using this setup, the FTDI supplies the power and allows for repl, if desired.
 
 - Connect Esp-32 CAM (Bare) to OLED with male to male jumpers
 
-  esp32cam OLED
-  
-  - IO15 to  sda
-  - IO13 to  scl
+
+| Esp32cam       | OLED          |
+| :-------------:|:-------------:|
+| IO15           | sda           |
+| IO13           | sdcl          |
+
 
 - Install MicroPython:
 https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp8266/
