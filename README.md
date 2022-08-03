@@ -74,7 +74,7 @@ vi network_setup.py #should be obvious
 - myoled.py
 - boot.py 
 ```
-ssd1306.py is from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py
+Note: ssd1306.py is from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py
 
 to '/'
 
