@@ -28,7 +28,7 @@ https://www.amazon.com/dp/B07WCFGMTF/
 
 - Mini USB Cable
   Anywhere Mini usb cables are sold
-  
+ 
 - API: https://github.com/toddrob99/MLB-StatsAPI 
   (Modified here - my_mlb_api.py was renamed from __init__.py in MLB-StatsApI and just barely modified.
 
@@ -74,6 +74,7 @@ vi network_setup.py #should be obvious
 - myoled.py
 - boot.py 
 ```
+ssd1306.py is from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py
 
 to '/'
 
