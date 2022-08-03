@@ -1,6 +1,9 @@
 # MLB-ESP32
 
-Build you own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
+#### What 
+- Build you own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
+- If it's gametime the kiosk will refresh every 60 seconds
+- If no game it will wait a few hours and retry
 
 #### Requirements
 
