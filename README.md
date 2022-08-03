@@ -11,7 +11,7 @@
 - ESP32 CAM
 https://www.amazon.com/dp/B07WCFGMTF/
 
-You can buy one with or with the ESP32-CAM-MB. These boards typically have 4 MB of spiram.
+  You can buy one with or with the ESP32-CAM-MB. These boards typically have 4 MB of spiram.
 
 see https://micropython.org/download/esp32spiram/ for the right firmware.
 
