@@ -95,4 +95,4 @@ to '/'
 - Overcome UTC challenges
 
 #### Caveats
-UTC is big pain on micropython, I intentionally rely on NOT using NTP, which make dates much simpler.
+UTC is big pain on micropython, your mileage may vary late at night if your UTC offset puts you in 'tommorow'
