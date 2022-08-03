@@ -11,7 +11,11 @@
 - ESP32 CAM
 https://www.amazon.com/dp/B07WCFGMTF/
 
-You can buy one with or with the ESP32-CAM-MB
+You can buy one with or with the ESP32-CAM-MB. These boards typically have 4 MB of spiram.
+see https://micropython.org/download/esp32spiram/ for the right firmware.
+
+This is unlikely to work on a ESP8266 based board w/o modifications, hence the use of a 4 MB board. 
+The difference in cost is minimal.
 
 - FT232RL FTDI Mini USB to TTL Serial Converter Adapter Module
 
