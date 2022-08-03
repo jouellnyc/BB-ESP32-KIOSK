@@ -4,7 +4,7 @@
 <img src="esp32-kiosk.png"  width="200"/>
 
 #### What 
-- Build you own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
+- Build your own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
 - If it's gametime the kiosk will refresh every 60 seconds
 - If no game it will wait a few hours and retry
 - Only 1 Network Request is needed per update to https://statsapi.mlb.com/. 
