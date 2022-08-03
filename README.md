@@ -50,6 +50,7 @@ vi network_setup.py #should be obvious
 
 - Upload 
 
+```
 - statsapi
 - ssd1306.py
 - team_ids.py
@@ -57,6 +58,7 @@ vi network_setup.py #should be obvious
 - my_mlb_api.py
 - myoled.py
 - boot.py 
+```
 
 to '/'
 
