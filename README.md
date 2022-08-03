@@ -28,8 +28,16 @@ Using this setup, the FTDI supplies the power and allows for repl, if desired.
 - Connect Esp-32 CAM (Bare) to OLED with male to male jumpers
 
   esp32cam OLED
+  
   IO15     sda
   IO13     scl
+
+- Install MicroPython:
+- 
+import upip
+upip.install('urequests')
+upip.install('micropython-logging')
+
 
 
 #### Code Setup
