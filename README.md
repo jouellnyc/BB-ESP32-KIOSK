@@ -10,12 +10,15 @@
 
 - ESP32 CAM
 https://www.amazon.com/dp/B07WCFGMTF/
+
 You can buy one with or with the ESP32-CAM-MB
 
 - FT232RL FTDI Mini USB to TTL Serial Converter Adapter Module
+
 https://www.amazon.com/HiLetgo-FT232RL-Converter-Adapter-Breakout/dp/B00IJXZQ7C
 
 - Small Bread Board
+
 https://www.amazon.com/Breadboard-Solderless-Prototype-PCB-Board
 
 - Mini USB Cable
