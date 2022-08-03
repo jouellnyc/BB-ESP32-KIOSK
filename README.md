@@ -25,8 +25,7 @@ Using this setup, the FTDI supplies the power and allows for repl, if desired.
 
 - Connect USB FTDI programmer to esp-cam as per the PIN CONNECT link in References.
 
-- Connect Esp-32 CAM (Bare) to OLED with male to male jumpers
-
+- Connect Esp-32 CAM (Bare) to OLED with male to male jumpers:
 
 | Esp32cam       | OLED          |
 | :-------------:|:-------------:|
