@@ -3,8 +3,6 @@
 #### ESP32 CAM MLB Mini Kiosk
 <img src="esp32-kiosk.png"  width="200"/>
 
-![ESP32-CAM-MLB-Kiosk](esp32-kiosk.png =250x250)
-
 #### What 
 - Build you own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
 - If it's gametime the kiosk will refresh every 60 seconds
