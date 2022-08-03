@@ -25,12 +25,13 @@ Using this setup, the FTDI supplies the power and allows for repl, if desired.
 
 - Connect USB FTDI programmer to esp-cam as per the PIN CONNECT link in References.
 
-- Connect Esp-32 CAM (Bare) to OLED with male to male jumpers
+- Connect Esp-32 CAM (Bare) to OLED with male to male jumpers:
 
-  esp32cam OLED
-  
-  - IO15 to  sda
-  - IO13 to  scl
+| Esp32cam       | OLED          |
+| :-------------:|:-------------:|
+| IO15           | sda           |
+| IO13           | sdcl          |
+
 
 - Install MicroPython:
 https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp8266/
@@ -43,11 +44,25 @@ upip.install('urequests')
 upip.install('micropython-logging')
 ```
 
-#### Code Setup
-Upload 
--
-- 
-- 
+- Edit the Wifi Config:
+```
+vi network_setup.py #should be obvious
+```
+
+- Upload 
+
+```
+- statsapi (folder) (keep endpoints.py  in here)
+- ssd1306.py
+- team_ids.py
+- network_setup.py
+- my_mlb_api.py
+- myoled.py
+- boot.py 
+```
+
+to '/'
+
 
 #### Picture of the mini Kiosk
 ![ESP32-CAM-MLB-Kiosk](esp32-kiosk.png)
