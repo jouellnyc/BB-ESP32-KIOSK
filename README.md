@@ -52,7 +52,7 @@ vi network_setup.py #should be obvious
 - Upload 
 
 ```
-- statsapi
+- statsapi (folder) (keep endpoints.py  in here)
 - ssd1306.py
 - team_ids.py
 - network_setup.py
