@@ -1,5 +1,8 @@
 # MLB-ESP32
 
+#### ESP32 CAM MLB Mini Kiosk
+![ESP32-CAM-MLB-Kiosk](esp32-kiosk.png)
+
 #### What 
 - Build you own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
 - If it's gametime the kiosk will refresh every 60 seconds
@@ -77,9 +80,6 @@ vi network_setup.py #should be obvious
 Note: ssd1306.py is from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py
 
 to '/'
-
-#### Picture of the mini Kiosk
-![ESP32-CAM-MLB-Kiosk](esp32-kiosk.png)
 
 #### References 
 
