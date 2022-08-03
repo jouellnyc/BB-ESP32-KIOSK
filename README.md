@@ -1,6 +1,8 @@
 # MLB-ESP32
 
 #### ESP32 CAM MLB Mini Kiosk
+<img src="esp32-kiosk.png"  width="200"/>
+
 ![ESP32-CAM-MLB-Kiosk](esp32-kiosk.png =250x250)
 
 #### What 
