@@ -13,24 +13,24 @@ https://www.amazon.com/dp/B07WCFGMTF/
 
   You can buy one with or with the ESP32-CAM-MB. These boards typically have 4 MB of spiram.
 
-see https://micropython.org/download/esp32spiram/ for the right firmware.
+  see https://micropython.org/download/esp32spiram/ for the right firmware.
 
-This is unlikely to work on a ESP8266 based board w/o modifications, hence the use of a 4 MB board. 
-The difference in cost is minimal.
+  This repo is unlikely to work on a ESP8266 based board w/o modifications, hence the use of a 4 MB board. 
+  The difference in cost is minimal.
 
 - FT232RL FTDI Mini USB to TTL Serial Converter Adapter Module
 
-https://www.amazon.com/HiLetgo-FT232RL-Converter-Adapter-Breakout/dp/B00IJXZQ7C
+  https://www.amazon.com/HiLetgo-FT232RL-Converter-Adapter-Breakout/dp/B00IJXZQ7C
 
 - Small Bread Board
 
-https://www.amazon.com/Breadboard-Solderless-Prototype-PCB-Board
+  https://www.amazon.com/Breadboard-Solderless-Prototype-PCB-Board
 
 - Mini USB Cable
-
-- API: https://github.com/toddrob99/MLB-StatsAPI (Modified here)
-
-(NOTE: my_mlb_api.py was renamed from __init__.py in MLB-StatsApI and just barely modified.
+  Anywhere Mini usb cables are sold
+  
+- API: https://github.com/toddrob99/MLB-StatsAPI 
+  (Modified here - my_mlb_api.py was renamed from __init__.py in MLB-StatsApI and just barely modified.
 
 
 #### Steps
@@ -77,10 +77,8 @@ vi network_setup.py #should be obvious
 
 to '/'
 
-
 #### Picture of the mini Kiosk
 ![ESP32-CAM-MLB-Kiosk](esp32-kiosk.png)
-
 
 #### References 
 
