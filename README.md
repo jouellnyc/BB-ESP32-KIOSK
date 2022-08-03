@@ -84,3 +84,12 @@ to '/'
 - IN MAP: https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
 - OLED SETUP CODE: https://randomnerdtutorials.com/micropython-oled-display-esp32-esp8266/
 
+#### TBD
+- Figure out how to get a clearer Picture of the Kiosk
+- Make the code better
+- Using Scrolling for more information on the kiosk
+- Implement Push Button for Real Time update
+- Overcome UTC challenges
+- 
+#### Caveats
+UTC is big pain on micropython, I intentionally rely on NOT using NTP, which make dates much simpler.
