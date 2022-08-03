@@ -90,6 +90,6 @@ to '/'
 - Using Scrolling for more information on the kiosk
 - Implement Push Button for Real Time update
 - Overcome UTC challenges
-- 
+
 #### Caveats
 UTC is big pain on micropython, I intentionally rely on NOT using NTP, which make dates much simpler.
