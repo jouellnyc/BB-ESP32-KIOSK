@@ -43,11 +43,23 @@ upip.install('urequests')
 upip.install('micropython-logging')
 ```
 
-#### Code Setup
-Upload 
--
-- 
-- 
+- Edit the Wifi Config:
+```
+vi network_setup.py #should be obvious
+```
+
+- Upload 
+
+- statsapi
+- ssd1306.py
+- team_ids.py
+- network_setup.py
+- my_mlb_api.py
+- myoled.py
+- boot.py 
+
+to '/'
+
 
 #### Picture of the mini Kiosk
 ![ESP32-CAM-MLB-Kiosk](esp32-kiosk.png)
