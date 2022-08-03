@@ -29,20 +29,25 @@ Using this setup, the FTDI supplies the power and allows for repl, if desired.
 
   esp32cam OLED
   
-  IO15     sda
-  IO13     scl
+  - IO15 to  sda
+  - IO13 to  scl
 
 - Install MicroPython:
-- 
+https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp8266/
+
+- Install 2 Libraries
+
+```
 import upip
 upip.install('urequests')
 upip.install('micropython-logging')
-
-
+```
 
 #### Code Setup
-
-
+Upload 
+-
+- 
+- 
 
 #### Picture of the mini Kiosk
 ![ESP32-CAM-MLB-Kiosk](esp32-kiosk.png)
