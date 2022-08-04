@@ -23,10 +23,10 @@ import time
 
 
 try:
-    ntptime.host1 = "server 3.north-america.pool.nt.org"
+    ntptime.host = "server 3.north-america.pool.nt.org"
     ntptime.settime()
 except Exception as e:
-    ntptime.host1 = "server 1.north-america.pool.ntp.org"
+    ntptime.host = "server 1.north-america.pool.ntp.org"
     ntptime.settime()
 else:
     print("Local time before synchronization：%s" % str(time.localtime()))
