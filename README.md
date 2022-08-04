@@ -50,33 +50,33 @@ Using this setup, the FTDI supplies the power and allows for repl, if desired.
 | IO13           | sdcl          |
 
 
-- Install MicroPython:
+- Install MicroPython with SPIRAM to the ESP32:
+- Get a REPL on the ESP32:
 https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp8266/
 
-- Install 2 Libraries
+- Edit the Wifi Config:
+```
+vi net_config.py  #should be obvious
+```
 
+- Edit tm_id = XXX and set to your team's id 
+```
+vi  mlb_app_runner.py 
+```
+
+- Upload mlbapp/ folder using Thonny/IDE as well as:
+```
+- boot.py 
+- main.py
+```
+
+- Install 2 Libraries
 ```
 import upip
 upip.install('urequests')
 upip.install('micropython-logging')
 ```
 
-- Edit the Wifi Config:
-```
-vi network_setup.py #should be obvious
-```
-
-- Upload 
-
-```
-- statsapi (folder) (keep endpoints.py  in here)
-- ssd1306.py
-- team_ids.py
-- network_setup.py
-- my_mlb_api.py
-- myoled.py
-- boot.py 
-```
 Note: ssd1306.py is from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py
 
 to '/'
