@@ -1,11 +1,9 @@
-# This is modified very slightly for Micro Python
-
 import sys
 #import copy
 import logging
 import urequests as requests
 
-from statsapi import endpoints
+from . import endpoints
 
 BASE_URL = endpoints.BASE_URL
 """Base MLB Stats API URL"""
