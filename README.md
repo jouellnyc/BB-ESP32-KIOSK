@@ -93,7 +93,3 @@ to '/'
 - Make the code better post current MicroPythonic issues
 - Using Scrolling for more information on the kiosk
 - Implement Push Button for Real Time update
-- Overcome UTC challenges
-
-#### Caveats
-UTC is big pain on micropython, your mileage may vary late at night if your UTC offset puts you in 'tommorow'
