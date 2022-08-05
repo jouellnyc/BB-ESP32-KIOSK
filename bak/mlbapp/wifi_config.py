@@ -1,2 +1,0 @@
-SSID='SSID'
-PSWD='PSWD'
