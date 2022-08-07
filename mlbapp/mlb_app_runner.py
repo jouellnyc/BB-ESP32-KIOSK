@@ -1,3 +1,4 @@
+import sys
 import time
 
 """ OLED SETUP """
@@ -7,6 +8,7 @@ delta=13
 
 """ MLB SETUP """
 from . import my_mlb_api
+from .ntp_setup import utc_to_local
 
 """ This is the only thing you need to lookup """
 """ see team_ids.py for your teams id         """
@@ -79,14 +81,14 @@ def get_score():
             myoled.show()
             return 60 * 2 # check back every 2 minutes
         
-        elif game_status == "Game Over" or "Final":
+        elif game_status == "Game Over" or game_status == "Final":
             
             lp = get_x_p(games[0]['losing_pitcher'])
             wp = get_x_p(games[0]['winning_pitcher'])
             fill_show()
             myoled.text(f"{mt}-{dy}-{short_yr} {game_status}", 0, start + (0 * delta))
             myoled.text(f"{team1}:{team1_score} H {home_rec}", 0, start + (1 * delta) + 4)
-            myoled.text(f"{team2}:{team2_score} W {away_rec}", 0, start + (2 * delta))
+            myoled.text(f"{team2}:{team2_score} A {away_rec}", 0, start + (2 * delta))
             myoled.text(f"wp: {wp}",                           0, start + (3 * delta))
             myoled.text(f"lp: {lp}",                           0, start + (4 * delta))
             myoled.show()
@@ -95,11 +97,14 @@ def get_score():
         else:
             
             fill_show()
+            gm_time=games[0].get('game_datetime','NA')
+            tm=utc_to_local(gm_time)
             myoled.text(f"{mt}-{dy}-{short_yr}" ,               0, start + (0 * delta))
             myoled.text(f"{hr}:{mn}"            ,              72, start + (0 * delta))
             myoled.text(f"{team1}  H {home_rec}",               0, start + (1 * delta) + 4)
-            myoled.text(f"{team2}  W {away_rec}",               0, start + (2 * delta))
-            myoled.text(f"Stat: {game_status}" ,                0, start + (4 * delta))
+            myoled.text(f"{team2}  A {away_rec}",               0, start + (2 * delta))
+            myoled.text(f"{game_status} for" ,                  0, start + (3 * delta))
+            myoled.text(f"{tm}"               ,                 0, start + (4 * delta))
             myoled.show()
             return 60 * 20 # check back every 20 minutes
         
@@ -114,8 +119,9 @@ def no_gm():
 
 
 while True:
-    
+   
     try:
+        
         yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]
         short_yr = f"{int( str(yr)[2:]):02d}"
         gm_dt = f"{mt}/{dy}/{yr}"
@@ -129,10 +135,10 @@ while True:
             what_sleep=get_score()
             print(f"Sleeping {what_sleep} seconds")
             time.sleep(what_sleep)
+
     except Exception as e:
-        print(str(e))
+        print(sys.print_exception(e))
         myoled.text(str(e), 0, 0 )
         myoled.show()
-        
-        
+        sys.exit(1)
         
