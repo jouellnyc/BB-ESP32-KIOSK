@@ -79,7 +79,7 @@ def get_score():
             myoled.text(f"Inn: {in_sta} of {inn_cur}",        0, start + (3 * delta))
             myoled.text(f"Stat: {game_status}",               0, start + (4 * delta))
             myoled.show()
-            return 60 * 2 # check back every 2 minutes
+            return 60 * 1 # check back every x minutes
         
         elif game_status == "Game Over" or game_status == "Final":
             
