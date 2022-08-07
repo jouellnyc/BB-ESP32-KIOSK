@@ -1,0 +1,2 @@
+SSID='SSID'
+PSWD='PSWD'

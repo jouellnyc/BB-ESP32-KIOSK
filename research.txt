@@ -1,0 +1,19 @@
+
+https://statsapi.mlb.com/api/v1/schedule?startDate=08/05/2022&endDate=08/05/2022&teamId=111&sportId=1&hydrate=decisions,probablePitcher(note),linescore
+
+
+
+import urequests
+games = urequests.get('https://statsapi.mlb.com/api/v1/schedule?startDate=08/05/2022&endDate=08/05/2022&teamId=111&sportId=1&hydrate=decisions,probablePitcher(note),linescore')
+ g0 = games.content
+ g0.decode('utf8').replace("'", '"')
+ aa = g0.decode('utf8').replace("'", '"')
+import ujson
+data = ujson.loads(aa)
+ujson.dumps(data)
+ data['dates'][0]['games'][0]
+{'gameDate': '2022-08-06T00:10:00Z', 'inningBreakLength': 120, 'seriesGameNumber': 2, 'seriesDescription': 'Regular Season', 'recordSource': 'S', 'ifNecessary': 'N', 'calendarEventID': '14-662650-2022-08-05', 'gamedayType': 'P', 'ifNecessaryDescription': 'Normal Game', 'status': {'detailedState': 'Scheduled', 'codedGameState': 'S', 'statusCode': 'S', 'abstractGameCode': 'P', 'abstractGameState': 'Preview', 'startTimeTBD': False}, 'season': '2022', 'scheduledInnings': 9, 'gameType': 'R', 'venue': {'id': 7, 'link': '/api/v1/venues/7', 'name': 'Kauffman Stadium'}, 'officialDate': '2022-08-05', 'seasonDisplay': '2022', 'tiebreaker': 'N', 'gamePk': 662650, 'reverseHomeAwayStatus': False, 'dayNight': 'night', 'content': {'link': '/api/v1/game/662650/content'}, 'teams': {'home': {'team': {'id': 118, 'link': '/api/v1/teams/118', 'name': 'Kansas City Royals'}, 'leagueRecord': {'losses': 64, 'wins': 42, 'pct': '.396'}, 'seriesNumber': 34, 'probablePitcher': {'id': 425844, 'fullName': 'Zack Greinke', 'link': '/api/v1/people/425844'}, 'splitSquad': False}, 'away': {'team': {'id': 111, 'link': '/api/v1/teams/111', 'name': 'Boston Red Sox'}, 'leagueRecord': {'losses': 54, 'wins': 53, 'pct': '.495'}, 'seriesNumber': 34, 'probablePitcher': {'id': 670174, 'fullName': 'Josh Winckowski', 'link': '/api/v1/people/670174'}, 'splitSquad': False}}, 'gameNumber': 1, 'linescore': {'teams': {'home': {}, 'away': {}}, 'scheduledInnings': 9, 'defense': {'team': {'id': 111, 'link': '/api/v1/teams/111', 'name': 'Boston Red Sox'}}, 'innings': [], 'offense': {'team': {'id': 118, 'link': '/api/v1/teams/118', 'name': 'Kansas City Royals'}}}, 'gamesInSeries': 4, 'doubleHeader': 'N', 'publicFacing': True, 'link': '/api/v1.1/game/662650/feed/live'}
+>>> data['dates'][0]['games'][0]['status']
+{'detailedState': 'Scheduled', 'codedGameState': 'S', 'statusCode': 'S', 'abstractGameCode': 'P', 'abstractGameState': 'Preview', 'startTimeTBD': False}
+>>> data['dates'][0]['games'][0]['status']['detailedState']
+'Scheduled'

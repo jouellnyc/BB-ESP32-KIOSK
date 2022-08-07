@@ -21,18 +21,19 @@ def schedule(
     opponent="",
     sportId=1,
     game_id=None,
+    params=None
 ):
     """Get list of games for a given date/range and/or team/opponent."""
     if end_date and not start_date:
         date = end_date
-        end_date = None
+        end_date = Nonef
 
     if start_date and not end_date:
         date = start_date
         start_date = None
 
-    params = {}
-
+    #params = {}
+    """
     if date:
         params.update({"date": date})
     elif start_date and end_date:
@@ -53,6 +54,7 @@ def schedule(
             "hydrate": "decisions,probablePitcher(note),linescore",
         }
     )
+    """
 
     r = get("schedule", params)
 
@@ -88,13 +90,18 @@ def schedule(
                     .get("note", ""),
                     "away_score": game["teams"]["away"].get("score", "0"),
                     "home_score": game["teams"]["home"].get("score", "0"),
-                    "current_inning": game.get("linescore", {}).get(
-                        "currentInning", ""
-                    ),
+                    "current_inning": game.get("linescore", {}).get( "currentInning", ""),
                     "inning_state": game.get("linescore", {}).get("inningState", ""),
-                    "venue_id": game.get("venue", {}).get("id"),
-                    "venue_name": game.get("venue", {}).get("name"),
+                    "venue_id"    : game.get("venue", {}).get("id"),
+                    "venue_name"  : game.get("venue", {}).get("name"),
+                    "home_rec"    : str(game.get("teams", {}).get('home',{}).get('leagueRecord','').get('wins',''))  + 
+                    "-" + str(game.get("teams", {}).get('home',{}).get('leagueRecord','').get('losses','')),
+                    "away_rec"    : str(game.get("teams", {}).get('away',{}).get('leagueRecord','').get('wins',''))  + 
+                    "-" + str(game.get("teams", {}).get('away',{}).get('leagueRecord','').get('losses','')),
+                    "home_id"     : game.get("teams", {}).get('home',{}).get('team','').get('id',''),
+                    "away_id"     : game.get("teams", {}).get('away',{}).get('team','').get('id',''),
                 }
+
                 if game_info["status"] in ["Final", "Game Over"]:
                     if game.get("isTie"):
                         game_info.update({"winning_team": "Tie", "losing_Team": "Tie"})
@@ -136,6 +143,10 @@ def schedule(
                 elif game_info["status"] == "In Progress":
                     game_info.update(
                         {
+                            "Balls"   : game.get("linescore",{}).get('balls',''),
+                            "Strikes" : game.get("linescore",{}).get('strikes',''),
+                            "Batter"  : game.get("linescore",{}).get('offense',{}).get('batter','').get('fullName',''),
+                            "Outs"    : game.get("linescore",{}).get('outs',''),
                             "summary": date["date"]
                             + " - "
                             + game["teams"]["away"]["team"]["name"]
@@ -148,8 +159,8 @@ def schedule(
                             + ") ("
                             + game["linescore"]["inningState"]
                             + " of the "
-                            + game["linescore"]["currentInningOrdinal"]
-                            + ")"
+                            + game["linescore"]["currentInningOrdinal"] 
+                            + ")" 
                         }
                     )
                 else:
@@ -927,4 +938,5 @@ def get(endpoint, params, force=False):
         return r.json()
 
     return None
+
 
