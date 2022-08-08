@@ -437,9 +437,6 @@ def lookup_team(lookup_value, activeStatus="Y", season=2022, sportIds=1):
 
     return teams
 
-
-
-
 def boxscore_data(gamePk, timecode=None):
     """Returns a python dict containing boxscore data for a given game."""
 
@@ -938,5 +935,4 @@ def get(endpoint, params, force=False):
         return r.json()
 
     return None
-
 
