@@ -1,7 +1,8 @@
+import time
+
 def main():
     
     from machine import  RTC
-    import time
     import ntptime
 
     print("Local time before synchronization：%s" % str(time.localtime()))
