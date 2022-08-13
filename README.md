@@ -56,10 +56,10 @@ Using this setup, the FTDI supplies the power and allows for repl, if desired.
 - Connect Esp-32 CAM to the RGB LED:
 
 There are many pics online to  to understand how to setup the reisistor to the RGB:
-https://github.com/danielwohlgemuth/blinking-led-micropython-esp32
-https://learn.sparkfun.com/tutorials/getting-started-with-micropython-and-the-sparkfun-inventors-kit-for-microbit/experiment-4-driving-an-rgb-led
-https://microcontrollerslab.com/esp32-rgb-led-web-server/
-https://microcontrollerslab.com/micropython-pwm-with-esp32-and-esp8266-led-fading-brightness-control-examples/
+..* https://github.com/danielwohlgemuth/blinking-led-micropython-esp32
+..* https://learn.sparkfun.com/tutorials/getting-started-with-micropython-and-the-sparkfun-inventors-kit-for-microbit/experiment-4-driving-an-rgb-led
+..* https://microcontrollerslab.com/esp32-rgb-led-web-server/
+..* https://microcontrollerslab.com/micropython-pwm-with-esp32-and-esp8266-led-fading-brightness-control-examples/
 
 You can try 200 Ohm resistors, or higher depending on the LED.
 I have about 500 Ohms using 2 resistors in series, because that's what I had available at the time.
