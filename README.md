@@ -89,6 +89,7 @@ Yes, the esp32 cam is very crowded now and is almost using 'all available' GPIOs
 
 - Install MicroPython with SPIRAM to the ESP32:
 - Get a REPL on the ESP32:
+
 https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp8266/
 
 - Edit the Wifi Config:
