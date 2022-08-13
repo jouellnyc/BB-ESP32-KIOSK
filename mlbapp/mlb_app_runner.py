@@ -66,22 +66,27 @@ try:
             
                
             if team_id == home_id:
+                print('We are the home team')
                 our_score  = team1_score = games[0].get("home_score",'NA')
-                opp_score  = team1_score = games[0].get("away_score",'NA')
+                opp_score  = team2_score = games[0].get("away_score",'NA')
             else:
-                our_score  = games[0].get("away_score",'NA')
-                opp_score  = games[0].get("home_score",'NA')
+                print('We are the away team')
+                our_score  = team2_score = games[0].get("away_score",'NA')
+                opp_score  = team1_score = games[0].get("home_score",'NA')
             
             """ Are we happy or not ? """
             """ Green if winning, Red if not, Blue if tie """
             
             if our_score > opp_score:
+               print("Setting Green")
                rgb.all_off()
                rgb.g.value(1)
             elif our_score < opp_score:
+                print("Setting Red")
                 rgb.all_off()
                 rgb.r.value(1)
             elif our_score == opp_score:
+                print("Setting Blue")
                 rgb.all_off()
                 rgb.b.value(1)
             
