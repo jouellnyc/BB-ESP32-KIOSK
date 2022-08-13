@@ -1,7 +1,7 @@
 # MLB-ESP32
 
 #### ESP32 CAM MLB Mini Kiosk
-|<img src="images/esp32-kiosk.png"  width="200"/>|<img src="images/esp32-kiosk-live.png" width="200"/>|<img src="images/esp32-kiosk.over.png" width="200"/>|<img src="images/esp32-kiosk-RGB.png" width="200"/>|
+|<img src="images/esp32-kiosk.png"  width="200"/>|<img src="images/esp32-kiosk-live.png" width="200"/>|<img src="images/esp32-kiosk.over.png" width="200"/>|
 
 #### What 
 - Build your own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
@@ -84,7 +84,8 @@ them like this:
 | IO12           | 4 (furthest to the right)| Red Leg|
 
 Yes, the esp32 cam is very crowded now and is almost using 'all available' GPIOs.
-
+|RGB PIC|
+|<img src="images/esp32-kiosk-RGB.png"  width="200"/>|
 
 - Install MicroPython with SPIRAM to the ESP32:
 - Get a REPL on the ESP32:
