@@ -5,10 +5,9 @@
 
 #### What 
 - Build your own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
-- If it's gametime the kiosk will refresh every 120 seconds
-- If no game it will wait a few hours and retry
-- RGB LED (optional) turns RED if your team is losing, GREEN if winning, BLUE if a tie or WHITE if a game is scheduled
-  for later.
+- If it's gametime the kiosk will refresh every 120 seconds.
+- If no game it will wait a few hours and retry.
+- RGB LED (optional) turns RED if your team is losing, GREEN if winning, BLUE if a tie or WHITE if a game is scheduled for later.
 - Only 1 Network Request is needed per update to https://statsapi.mlb.com/. 
 
 #### Requirements
