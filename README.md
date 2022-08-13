@@ -52,6 +52,41 @@ Using this setup, the FTDI supplies the power and allows for repl, if desired.
 | IO13           | sdcl          |
 
 
+- Connect Esp-32 CAM to the RGB LED:
+
+There are many pics online to  to understand how to setup the reisistor to the RGB:
+https://github.com/danielwohlgemuth/blinking-led-micropython-esp32
+https://learn.sparkfun.com/tutorials/getting-started-with-micropython-and-the-sparkfun-inventors-kit-for-microbit/experiment-4-driving-an-rgb-led
+https://microcontrollerslab.com/esp32-rgb-led-web-server/
+https://microcontrollerslab.com/micropython-pwm-with-esp32-and-esp8266-led-fading-brightness-control-examples/
+
+You can try 200 Ohm resistors, or higher depending on the LED.
+I have about 500 Ohms using 2 resistors in series, because that's what I had available at the time.
+
+
+However, you will be using PINS 12, 2, and 14 for the red, blue, and green legs of the LED respectively. 
+
+This is reflected in rgb.py: 
+
+```
+r = Pin(12, Pin.OUT)
+g = Pin(2, Pin.OUT)
+b = Pin(14, Pin.OUT)
+```
+
+You can place the RGB LED in the breadboard in any manner, there is no forward or backwards, but if you count the legs from left to right as 1, 2, 3, 4, I connected
+them like this:
+
+| Esp32cam       | RGB LED       |What      |
+| :-------------:|:-------------:|:--------:|
+| IO14           | 1             | Blue leg |
+| IO02           | 2             | Green leg|
+| GRND           | 3 longest leg | Ground   |
+| IO12           | 4 (furthest to the right)| Red Leg|
+
+Yes, the esp32 cam is very crowded now and is almost using 'all available' GPIOs.
+
+
 - Install MicroPython with SPIRAM to the ESP32:
 - Get a REPL on the ESP32:
 https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp8266/
@@ -91,6 +126,5 @@ to '/'
 - OLED SETUP CODE: https://randomnerdtutorials.com/micropython-oled-display-esp32-esp8266/
 
 #### TBD
-- Make the code better post current MicroPythonic issues
 - Using Scrolling for more information on the kiosk
 - Implement Push Button for Real Time update
