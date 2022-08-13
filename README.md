@@ -121,6 +121,10 @@ Note: ssd1306.py is from https://github.com/micropython/micropython/blob/master/
 
 to '/'
 
+When expanded the view from Thonny should look like this:
+<img src="images/thonny.png"  width="200"/>
+
+
 #### References 
 
 - PINS: https://stackoverflow.com/questions/71853347/interfacing-oled-to-esp32-cam
