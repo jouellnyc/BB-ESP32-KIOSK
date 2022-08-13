@@ -1,21 +1,28 @@
-import sys
-import time
+""" This is the only thing you need to lookup """
+""" see team_ids.py for your teams' id        """
+team_id = int(111)
 
 """ OLED SETUP """
 from .esp32cam_oled import oled  as myoled
-start=0
-delta=13
+
+
+""" wrap as much as possible in a try """
+""" to put any errors on screen       """
 
 try:
-    
+
+    start=0
+    delta=13
+
+    import sys
+    import time
+
+    """ RGB SETUP """
+    from . import rgb
+
     """ MLB SETUP """
     from . import my_mlb_api
     from .ntp_setup import utc_to_local
-
-    """ This is the only thing you need to lookup """
-    """ see team_ids.py for your teams' id        """
-    team_id = 111
-
 
     def fill_show():
         myoled.fill(0)
@@ -34,14 +41,15 @@ try:
             """ Team Ids """
             home_id = games[0].get("home_id",'NA')
             away_id = games[0].get("away_id",'NA')
-                    
+            
             import ujson
             with open("/mlbapp/team_ids.py") as f:
                 all_teams = f.read()
             all_team_ids = ujson.loads(all_teams)
+            
             team1 = str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == home_id][0]).upper()
             team2 = str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == away_id][0]).upper()
-
+            
             """ typical 'x' above
             ...
              "teams" : [ {
@@ -56,18 +64,27 @@ try:
             ...
             """
             
-            """ Score """
-            team1_score = games[0].get("home_score",'NA')
-            team2_score = games[0].get("away_score",'NA')
-
-            """ Results """
-            if team1_score > team2_score:
-                team1_res = "W"
-                team2_res = "L"
+               
+            if team_id == home_id:
+                our_score  = team1_score = games[0].get("home_score",'NA')
+                opp_score  = team1_score = games[0].get("away_score",'NA')
             else:
-                team1_res = "L"
-                team2_res = "W"
-                
+                our_score  = games[0].get("away_score",'NA')
+                opp_score  = games[0].get("home_score",'NA')
+            
+            """ Are we happy or not ? """
+            """ Green if winning, Red if not, Blue if tie """
+            
+            if our_score > opp_score:
+               rgb.all_off()
+               rgb.g.value(1)
+            elif our_score < opp_score:
+                rgb.all_off()
+                rgb.r.value(1)
+            elif our_score == opp_score:
+                rgb.all_off()
+                rgb.b.value(1)
+            
             """ Records """
             home_rec = games[0].get('home_rec','NA')
             away_rec = games[0].get('away_rec','NA')
@@ -89,12 +106,13 @@ try:
                 balls   = games[0].get('Balls','NA')
                 strks   = games[0].get('Strikes','NA')
                 outs    = games[0].get('Outs','NA')
+                inn_cur = games[0].get("current_inning",'NA')
+                battr   = get_x_p(games[0].get("Batter",'NA'))
+                
                 try:
                     in_sta  = games[0]["inning_state"][:3]
                 except KeyError:
                     in_sta  = 'NA'
-                inn_cur = games[0].get("current_inning",'NA')
-                battr   = get_x_p(games[0].get("Batter",'NA'))
                 
                 fill_show()
                 myoled.text(f"{mt}-{dy}-{short_yr}",         0, start + (0 * delta))
@@ -119,8 +137,10 @@ try:
                 myoled.show()
                 return 60 * 60 *4 # check back 4 hours from now
             
-            else:
+            else:               #"Scheduled"/"Warm up"/"Pre Game"
                 
+                rgb.all_off() #Clear RGB LED and 
+                rgb.all_on()  #Set it  white
                 fill_show()
                 gm_time=games[0].get('game_datetime','NA')
                 tm=utc_to_local(gm_time)
