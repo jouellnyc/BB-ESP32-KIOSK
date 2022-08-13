@@ -19,7 +19,8 @@ https://www.amazon.com/dp/B07WCFGMTF/
 
   see https://micropython.org/download/esp32spiram/ for the right firmware.
 
-  This repo is unlikely to work on a ESP8266 based board w/o modifications, hence the use of a 4 MB board. 
+  This repo is unlikely to work on a ESP8266 based board w/o modifications due to RAM usage, I chose the 4 MB board to
+  have plenty. 
 
   The difference in dollar cost is minimal, but code effort is likely much larger.
 
