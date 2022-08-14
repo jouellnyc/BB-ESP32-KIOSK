@@ -109,6 +109,7 @@ edit the mlb_app_runner.py  file
 - boot.py 
 - main.py
 ```
+to '/'
 
 - Install 2 Libraries
 ```
@@ -119,7 +120,6 @@ upip.install('micropython-logging')
 
 Note: ssd1306.py is from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py
 
-to '/'
 
 When expanded the view from Thonny should look like this:
 
