@@ -53,7 +53,7 @@ Using this setup, the FTDI supplies the power and allows for repl, if desired.
 | IO13           | sdcl          |
 
 
-- Connect Esp-32 CAM to the RGB LED:
+- Connect Esp-32 CAM to the RGB LED (optional) :
 
 There are many pics online to  to understand how to setup the reisistor to the RGB:
 * https://github.com/danielwohlgemuth/blinking-led-micropython-esp32
