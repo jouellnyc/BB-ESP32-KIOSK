@@ -28,14 +28,17 @@ https://www.amazon.com/dp/B07WCFGMTF/
 
   https://www.amazon.com/HiLetgo-FT232RL-Converter-Adapter-Breakout/dp/B00IJXZQ7C
 
-- (Optional) Breadboard Power Supply Board Module 3.3V/5V Dual Voltage (2 Pack) by MakerSpot with Power-on Indicator LED
+- (Optional) "Breadboard Power Supply Board Module 3.3V/5V Dual Voltage (2 Pack) by MakerSpot"
   If you want the power supply to lay flat vs standing up like the FTDI, you can use this:
   https://www.amazon.com/gp/product/B08KQ9DNQZ/
+
   NOTE1: it won't allow you connect to the ESP32-cam over usb to upload files.
+
   NOTE2: Both this power supply and the FTDI have a slighltly annoying RED LED that's on if it's power is on.
 
-- (Optional) "ESP32-CAM-CH340" - ESP32-Came with built mini usb that is Breadboard friendly:
-  I have really only seen these on ebay: https://www.ebay.com/itm/185476432256
+- (Optional) "ESP32-CAM-CH340" - ESP32-CAM with built mini usb that is Breadboard friendly:
+  I have really only seen these on ebay: https://www.ebay.com/itm/185476432256. This will not have the RED LED and gets
+  power from the mini usb.
 
 - Small Bread Board
 
