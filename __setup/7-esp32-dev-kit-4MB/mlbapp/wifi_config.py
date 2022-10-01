@@ -1,0 +1,2 @@
+SSID='XXX'
+PSWD='YYY'
