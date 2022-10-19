@@ -1,2 +1,0 @@
-SSID='XXX'
-PSWD='YYY'
