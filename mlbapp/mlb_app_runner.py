@@ -3,7 +3,7 @@ import time
 time.sleep(2)
 
 """ OLED SETUP """
-from .esp32cam_oled import oled  as myoled
+from .esp32_oled import oled  as myoled
 
 """ All non caught errors are handled by main.py """  
 from . team_id import team_id
