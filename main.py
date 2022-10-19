@@ -1,5 +1,5 @@
 import os
-import mlbapp.esp32cam_oled as myoled 
+import mlbapp.esp32_oled as myoled 
 import mlbapp.err2oled
 
 
