@@ -120,13 +120,14 @@ edit the mlb_app_runner.py  file
 ```
 
 - Upload the mlbapp/ and  lib/ folder using Thonny/IDE as well as:
+
 ```
 - boot.py 
 - main.py
 ```
+
 to '/'
 
-```
 
 Note: ssd1306.py is from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py
 
