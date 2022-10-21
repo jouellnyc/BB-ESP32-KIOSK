@@ -119,18 +119,13 @@ vi net_config.py  #should be obvious
 edit the mlb_app_runner.py  file
 ```
 
-- Upload mlbapp/ folder using Thonny/IDE as well as:
+- Upload the mlbapp/ and  lib/ folder using Thonny/IDE as well as:
 ```
 - boot.py 
 - main.py
 ```
 to '/'
 
-- Install 2 Libraries
-```
-import upip
-upip.install('urequests')
-upip.install('micropython-logging')
 ```
 
 Note: ssd1306.py is from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py
