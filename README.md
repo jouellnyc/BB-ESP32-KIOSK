@@ -150,8 +150,10 @@ When expanded the view from Thonny should look like this:
 - PIN CONNECT: https://randomnerdtutorials.com/program-upload-code-esp32-cam/
 - IN MAP: https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
 - OLED SETUP CODE: https://randomnerdtutorials.com/micropython-oled-display-esp32-esp8266/
+
 Black Case:
 - https://www.thingiverse.com/thing:3495445/files
+
 Orange Case:
 - https://www.thingiverse.com/thing:3461768
 
