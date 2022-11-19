@@ -4,10 +4,10 @@
 
 |<img src="images/esp32-kiosk.png"  width="200"/>|<img src="images/esp32-kiosk-live.png" width="200"/>|<img src="images/esp32-kiosk.over.png" width="200"/>|
 
-Possible ThingVerse Option #1
+Possible ThingVerse Option #1 (uses code for esp32-ili9341-2.8)
 |<img src="images/side_view_black.jpg" width="200"/>
 
-Possible ThingVerse Option #2
+Possible ThingVerse Option #2 (uses code for esp32-ili9341-2.8)
 |<img src="images/orange.png" width="200"/>|
 
 #### What 
