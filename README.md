@@ -4,8 +4,10 @@
 
 |<img src="images/esp32-kiosk.png"  width="200"/>|<img src="images/esp32-kiosk-live.png" width="200"/>|<img src="images/esp32-kiosk.over.png" width="200"/>|
 
+Possible ThingVerse Option #1
 |<img src="images/side_view_black.jpg" width="200"/>
 
+Possible ThingVerse Option #2
 |<img src="images/orange.png" width="200"/>|
 
 #### What 
