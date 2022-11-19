@@ -1,8 +1,8 @@
 # MLB-ESP32
 
 #### ESP32 CAM MLB Mini Kiosk
-<img src="images/side_view_black.jpg" width="200"/>
-<img src="images/orange.png" width="200"/>
+|<img src="images/side_view_black.jpg" width="200"/>|<img src="images/orange.png" width="200"/>|
+
 |<img src="images/esp32-kiosk.png"  width="200"/>|<img src="images/esp32-kiosk-live.png" width="200"/>|<img src="images/esp32-kiosk.over.png" width="200"/>|
 
 #### What 
@@ -145,3 +145,8 @@ When expanded the view from Thonny should look like this:
 - PIN CONNECT: https://randomnerdtutorials.com/program-upload-code-esp32-cam/
 - IN MAP: https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
 - OLED SETUP CODE: https://randomnerdtutorials.com/micropython-oled-display-esp32-esp8266/
+Black Case:
+- https://www.thingiverse.com/thing:3495445/files
+Orange Case:
+- https://www.thingiverse.com/thing:3461768
+
