@@ -1,5 +1,5 @@
 """
-microdot - https://github.com/miguelgrinberg/microdot
+microdot
 --------
 
 The ``microdot`` module defines a few classes that help implement HTTP-based
