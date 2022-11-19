@@ -1,0 +1,10 @@
+SDI(MISO) - no 
+LED - 5V
+SCK - 18
+SDI(mosi) - 23
+DC - 2
+RESET - 4
+CS - 15 
+GND - GND
+VCC - 5V
+
