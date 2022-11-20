@@ -26,7 +26,7 @@ else:
         hardware.ntp_setup.main()
 
         """ Run MLB APP """
-        import mlbapp.mlb_app_runner2
+        import mlbapp.mlb_app_runner
 
 
     else:
