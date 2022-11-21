@@ -59,6 +59,7 @@ https://www.amazon.com/dp/B07WCFGMTF/
 
 - (For ThingiVerse Large Screen Setup) - 320x240 SPI Serial ILI9341 - https://www.amazon.com/dp/B09XHJ9KRX
 
+- Configs / Libraries shared in https://github.com/jouellnyc/mcconfigs 
 
 #### Steps
 
