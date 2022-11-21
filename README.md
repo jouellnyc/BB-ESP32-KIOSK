@@ -57,6 +57,8 @@ https://www.amazon.com/dp/B07WCFGMTF/
 - API: https://github.com/toddrob99/MLB-StatsAPI 
   (Modified here - my_mlb_api.py was renamed from __init__.py in MLB-StatsApI and just barely modified.
 
+- (For ThingVerse Large Screen Setup) - 320x240 SPI Serial ILI9341 - https://www.amazon.com/dp/B09XHJ9KRX
+
 
 #### Steps
 
