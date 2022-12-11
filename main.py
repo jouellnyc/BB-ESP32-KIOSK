@@ -2,6 +2,7 @@
 """ If no error on the screen, likely it is a hw / screen problem """
 
 from hardware.err_to_screen import errr
+from hardware.config import screen 
 
 try:
     
@@ -33,8 +34,10 @@ try:
             hardware.ntp_setup.main()
 
             """ Run MLB APP """
-            import mlbapp.mlb_app_runner
-
+            if screen = 'ili9341':
+                import mlbapp.mlb_app_runner_ili9341 as mlb_app_runner
+            elif screen = 'oled': 
+                import mlbapp.mlb_app_runner_oled as mlb_app_runner
 
         else:
 
