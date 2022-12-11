@@ -42,10 +42,10 @@ upload fonts, hardware, and lib to / using Thonny/your IDE
 
 If you want to connect the esp32 to an ili9341, you can follow https://www.youtube.com/watch?v=rq5yPJbX_uk
 
-- Setup Wifi/Device
+#### Setup
 At boot the esp32 launches a wifi SSID named 'mlb32jc2' and a password of '123456789'
+<img src="images/side_view_black.jpg" width="200"/>
 Connect to it at 192.168.4.1 and use the wizard to enter your local Wifi Credentials and Team.
-
 
  
 
