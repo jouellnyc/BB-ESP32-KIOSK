@@ -66,7 +66,7 @@ On the same page, select your team from the drop down:
 Click Submit
 
 Click Reboot if Successful (You have one shot to get it right)
-<img src="images/4_setup_team.jpg" width="200"/>
+<img src="images/4_setup_reboot.jpg" width="200"/>
 
 
 #### References 
