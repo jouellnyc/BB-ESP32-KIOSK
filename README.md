@@ -11,7 +11,7 @@ Possible ThingVerse Option #2 (uses code for esp32-ili9341-2.8)
 |<img src="images/orange.png" width="200"/>|
 
 #### What 
-- Build your own MLB team kiosk  for your favorite team on a tiny device - all in for $15 or less...
+- Build your own MLB team kiosk  for your favorite team on a tiny device.
 - If it's gametime the kiosk will refresh every 120 seconds.
 - If no game it will wait a few hours and retry.
 - RGB LED (optional) turns RED if your team is losing, GREEN if winning, BLUE if a tie or WHITE if a game is scheduled for later.
@@ -19,17 +19,17 @@ Possible ThingVerse Option #2 (uses code for esp32-ili9341-2.8)
 
 #### Requirements
 
-- ESP32 CAM
-https://www.amazon.com/dp/B07WCFGMTF/
+- OLED Version on the BreadBoard with ESP32 CAM as shown in the pics
 
-  You can buy one with or with the ESP32-CAM-MB. These boards typically have 4 MB of spiram.
+  https://www.amazon.com/dp/B07WCFGMTF/
+
+  You can buy one with or without the ESP32-CAM-MB. These boards typically have 4 MB of spiram.
 
   see https://micropython.org/download/esp32spiram/ for the right firmware.
 
-  This repo is unlikely to work on a ESP8266 based board w/o modifications due to RAM usage, I chose the 4 MB board to
-  have plenty. 
+  This repo will not to work on a ESP8266 based board w/o major modifications due to RAM usage, I chose the 4 MB board to have plenty. (It does seem to work with an ESP32 with 520 kb).
 
-  The difference in dollar cost is minimal, but code effort is likely much larger.
+  The difference in dollar cost is minimal, but code effort is much larger.
 
 - FT232RL FTDI Mini USB to TTL Serial Converter Adapter Module
 
@@ -119,33 +119,16 @@ But you have visual and don't need to read the screen anymore...
 
 https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp8266/
 
-- Edit the Wifi Config:
-```
-vi net_config.py  #should be obvious
-```
+- Install libraries 
+git clone https://github.com/jouellnyc/mcconfigs
+upload fonts, hardware, and lib to / using Thonny/your IDE
 
-- Edit tm_id = XXX and set to your team's id 
-```
-edit the mlb_app_runner.py  file
-```
+If you want to connect the esp32 to an ili9341, you can follow https://www.youtube.com/watch?v=rq5yPJbX_uk
 
-- Upload the mlbapp/ and  lib/ folder using Thonny/IDE as well as:
-
-```
-- boot.py 
-- main.py
-```
-
-to '/'
-
-
-Note: ssd1306.py is from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py
-
-
-When expanded the view from Thonny should look like this:
-
-<img src="images/thonny.png"  width="200"/>
-
+- Setup Wifi/Device
+At boot the esp32 launches a wifi SSID named 'mlb32jc2' and a password of '123456789'
+Connect to it at 192.168.4.1 and use the wizard to enter your local Wifi Credentials and Team.
+ 
 
 #### References 
 
