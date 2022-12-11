@@ -47,7 +47,7 @@ At boot the esp32 launches a wifi SSID named 'mlb32jc2' and a password of '12345
 Connect your mobile phone to it at 192.168.4.1
 <img src="images/mlb-essid.png" width="200"/>
 Use the wizard to enter your local Wifi Credentials and Team:
-
+<img src="images/1_setup.jpg" width="200"/>
  
 
 #### References 
