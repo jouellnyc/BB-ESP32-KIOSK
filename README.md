@@ -92,4 +92,4 @@ The kiosk should boot and show startup mesages:
 Once Done, it will show you status of Your Team.
 
 Looking for the BreadBoard Version?
-https://raw.githubusercontent.com/jouellnyc/MLB-ESP32/5ab92c79a4a3a0a481b10e7f1286601ab418bb5e/README.md
+see README.BREAD.BOARD.md
