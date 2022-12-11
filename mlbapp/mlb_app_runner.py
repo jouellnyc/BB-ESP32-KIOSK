@@ -1,25 +1,57 @@
-#This is for a stand up case like the black case:
-#https://github.com/jouellnyc/MLB-ESP32/blob/main/images/side_view_black.jpg
-
 import sys
 import time
 
 """ OLED SETUP """
-from hardware.esp32_oled_2_8_inch import display, red, black, white, drk_grn, score_font, date_font, sm_font
+from hardware.esp32_oled_2_8_inch import display, red, black, white, drk_grn
+from hardware.esp32_oled_2_8_inch import score_font, date_font, sm_font, draw_outline_box, clear_fill    
+from hardware.config import case
+if case == "upright":
+    date_font=sm_font
 
 """ All non caught errors are handled by main.py """  
 from . team_id import team_id
-
-start=5
+start=5 
 delta=45
 
 """ MLB SETUP """
 from . import my_mlb_api
 from hardware.ntp_setup import utc_to_local
-
+url='https://en.wikipedia.org/wiki/2023_Major_League_Baseball_season'
+ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
+    
 """ Version """
 from .version import version
    
+def get_start_date(url, ua):
+    import re
+    import mrequests
+    t=mrequests.get(url, headers={"User-Agent" : ua})
+    _mtch= re.search("scheduled to begin on\s+([A-Z][a-z]+\s+[0-9]+)",t.text)
+    print(f"m1 {_mtch}")
+    if _mtch:
+        try:
+            start_date = _mtch.group(1)
+        except IndexError as e:
+            start_date = "??"
+        finally:
+            print(start_date)
+            return start_date
+
+def say_fetching():
+    clear_fill()
+    draw_outline_box()
+    display.draw_text(5, 5,'Fetching Data',date_font, white, drk_grn)
+
+def days_til_open():
+    say_fetching()
+    start_date=get_start_date(url, ua)
+    clear_fill()
+    draw_outline_box()
+    display.draw_text(5,  start + (0 * delta)     ,f"{mt}-{dy}-{short_yr}", date_font,  white , drk_grn)
+    display.draw_text(5,  start + (1 * delta) + 5 ,f"Opening"             , score_font, white , drk_grn)
+    display.draw_text(5,  start + (2 * delta) + 5 ,f"Day is"              , score_font, white , drk_grn)
+    display.draw_text(5,  start + (3 * delta) + 5 ,f"{start_date}"        , score_font, white , drk_grn)
+
 def get_x_p(pname):
     """ Given 'John Smith (Jr.)'  """
     """ return 'J.Smith'          """
@@ -28,18 +60,14 @@ def get_x_p(pname):
     pn = fi + '.' + ln
     return pn        
 
-def draw_outline_box():
-    display.draw_vline(0,   0, 239, white)
-    display.draw_vline(319, 0, 238, white)
-    display.draw_hline(0,   0, 319, white)
-    display.draw_hline(0,  40, 319, white)
-    display.draw_hline(0, 239, 319, white)
-
-def clear_fill():
-    display.clear()
-    display.fill_rectangle(0,0, 319,239, drk_grn)
-            
-        
+def no_gm():
+    yr, mt, dy, hr, mn, s1, s2, s3 = time.localtime()
+    clear_fill()
+    draw_outline_box()
+    display.draw_text(5, 5, gm_dt, date_font, white, drk_grn)
+    display.draw_text(5, 75, 'No Game Today!', date_font, white, drk_grn)
+    print(f"No Game today!")
+    
 def get_score():
         
         """ Determine home or away from Team Ids Data """
@@ -84,7 +112,7 @@ def get_score():
         home_rec = games[0].get('home_rec','NA')
         away_rec = games[0].get('away_rec','NA')
         
-        """ Statuses
+        """ Statuses are one of:
             "In Progress"
             "Umpire Review"?
             "Scheduled"
@@ -108,12 +136,13 @@ def get_score():
                     
             clear_fill()
             display.draw_text(0,  start + (0 * delta), f"{mt}-{dy}-{short_yr} {in_sta} {inn_cur}", date_font,  white , drk_grn)
-            display.draw_text(5,  start + (1 * delta) + 5, f"{team1}:{team1_score} H {home_rec}", score_font, white , drk_grn)
-            display.draw_text(5,  start + (2 * delta) + 5, f"{team2}:{team2_score} A {away_rec}", score_font, white , drk_grn)
-            display.draw_text(5,  start + (3 * delta) + 5, f"AB: {batter}"                      , sm_font,    white , drk_grn)
-            display.draw_text(10, start + (4 * delta) + 5, f"B: {balls} S: {strks} O: {outs }"  , sm_font,    white , drk_grn)
+            display.draw_text(5,  start + (1 * delta) + 5, f"{team1}:{team1_score} H {home_rec}" , score_font, white , drk_grn)
+            display.draw_text(5,  start + (2 * delta) + 5, f"{team2}:{team2_score} A {away_rec}" , score_font, white , drk_grn)
+            display.draw_text(5,  start + (3 * delta) + 5, f"AB: {batter}"                       , sm_font,    white , drk_grn)
+            display.draw_text(10, start + (4 * delta) + 5, f"B: {balls} S: {strks} O: {outs }"   , sm_font,    white , drk_grn)
             draw_outline_box()
             
+            return 5
             return 60 * 1# check back every 2 minutes
         
         elif game_status == "Game Over" or game_status == "Final":
@@ -129,6 +158,7 @@ def get_score():
             display.draw_text(5, start + (4 * delta), f"LP: {lp}"                           , sm_font,    white , drk_grn)
             draw_outline_box()
             
+            return 5
             return 60 * 60 *4 # check back 4 hours from now
         
         else:  #"Scheduled"/"Warm up"/"Pre Game"
@@ -137,48 +167,58 @@ def get_score():
             tm=utc_to_local(gm_time)
             
             clear_fill()
-            display.draw_text(0, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}"   , date_font,  white , drk_grn)
-            display.draw_text(5, start + (1 * delta), f"{team1} H {home_rec}"   , score_font, white , drk_grn)
-            display.draw_text(5, start + (2 * delta), f"{team2} A {away_rec}"   , score_font, white , drk_grn)
-            display.draw_text(5, start + (3 * delta), f"Game at {tm}" , sm_font,    white , drk_grn)
+            display.draw_text(0, start + (0 * delta), f"{mt}-{dy} {game_status}"            , date_font,  white , drk_grn)
+            display.draw_text(0, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , sm_font,    white , drk_grn)
+            display.draw_text(5, start + (1 * delta), f"{team1} H {home_rec}"               , score_font, white , drk_grn)
+            display.draw_text(5, start + (2 * delta), f"{team2} A {away_rec}"               , score_font, white , drk_grn)
+            display.draw_text(5, start + (3 * delta), f"Game at {tm}"                       , sm_font,    white , drk_grn)
             draw_outline_box()
             
+            return 5
             return 60 * 20 # check back every 20 minutes
         
 
-def no_gm():
-    yr, mt, dy, hr, mn, s1, s2, s3 = time.localtime()
-    clear_fill()
-    draw_outline_box()
-    display.draw_text(5, 5, gm_dt, date_font, white, drk_grn)
-    display.draw_text(5, 75, 'No Game Today!', date_font, white, drk_grn)
-    print(f"No Game today!")
-    
 while True:
     
-    print(f"Version: {version}")
     import gc
     gc.collect()
+    
+    print(f"Version: {version}")
     yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]
     short_yr = f"{int( str(yr)[2:]):02d}"
     gm_dt = f"{mt}/{dy}/{yr}"
     print("Date: ",gm_dt)
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
-
-    try:
-        games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
-    except OSError as e:
-        #Catch this known weird, unrecoverable issue and reboot
-        #https://github.com/espressif/esp-idf/issues/2907
-        if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
-            import machine
-            machine.reset()
+    print("Month is",mt)
+    
+    if int(mt) not in [09,10,11,12,01,02,03]:
+    #if int(mt)  in [09,10,11,12,01,02,03]:
+        
+        days_til_open()
+        time.sleep(60 * 60 * 24 ) # check back Tommorow
+        
     else:
-        if not games:
-            no_gm()
-            time.sleep(60 * 240)  # check back 4 hours from now
-        else:
-            print(games[0])
-            what_sleep=get_score()
-            print(f"Sleeping {what_sleep} seconds")
-            time.sleep(what_sleep)           
+        
+        from .games import games
+        for x in games:
+            
+            try:
+                #from .games import games
+                #games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
+                games = [x]
+            except OSError as e:
+                #Catch this known weird, unrecoverable issue and reboot
+                #https://github.com/espressif/esp-idf/issues/2907
+                if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
+                    import machine
+                    machine.reset()
+            else:
+                if not games:
+                    no_gm()
+                    time.sleep(60 * 60 * 4)  # check back 4 hours from now
+                else:
+                    print(games[0])
+                    what_sleep=get_score()
+                    print(f"Sleeping {what_sleep} seconds")
+                    time.sleep(what_sleep)           
+            
