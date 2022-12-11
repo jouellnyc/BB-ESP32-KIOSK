@@ -91,5 +91,4 @@ The kiosk should boot and show startup mesages:
 
 Once Done, it will show you status of Your Team.
 
-Looking for the BreadBoard Version?
-see README.BREAD.BOARD.md
+Looking for the [BreadBoard Version with OLEDs](README.BREAD.BOARD.md)?
