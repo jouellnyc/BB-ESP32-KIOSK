@@ -45,9 +45,9 @@ https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp
 - Install libraries 
 ```
 git clone https://github.com/jouellnyc/MLB-ESP32
-upload appsetup, mlbapp, main.py and boot.py to / using Thonny/your IDE
+ upload appsetup, mlbapp, main.py and boot.py to / using Thonny/your IDE
 git clone https://github.com/jouellnyc/mcconfigs
-upload fonts, hardware, and lib to / using Thonny/your IDE
+ upload fonts, hardware, and lib to / using Thonny/your IDE
 ```
 
 If you want to connect the esp32 to an ili9341, you can follow https://www.youtube.com/watch?v=rq5yPJbX_uk
