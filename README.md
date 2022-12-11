@@ -63,7 +63,7 @@ On the same page, select your team from the drop down:
 
 <img src="images/3_setup_team.jpg" width="200"/>
 
-Click Submit
+Click Submit (on the same page)
 
 Click Reboot if Successful (You have one shot to get it right)
 
