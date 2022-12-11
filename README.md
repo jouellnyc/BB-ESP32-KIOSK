@@ -55,7 +55,7 @@ There will be no Internet Access via this ssid:
 
 Navigate to http://192.168.4.1
 
-Enter your local Wifi SSID, Credentials:
+Enter your local Wifi SSID, Credentials: (NB: You have one shot to get it right)
 
 <img src="images/1_setup.jpg" width="200"/>
 
@@ -65,7 +65,7 @@ On the same page, select your team from the drop down:
 
 Click Submit (on the same page)
 
-Click Reboot if Successful (You have one shot to get it right)
+Click Reboot if Successful
 
 <img src="images/4_setup_reboot.jpg" width="200"/>
 
