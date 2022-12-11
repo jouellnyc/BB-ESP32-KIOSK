@@ -53,7 +53,7 @@ There will be no Internet Access via this ssid:
 
 <img src="images/2_setup.png" width="200"/>
 
-Navigate to it http://192.168.4.1
+Navigate to http://192.168.4.1
 
 Use the wizard to enter your local Wifi Credentials and Team:
 
