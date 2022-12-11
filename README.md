@@ -57,7 +57,7 @@ Use the wizard to enter your local Wifi Credentials and Team:
 
 <img src="images/1_setup.jpg" width="200"/>
 
-Select your Team:
+On the same page, select your team from the drop down:
 
 <img src="images/3_setup_team.jpg" width="200"/>
 
