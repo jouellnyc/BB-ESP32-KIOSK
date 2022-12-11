@@ -132,7 +132,3 @@ When expanded the view from Thonny should look like this:
 - PIN CONNECT: https://randomnerdtutorials.com/program-upload-code-esp32-cam/
 - IN MAP: https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
 - OLED SETUP CODE: https://randomnerdtutorials.com/micropython-oled-display-esp32-esp8266/
-
-#### TBD
-- Using Scrolling for more information on the kiosk
-- Implement Push Button for Real Time update
