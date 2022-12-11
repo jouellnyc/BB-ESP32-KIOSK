@@ -76,7 +76,7 @@ The page will NOT Refesh (This is OK and expected):
 Connect back to Your Normal Wifi SSID
 
 The kiosk should boot and show startup mesages:
-<img src="images/6_boot.jpg" width="200"/>
+<img src="images/7_boot.jpg" width="200"/>
 
 Once Done, it will show you status of Your Team.
 
