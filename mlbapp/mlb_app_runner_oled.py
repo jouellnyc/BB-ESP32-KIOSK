@@ -3,7 +3,7 @@ import time
 time.sleep(2)
 
 """ OLED SETUP """
-from .esp32_oled import oled  as myoled
+from hardware.esp32_oled import oled  as myoled
 
 """ All non caught errors are handled by main.py """  
 from . team_id import team_id
@@ -12,11 +12,11 @@ start=0
 delta=13
 
 """ RGB SETUP """
-from . import esp32_rgb as rgb
+from hardware import esp32_rgb as rgb
 
 """ MLB SETUP """
 from . import my_mlb_api
-from .ntp_setup import utc_to_local
+from hardware.ntp_setup import utc_to_local
 
 """ Version """
 from .version import version
