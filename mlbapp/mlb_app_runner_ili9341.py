@@ -27,7 +27,6 @@ def get_start_date(url, ua):
     import mrequests
     t=mrequests.get(url, headers={"User-Agent" : ua})
     _mtch= re.search("scheduled to begin on\s+([A-Z][a-z]+\s+[0-9]+)",t.text)
-    print(f"m1 {_mtch}")
     if _mtch:
         try:
             start_date = _mtch.group(1)
@@ -167,8 +166,7 @@ def get_score():
             tm=utc_to_local(gm_time)
             
             clear_fill()
-            display.draw_text(0, start + (0 * delta), f"{mt}-{dy} {game_status}"            , date_font,  white , drk_grn)
-            display.draw_text(0, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , sm_font,    white , drk_grn)
+            display.draw_text(0, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , date_font, white , drk_grn)
             display.draw_text(5, start + (1 * delta), f"{team1} H {home_rec}"               , score_font, white , drk_grn)
             display.draw_text(5, start + (2 * delta), f"{team2} A {away_rec}"               , score_font, white , drk_grn)
             display.draw_text(5, start + (3 * delta), f"Game at {tm}"                       , sm_font,    white , drk_grn)
@@ -191,34 +189,27 @@ while True:
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
     print("Month is",mt)
     
-    if int(mt) not in [09,10,11,12,01,02,03]:
-    #if int(mt)  in [09,10,11,12,01,02,03]:
+    if int(mt) in [11,12,01,02,03]:
         
         days_til_open()
         time.sleep(60 * 60 * 24 ) # check back Tommorow
         
     else:
         
-        from .games import games
-        for x in games:
-            
-            try:
-                #from .games import games
-                #games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
-                games = [x]
-            except OSError as e:
-                #Catch this known weird, unrecoverable issue and reboot
-                #https://github.com/espressif/esp-idf/issues/2907
-                if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
-                    import machine
-                    machine.reset()
+        try:
+            games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
+        except OSError as e:
+            #Catch this known weird, unrecoverable issue and reboot
+            #https://github.com/espressif/esp-idf/issues/2907
+            if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
+                import machine
+                machine.reset()
+        else:
+            if not games:
+                no_gm()
+                time.sleep(60 * 60 * 4)  # check back 4 hours from now
             else:
-                if not games:
-                    no_gm()
-                    time.sleep(60 * 60 * 4)  # check back 4 hours from now
-                else:
-                    print(games[0])
-                    what_sleep=get_score()
-                    print(f"Sleeping {what_sleep} seconds")
-                    time.sleep(what_sleep)           
-            
+                print(games[0])
+                what_sleep=get_score()
+                print(f"Sleeping {what_sleep} seconds")
+                time.sleep(what_sleep)                       
