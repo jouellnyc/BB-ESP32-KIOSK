@@ -1,12 +1,12 @@
 # MLB-ESP32
 
 #### ESP32 MLB Mini Kiosk
+<img src="images/orange.png" width="200"/>
+ThingVerse Option #1
 
-Possible ThingVerse Option #1 (uses code for esp32-ili9341-2.8)
 <img src="images/side_view_black.jpg" width="200"/>
+ThingVerse Option #2
 
-Possible ThingVerse Option #2 (uses code for esp32-ili9341-2.8)
-<img src="images/orange.png" width="200"/>|
 
 #### What 
 - Build your own MLB team kiosk  for your favorite team on a tiny device.
