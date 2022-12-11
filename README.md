@@ -49,13 +49,14 @@ Connect your mobile phone to it at 192.168.4.1
 
 <img src="images/mlb-essid.png" width="200"/>
 
+There will be no Internet Access via this ssid:
+
+<img src="images/2_setup.png" width="200"/>
+
 Use the wizard to enter your local Wifi Credentials and Team:
 
 <img src="images/1_setup.jpg" width="200"/>
 
-There will be no Internet Access via this ssid:
-
-<img src="images/2_setup.png" width="200"/>
  
 
 #### References 
