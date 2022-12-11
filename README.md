@@ -55,7 +55,7 @@ There will be no Internet Access via this ssid:
 
 Navigate to http://192.168.4.1
 
-Use the wizard to enter your local Wifi Credentials and Team:
+Enter your local Wifi SSID, Credentials:
 
 <img src="images/1_setup.jpg" width="200"/>
 
