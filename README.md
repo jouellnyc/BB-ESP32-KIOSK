@@ -69,6 +69,15 @@ Click Reboot if Successful
 
 <img src="images/4_setup_reboot.jpg" width="200"/>
 
+The page will NOT Refesh (This is OK and expected):
+
+<img src="images/5_setup_ok_no_connect.jpg" width="200"/>
+
+Connect back to Your Normal Wifi SSID
+
+Watch the game:
+
+
 
 #### References 
 Black Case:
