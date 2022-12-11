@@ -1,11 +1,11 @@
 # MLB-ESP32
 
 #### ESP32 MLB Mini Kiosk
-<img src="images/orange.png" width="200"/>
 ThingVerse Option #1
+<img src="images/orange.png" width="200"/>
 
-<img src="images/side_view_black.jpg" width="200"/>
 ThingVerse Option #2
+<img src="images/side_view_black.jpg" width="200"/>
 
 
 #### What 
