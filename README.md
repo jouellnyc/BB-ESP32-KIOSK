@@ -75,8 +75,10 @@ The page will NOT Refesh (This is OK and expected):
 
 Connect back to Your Normal Wifi SSID
 
-Watch the game:
+The kiosk should boot and show startup mesages:
+<img src="images/6_boot.jpg" width="200"/>
 
+Once Done, it will show you status of Your Team.
 
 
 #### References 
