@@ -33,8 +33,10 @@ Anywhere Mini usb cables are sold (short - 3 ft or less are best)
 https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp8266/
 
 - Install libraries 
+```
 git clone https://github.com/jouellnyc/mcconfigs
 upload fonts, hardware, and lib to / using Thonny/your IDE
+```
 
 If you want to connect the esp32 to an ili9341, you can follow https://www.youtube.com/watch?v=rq5yPJbX_uk
 
