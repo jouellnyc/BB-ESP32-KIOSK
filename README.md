@@ -15,6 +15,7 @@ ThingVerse Option #2
 - If it's gametime the kiosk will refresh every 120 seconds.
 - If no game it will wait a few hours and retry.
 
+
 #### Requirements
 - ESP32 DevKitC
 https://www.amazon.com/gp/product/B087TNPQCV/
@@ -25,6 +26,15 @@ Anywhere Mini usb cables are sold (short - 3 ft or less are best)
 - 320x240 SPI Serial ILI9341 - https://www.amazon.com/dp/B09XHJ9KRX
 
 - Configs / Libraries shared in https://github.com/jouellnyc/mcconfigs 
+
+Upright Case:
+- https://www.thingiverse.com/thing:3495445/files
+
+OR 
+
+Sideways Case:
+- https://www.thingiverse.com/thing:3461768
+
 
 #### Steps
 - Install MicroPython with SPIRAM to the ESP32:
@@ -80,12 +90,3 @@ The kiosk should boot and show startup mesages:
 <img src="images/7_boot.jpg" width="200"/>
 
 Once Done, it will show you status of Your Team.
-
-
-#### References 
-Black Case:
-- https://www.thingiverse.com/thing:3495445/files
-
-Orange Case:
-- https://www.thingiverse.com/thing:3461768
-
