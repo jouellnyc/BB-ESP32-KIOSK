@@ -34,9 +34,9 @@ try:
             hardware.ntp_setup.main()
 
             """ Run MLB APP """
-            if screen = 'ili9341':
+            if screen == 'ili9341':
                 import mlbapp.mlb_app_runner_ili9341 as mlb_app_runner
-            elif screen = 'oled': 
+            elif screen == 'oled': 
                 import mlbapp.mlb_app_runner_oled as mlb_app_runner
 
         else:
