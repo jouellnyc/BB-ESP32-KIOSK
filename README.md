@@ -92,5 +92,3 @@ The kiosk should boot and show startup mesages:
 Once Done, it will show you status of Your Team.
 
 Looking for the [BreadBoard Version with OLEDs](README.BREAD.BOARD.md)?
-
-(This repo supports both OLED and ili9341)
