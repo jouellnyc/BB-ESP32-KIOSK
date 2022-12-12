@@ -3,7 +3,7 @@ import uos
 import machine
 
 setup_file='/appsetup/setup_complete.txt'
-wifi_file='/mlbapp/wifi_config.py'
+wifi_file='/hardware/wifi_config.py'
 team_file='/mlbapp/team_id.py'
 
 def write_wifi_creds(ssid, pswd):
