@@ -22,9 +22,8 @@ if screen == 'ili9341':
         score_font=sm_font
     clear_fill()
     draw_outline_box()
-    display.draw_text(5, 5,  'Setup at',      date_font,  white , drk_grn)
-    display.draw_text(5, 45, 'http://',       score_font, white , drk_grn)
-    display.draw_text(5, 85, f"{ip_addr}",    score_font, white , drk_grn)
+    display.draw_text(5, 5,  'Setup Page at',      date_font,  white , drk_grn)
+    display.draw_text(5, 65,  f"http://{ip_addr}",       date_font, white , drk_grn)
     display.draw_text(5, 125, f"Wifi ssid:",  score_font, white , drk_grn)
     display.draw_text(5, 165, f"{essid}",     score_font, white , drk_grn)
 elif screen == 'oled': 
