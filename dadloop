@@ -1,0 +1,13 @@
+###
+        time.sleep(10)
+        clear_fill()
+        display.draw_text(0, start + (0 * delta), f"What's Next?" , date_font, white , drk_grn)
+        display.draw_text(5, start + (1 * delta), f"Grandson"     , score_font, white , drk_grn)
+        display.draw_text(5, start + (2 * delta), f"Pics!"        , score_font, white , drk_grn)
+        time.sleep(10)
+        while True:
+            for x in ['/319.1.jpg.raw', '/319.IMG_1721.jpg.raw', '/319.IMG_1392.jpg.raw', '/319.IMG_2132.jpg.raw','/319.IMG_1358.jpg.raw']:
+                display.draw_image(x, 0, 0, 319, 239)
+                time.sleep(5)
+        ###
+        

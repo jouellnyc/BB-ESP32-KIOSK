@@ -152,14 +152,12 @@ def setup(req):
         else:
             return '<HTML><TITLE>Error</TITLE>' + result + '</HTML>', 200, {'Content-Type': 'text/html'}
             
-            
-        
 
 @app.route('/reboot/', methods=['GET'])
 def reboot(req):
     machine.reset()
     
-    
 """ Start Microdot """
 print("MicroDot Starting")
 app.run(host='0.0.0.0', port=80)
+

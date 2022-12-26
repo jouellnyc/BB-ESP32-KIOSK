@@ -2,8 +2,8 @@ import sys
 import time
 
 """ OLED SETUP """
-from hardware.esp32_oled_2_8_inch import display, red, black, white, drk_grn
-from hardware.esp32_oled_2_8_inch import score_font, date_font, sm_font, draw_outline_box, clear_fill    
+from hardware.screen_runner import display, red, black, white, drk_grn
+from hardware.screen_runner import score_font, date_font, sm_font, draw_outline_box, clear_fill    
 from hardware.config import case
 if case == "upright":
     date_font=sm_font
@@ -18,82 +18,40 @@ from . import my_mlb_api
 from hardware.ntp_setup import utc_to_local
 url='https://en.wikipedia.org/wiki/2023_Major_League_Baseball_season'
 ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
-
-""" Helper Credits 
-https://forum.micropython.org/viewtopic.php?t=4179
-https://stackoverflow.com/questions/3418050/how-to-map-month-name-to-month-number-and-vice-versa/33736132#33736132
-""" 
     
 """ Version """
 from .version import version
-
-def month_string_to_number(dstring):
-    m = {
-        'jan': 1,
-        'feb': 2,
-        'mar': 3,
-        'apr':4,
-         'may':5,
-         'jun':6,
-         'jul':7,
-         'aug':8,
-         'sep':9,
-         'oct':10,
-         'nov':11,
-         'dec':12
-        }
-    s = dstring.strip()[:3].lower()
-
-    try:
-        out = m[s]
-        return out
-    except:
-        raise ValueError('Not a month')
-    
-    
+   
 def get_start_date(url, ua):
     import re
     import mrequests
     t=mrequests.get(url, headers={"User-Agent" : ua})
     _mtch= re.search("scheduled to begin on\s+([A-Z][a-z]+\s+[0-9]+)",t.text)
+    print(f"m1 {_mtch}")
     if _mtch:
         try:
             start_date = _mtch.group(1)
         except IndexError as e:
             start_date = "??"
         finally:
-            print(f"start_date {start_date}")
-            mstart, dstart = start_date.split()
-            return (mstart, int(dstart))
-                    
+            print(start_date)
+            return start_date
+
 def say_fetching():
     clear_fill()
     draw_outline_box()
     display.draw_text(5, 5,'Fetching Data',date_font, white, drk_grn)
 
-def days_between(d1, d2):
-    import utime
-    d1 += (1, 0, 0, 0, 0)  # ensure a time past midnight
-    d2 += (1, 0, 0, 0, 0)
-    return (utime.mktime(d1)// (24*3600)) - (utime.mktime(d2) // (24*3600))
-    
-    
-def days_till_open():
+def days_til_open():
     say_fetching()
-    mstartn, dstarti = get_start_date(url, ua)
-    mstarti  = month_string_to_number(mstartn)
-    if mstarti < mti:
-        ystarti = yri + 1
-    else:
-        ystarti = yri
-    days_until  = days_between( (ystarti, mstarti, dstarti) , (yri, mti, dyi) )
+    start_date=get_start_date(url, ua)
     clear_fill()
     draw_outline_box()
-    display.draw_text(5,  start + (0 * delta)     ,f"{mt}-{dy}-{short_yr}"          , date_font,  white ,drk_grn)
-    display.draw_text(5,  start + (1 * delta) + 5 ,f"Opening Day is"                , date_font, white ,drk_grn)
-    display.draw_text(5,  start + (2 * delta) + 5 ,f"{mstartn} {dstarti}, {ystarti}" , date_font, white ,drk_grn)
-    display.draw_text(5,  start + (3 * delta) + 5 ,f"{days_until} days away!"       , score_font, white ,drk_grn)
-    
+    display.draw_text(5,  start + (0 * delta)     ,f"{mt}-{dy}-{short_yr}", date_font,  white , drk_grn)
+    display.draw_text(5,  start + (1 * delta) + 5 ,f"Opening"             , score_font, white , drk_grn)
+    display.draw_text(5,  start + (2 * delta) + 5 ,f"Day is"              , score_font, white , drk_grn)
+    display.draw_text(5,  start + (3 * delta) + 5 ,f"{start_date}"        , score_font, white , drk_grn)
+
 def get_x_p(pname):
     """ Given 'John Smith (Jr.)'  """
     """ return 'J.Smith'          """
@@ -221,45 +179,49 @@ def get_score():
 
 while True:
     
+    factory_test = "True"
     import gc
     gc.collect()
+    
     print(f"Version: {version}")
-    
-    #Strings
     yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]
-    #Integers
-    yri, mti, dyi, hri, mni, s1i, s2i, s3i = [ int(x) for x in time.localtime() ]
-    
     short_yr = f"{int( str(yr)[2:]):02d}"
-    short_yri = int(str(yri)[2:])
-    
     gm_dt = f"{mt}/{dy}/{yr}"
-    
     print("Date: ",gm_dt)
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
     print("Month is",mt)
     
-    if mti in [11,12,01,02,03]:
+    if int(mt)  not in [09,10,11,12,01,02,03]:
         
-        days_till_open()
+        days_til_open()
         time.sleep(60 * 60 * 24 ) # check back Tommorow
         
     else:
         
-        try:
-            games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
-        except OSError as e:
-            #Catch this known weird, unrecoverable issue and reboot
-            #https://github.com/espressif/esp-idf/issues/2907
-            if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
-                import machine
-                machine.reset()
-        else:
-            if not games:
-                no_gm()
-                time.sleep(60 * 60 * 4)  # check back 4 hours from now
+        if factory_test == "True":
+            from .games import games
+        
+        for x in games:
+            
+            try:
+                #from .games import games
+                #games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
+                games = [x]
+            except OSError as e:
+                #Catch this known weird, unrecoverable issue and reboot
+                #https://github.com/espressif/esp-idf/issues/2907
+                if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
+                    import machine
+                    machine.reset()
             else:
-                print(games[0])
-                what_sleep=get_score()
-                print(f"Sleeping {what_sleep} seconds")
-                time.sleep(what_sleep)                       
+                if not games:
+                    no_gm()
+                    time.sleep(60 * 60 * 4)  # check back 4 hours from now
+                else:
+                    print(games[0])
+                    what_sleep=get_score()
+                    print(f"Sleeping {what_sleep} seconds")
+                    time.sleep(what_sleep)           
+            
+
+
