@@ -41,7 +41,7 @@ try:
             hardware.ntp_setup.main()
 
             """ Run MLB APP """
-            print_setup("Launch MLB Kiosk ")
+            print_setup("Launch BB Kiosk ")
             if screen == 'ili9341':
                 import mlbapp.mlb_app_runner_ili9341 as mlb_app_runner
             elif screen == 'oled': 
