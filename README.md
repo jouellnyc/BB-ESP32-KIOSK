@@ -1,6 +1,6 @@
-# MLB-ESP32
+# BB-ESP32-KIOSK
 
-#### ESP32 MLB Mini Kiosk
+#### ESP32 Game Day BaseBall Kiosk
 ThingVerse Option #1
 
 <img src="images/orange.png" width="200"/>
@@ -11,7 +11,7 @@ ThingVerse Option #2
 
 
 #### What 
-- Build your own MLB team kiosk  for your favorite team on a tiny device.
+- Build your own kiosk for your favorite baseball team on a tiny device.
 - If it's gametime the kiosk will refresh every 120 seconds.
 - If no game it will wait a few hours and retry.
 
@@ -53,7 +53,7 @@ git clone https://github.com/jouellnyc/mcconfigs
 To connect the esp32 to an ili9341, you can follow https://www.youtube.com/watch?v=rq5yPJbX_uk
 
 #### Setup
-At boot the esp32 launches a wifi SSID named 'mlb32jc2' and a password of '123456789'.
+At boot the esp32 launches a wifi SSID named 'bbkiosk32' and a password of '123456789'.
 
 Connect your mobile phone to it:
 

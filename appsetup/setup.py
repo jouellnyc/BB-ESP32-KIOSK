@@ -1,6 +1,6 @@
 import time
 import network
-essid="mlb32jc2"
+essid="bbkiosk32"
 ap = network.WLAN(network.AP_IF)
 ap.config(essid=essid, password='123456789')
 ap.active(True)
