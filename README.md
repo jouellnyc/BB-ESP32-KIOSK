@@ -55,9 +55,7 @@ To connect the esp32 to an ili9341, you can follow https://www.youtube.com/watch
 #### Setup
 At boot the esp32 launches a wifi SSID named 'bbkiosk32' and a password of '123456789'.
 
-Connect your mobile phone to it:
-
-<img src="images/mlb-essid.png" width="200"/>
+Connect your mobile phone to it.
 
 There will be no Internet Access via this ssid:
 
