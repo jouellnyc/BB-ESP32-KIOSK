@@ -51,7 +51,7 @@ To connect the esp32 to an ili9341, you can follow https://www.youtube.com/watch
 #### Setup
 At boot the esp32 launches a wifi SSID named 'bbkiosk32' and a password of '123456789'.
 
-Connect your mobile phone to it.
+Connect your mobile phone/PC w/wifi to that SSID.
 
 There will be no Internet Access via this ssid:
 
@@ -77,7 +77,7 @@ The page will NOT Refesh (This is OK and expected):
 
 <img src="images/5_setup_ok_no_connect.jpg" width="200"/>
 
-Connect back to Your Normal Wifi SSID
+(Connect back to Your Normal Wifi SSID to get your mobile/PC back online.)
 
 The kiosk should boot and show startup mesages:
 
