@@ -83,7 +83,7 @@ The kiosk should boot and show startup mesages:
 
 <img src="images/7_boot.jpg" width="200"/>
 
-Once Done, it will show you status of Your Team.
+Once Done, it will show you status of Your Team's Game if in progress.
 
 ### BreadBoard Version with OLEDs
 Looking for the [BreadBoard Version with OLEDs](README.BREAD.BOARD.md) for the old school effect?
