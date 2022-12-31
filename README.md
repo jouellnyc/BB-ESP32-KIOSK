@@ -59,7 +59,7 @@ There will be no Internet Access via this ssid:
 
 Navigate to http://192.168.4.1
 
-Enter your local Wifi SSID, Credentials: (NB: You have one shot to get it right)
+Enter your local Wifi SSID, Credentials: 
 
 <img src="images/1_setup.jpg" width="200"/>
 
