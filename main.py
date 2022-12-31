@@ -1,15 +1,17 @@
 """ Send as much as possible to the screen as early as possible   """
 """ If no error on the screen, likely it is a hw / screen problem """
 
-from hardware.err_to_screen import errr
-from hardware.config import screen 
-from hardware.esp32_oled_2_8_inch import print_setup
+import sys
+from hardware.config import screen, gui_screen_types, mode
+from hardware.screen_runner import display as d
+if mode=="debug":
+    sys.exit(0)
 
-print_setup("Booting Up...")
+d.print_setup("Booting Up...")
 
 try:
     
-    import os
+    import os    
     import time
     time.sleep(2)
 
@@ -21,37 +23,33 @@ try:
         else:
             return True
 
-    mode='normal'
+    
+    
+    if file_or_dir_exists('/appsetup/setup_complete.txt'):        
 
-    if mode=="debug":
+        """ NETWORK SETUP """
+        d.print_setup("Network Setup ...")
+        import hardware.network_setup
 
-        pass
+        """ NTP SETUP """
+        d.print_setup("Time Setup ...")
+        import hardware.ntp_setup
+        hardware.ntp_setup.main()
 
+        """ Run BB APP """
+        d.print_setup("Launch BB Kiosk ")
+        if screen in gui_screen_types:
+            import bbapp.bb_app_runner
+        elif screen == 'oled': 
+            import bbapp.mlb_app_runner_oled as mlb_app_runner
+        print(screen)
+    
     else:
+        d.print_setup("Running Setup ...")
+        import appsetup.setup
 
-        if file_or_dir_exists('/appsetup/setup_complete.txt'):        
-
-            """ NETWORK SETUP """
-            print_setup("Network Setup ...")
-            import hardware.network_setup
-
-            """ NTP SETUP """
-            print_setup("Time Setup ...")
-            import hardware.ntp_setup
-            hardware.ntp_setup.main()
-
-            """ Run MLB APP """
-            print_setup("Launch BB Kiosk ")
-            if screen == 'ili9341':
-                import mlbapp.mlb_app_runner_ili9341 as mlb_app_runner
-            elif screen == 'oled': 
-                import mlbapp.mlb_app_runner_oled as mlb_app_runner
-
-        else:
-            print_setup("Running Setup ...")
-            import appsetup.setup
 
 except Exception as e:
+    print(str(e))
+    d.print_setup(str(e))
     
-    from hardware.err_to_screen import print_err
-    print_err(e)    
