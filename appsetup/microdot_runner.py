@@ -4,7 +4,7 @@ import machine
 
 setup_file='/appsetup/setup_complete.txt'
 wifi_file='/hardware/wifi_config.py'
-team_file='/mlbapp/team_id.py'
+team_file='/bbapp/team_id.py'
 
 def write_wifi_creds(ssid, pswd):
     try:
@@ -37,7 +37,7 @@ def write_team_id(team_id):
 
 def get_team_data():
     import ujson
-    with open("/mlbapp/team_ids.py") as f:
+    with open("/bbapp/team_ids.py") as f:
         all_teams = f.read()
         all_team_ids = ujson.loads(all_teams)['teams']
         sorted_teams = sorted(all_team_ids, key=lambda d: d['name'])
@@ -48,11 +48,11 @@ option_list = get_team_data()
 index_page='''<!doctype html>
               <html>
               <head>
-              <title> Setup for MLB APP</title>
+              <title> Setup for BB APP</title>
               </head>
               <body>
               
-              Welcome to Setup for the MLB APP <BR>
+              Welcome to Setup for the BB APP <BR>
               
               Please enter your SSID and password below:
               
@@ -95,11 +95,11 @@ setup_reply_page='''<!doctype html>
                       Please Click Reboot button and then: <P>
                       
                       <OL>
-                      <LI>Wait 60 seconds for the device to show you MLB Scores
+                      <LI>Wait 60 seconds for the device to show your Team Score
                       <LI>Remember to put this device back on the original Wifi Network
                       </OL>
                       
-                      This web page willl NOT refresh!
+                      This web page will NOT refresh!
                       
                       <P>
                       
