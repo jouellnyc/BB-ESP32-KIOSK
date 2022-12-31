@@ -9,13 +9,14 @@ ThingVerse Option #2
 
 <img src="images/side_view_black.jpg" width="200"/>
 
-LILYGO T-WATCH-2020 V3: 
+<A HREF="https://www.aliexpress.us/item/3256802898629918.html"> LILYGO T-WATCH-2020 V3 </A>
 
 <img src="images/lily_go_watch.png"  width="200"/>
 
 
 #### What 
-- Build your own kiosk for your favorite baseball team on a tiny device.
+- Build your own kiosk for your favorite baseball team on a tiny device:
+  LilyGo Watch, LilyGo 2.4 ESP32 or Build your own (see below) devices supported.  
 - If it's gametime the kiosk will refresh every 120 seconds.
 - If no game it will wait a few hours and retry.
 
