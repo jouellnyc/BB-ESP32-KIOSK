@@ -1,19 +1,14 @@
 # BB-ESP32-KIOSK
 
 #### ESP32 Game Day BaseBall Kiosk
+
 | ThingVerse Option #1 |ThingVerse Option #2|
 | ------------- | ------------- |
 | <img src="images/orange.png" width="200"/> | <img src="images/side_view_black.jpg" width="200"/>|
 
-
-<A HREF="https://www.aliexpress.us/item/3256802898629918.html"> LilyGO T-WATCH-2020 V3 </A>
-
-<img src="images/lily_go_watch.png"  width="200"/>
-
-
-<A HREF="https://www.tindie.com/products/lilygo/lilygo-ttgo-t4-v13-ili9341-24-inch-lcd-display/"> LilyGo 2.4 Inch ili9341 ES32</A>
-
-<img src="images/lily_24_esp32.png"  width="200"/>
+|<A HREF="https://www.aliexpress.us/item/3256802898629918.html"> LilyGO T-WATCH-2020 V3 </A>|<A HREF="https://www.tindie.com/products/lilygo/lilygo-ttgo-t4-v13-ili9341-24-inch-lcd-display/"> LilyGo 2.4 Inch ili9341 ES32</A>
+| ------------- | ------------- |
+| <img src="images/lily_go_watch.png"  width="200"/> | <img src="images/lily_24_esp32.png"  width="200"/> |
 
 
 #### What 
