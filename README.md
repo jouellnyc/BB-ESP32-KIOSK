@@ -2,7 +2,8 @@
 
 #### ESP32 Game Day BaseBall Kiosk
 
-| ThingVerse Option #1 |ThingVerse Option #2|
+| <A HREF="https://www.thingiverse.com/thing:3461768">ThingVerse #1</A> |<A HREF="https://www.thingiverse.com/thing:3495445/files
+">ThingVerse  #2|
 | ------------- | ------------- |
 | <img src="images/orange.png" width="200"/> | <img src="images/side_view_black.jpg" width="200"/>|
 
@@ -29,13 +30,6 @@ Anywhere Mini usb cables are sold (short - 3 ft or less are best)
 
 - Configs / Libraries shared in https://github.com/jouellnyc/mcconfigs 
 
-Upright Case:
-- https://www.thingiverse.com/thing:3495445/files
-
-OR 
-
-Sideways Case:
-- https://www.thingiverse.com/thing:3461768
 
 
 #### Steps
