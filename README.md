@@ -55,7 +55,7 @@ Connect your mobile phone to it.
 
 There will be no Internet Access via this ssid:
 
-<img src="images/2_setup.png" width="200"/>
+<img src="images/6_wifi.png" width="200"/>
 
 Navigate to http://192.168.4.1
 
