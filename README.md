@@ -31,7 +31,7 @@ Anywhere Mini usb cables are sold (short - 3 ft or less are best)
 #### Steps
 
 - Install MicroPython with SPIRAM to the ESP32:
-- For the LilyGo Watch use <A HREF="https://github.com/russhughes/st7789_mpy/tree/master/firmware/TWATCH-2020">this </A> firmware.
+- (For the LilyGo Watch use <A HREF="https://github.com/russhughes/st7789_mpy/tree/master/firmware/TWATCH-2020">this </A> firmware.)
 
 - Get a REPL on the ESP32:
 
