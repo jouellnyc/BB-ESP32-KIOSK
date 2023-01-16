@@ -11,9 +11,9 @@
 - Build your own kiosk for your favorite baseball team:
 
   LilyGo Watch, LilyGo 2.4 ESP32, ESP#@-S3-BOX Lite, or ThingVerse Model using an ESP32 DevKit.  
-- If it's gametime the kiosk will refresh every 120 seconds.
+- If it's gametime for you team, the kiosk will refresh the score every 120 seconds.
 - If no game 'today',  it will wait a few hours and retry.
-
+- If it's the offseason, it will tell you when open day is.
 
 #### Requirements
 - ESP32 DevKitC
@@ -25,7 +25,6 @@ Anywhere Mini usb cables are sold (short - 3 ft or less are best)
 - 320x240 SPI Serial ILI9341 - https://www.amazon.com/dp/B09XHJ9KRX
 
 - Configs / Libraries shared in https://github.com/jouellnyc/mcconfigs 
-
 
 
 #### Steps
