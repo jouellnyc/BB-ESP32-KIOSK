@@ -23,7 +23,6 @@ def get_start_date(url, ua):
     import mrequests
     t=mrequests.get(url, headers={"User-Agent" : ua})
     _mtch= re.search("scheduled to begin on\s+([A-Z][a-z]+\s+[0-9]+)",t.text)
-    print(f"m1 {_mtch}")
     if _mtch:
         try:
             start_date = _mtch.group(1)
@@ -43,10 +42,10 @@ def days_til_open():
     start_date=get_start_date(url, ua)
     d.clear_fill()
     d.draw_outline_box()
-    d.draw_text(5,  start + (0 * delta)     ,f"{mt}-{dy}-{short_yr}", d.d.date_font,  d.white , d.drk_grn)
-    d.draw_text(5,  start + (1 * delta) + 5 ,f"Opening"             , d.d.score_font, d.white , d.drk_grn)
-    d.draw_text(5,  start + (2 * delta) + 5 ,f"Day is"              , d.d.score_font, d.white , d.drk_grn)
-    d.draw_text(5,  start + (3 * delta) + 5 ,f"{start_date}"        , d.d.score_font, d.white , d.drk_grn)
+    d.draw_text(5,  start + (0 * delta)     ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
+    d.draw_text(5,  start + (1 * delta) + 5 ,f"Opening"             , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5,  start + (2 * delta) + 5 ,f"Day is"              , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5,  start + (3 * delta) + 5 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
 
 def get_x_p(pname):
     """ Given 'John Smith (Jr.)'  """
@@ -58,12 +57,22 @@ def get_x_p(pname):
 
 def no_gm():
     yr, mt, dy, hr, mn, s1, s2, s3 = time.localtime()
-    d.clear_fillill()
+    d.clear_fill()
     d.draw_outline_box()
     d.draw_text(5, 5, gm_dt, d.date_font, d.white, d.drk_grn)
     d.draw_text(5, 75, 'No Game Today!', d.date_font, d.white, d.drk_grn)
     print(f"No Game today!")
-    
+
+def check_if_game():
+    if not games:
+        no_gm()
+        time.sleep(60 * 60 * 4)  # check back 4 hours from now
+    else:
+        print(games[0])
+        what_sleep=get_score()
+        print(f"Sleeping {what_sleep} seconds")
+        time.sleep(what_sleep)         
+
 def get_score():
         
         """ Determine home or away from Team Ids Data """
@@ -131,7 +140,7 @@ def get_score():
             batter  = get_x_p(games[0].get("Batter",'NA'))
                     
             d.clear_fill()
-            d.draw_text(0,  start + (0 * delta), f"{mt}-{dy}-{short_yr} {in_sta} {inn_cur}", d.date_font,  d.white , d.drk_grn)
+            d.draw_text(5,  start + (0 * delta), f"{mt}-{dy}-{short_yr} {in_sta} {inn_cur}", d.date_font,  d.white , d.drk_grn)
             d.draw_text(5,  start + (1 * delta) + 5, f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , d.drk_grn)
             d.draw_text(5,  start + (2 * delta) + 5, f"{team2}:{team2_score} A {away_rec}" , d.score_font, d.white , d.drk_grn)
             d.draw_text(5,  start + (3 * delta) + 5, f"AB: {batter}"                       , d.sm_font,    d.white , d.drk_grn)
@@ -143,11 +152,15 @@ def get_score():
         
         elif game_status == "Game Over" or game_status == "Final":
             
+            """ Stretch the Game Status to minimize ghost pixelation """
+            """ here and with ZZZ in Warm up  below                  """
+            
+            game_status = "Final Score"
             lp = get_x_p(games[0]['losing_pitcher'])
             wp = get_x_p(games[0]['winning_pitcher'])
             
             d.clear_fill()
-            d.draw_text(0, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
+            d.draw_text(5, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
             d.draw_text(5, start + (1 * delta), f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , d.drk_grn)
             d.draw_text(5, start + (2 * delta), f"{team2}:{team2_score} A {away_rec}" , d.score_font, d.white , d.drk_grn)
             d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , d.drk_grn)
@@ -163,10 +176,11 @@ def get_score():
             tm=utc_to_local(gm_time)
             
             d.clear_fill()
-            d.draw_text(0, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font, d.white , d.drk_grn)
-            d.draw_text(5, start + (1 * delta), f"{team1} H {home_rec}"               , d.score_font, d.white , d.drk_grn)
-            d.draw_text(5, start + (2 * delta), f"{team2} A {away_rec}"               , d.score_font, d.white , d.drk_grn)
+            d.draw_text(5, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
+            d.draw_text(5, start + (1 * delta), f"{team1}:N H {home_rec}"             , d.score_font, d.white , d.drk_grn)
+            d.draw_text(5, start + (2 * delta), f"{team2}:N A {away_rec}"             , d.score_font, d.white , d.drk_grn)
             d.draw_text(5, start + (3 * delta), f"Game at {tm}"                       , d.sm_font,    d.white , d.drk_grn)
+            d.draw_text(5, start + (4 * delta), f"ZZZZZZZZZZZZZZZZZZZZZ"              , d.sm_font,   d.drk_grn, d.drk_grn)
             d.draw_outline_box()
             
             return 5
@@ -175,9 +189,9 @@ def get_score():
 
 while True:
     
-    factory_test = "True"
     import gc
     gc.collect()
+    factory_test = "False"
     
     print(f"Version: {version}")
     yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]
@@ -187,7 +201,7 @@ while True:
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
     print("Month is",mt)
     
-    if int(mt)  not in [09,10,11,12,01,02,03]:
+    if int(mt) in [11,12,01,02,03]:
         
         days_til_open()
         time.sleep(60 * 60 * 24 ) # check back Tommorow
@@ -195,29 +209,21 @@ while True:
     else:
         
         if factory_test == "True":
-            from .games import games
-        
-        for x in games:
+            
+            from .test_games import games
+            for x in games:
+                games = [x]
+                check_if_game()
+            
+        else:
             
             try:
-                #from .games import games
-                #games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
-                games = [x]
+                games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
             except OSError as e:
                 #Catch this known weird, unrecoverable issue and reboot
                 #https://github.com/espressif/esp-idf/issues/2907
                 if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
                     import machine
                     machine.reset()
-            else:
-                if not games:
-                    no_gm()
-                    time.sleep(60 * 60 * 4)  # check back 4 hours from now
-                else:
-                    print(games[0])
-                    what_sleep=get_score()
-                    print(f"Sleeping {what_sleep} seconds")
-                    time.sleep(what_sleep)         
-
-
+            check_if_game()          
 

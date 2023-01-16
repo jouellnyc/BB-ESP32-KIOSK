@@ -1,19 +1,20 @@
 """ Send as much as possible to the screen as early as possible   """
 """ If no error on the screen, likely it is a hw / screen problem """
 
-import sys
-from hardware.config import screen, gui_screen_types, mode
-from hardware.screen_runner import display as d
+""" Quickly Bail out if in debug """
+mode = 'normal'
 if mode=="debug":
+    import sys
     sys.exit(0)
 
+from hardware.screen_runner import display as d
 d.print_setup("Booting Up...")
 
 try:
     
-    import os    
+    import os
     import time
-    time.sleep(2)
+    time.sleep(5)
 
     def file_or_dir_exists(filename):
         try:
@@ -23,8 +24,6 @@ try:
         else:
             return True
 
-    
-    
     if file_or_dir_exists('/appsetup/setup_complete.txt'):        
 
         """ NETWORK SETUP """
@@ -38,18 +37,16 @@ try:
 
         """ Run BB APP """
         d.print_setup("Launch BB Kiosk ")
-        if screen in gui_screen_types:
-            import bbapp.bb_app_runner
-        elif screen == 'oled': 
-            import bbapp.mlb_app_runner_oled as mlb_app_runner
-        print(screen)
-    
+        import bbapp.bb_app_runner
+        
     else:
+        """ Run the Setup """    
         d.print_setup("Running Setup ...")
         import appsetup.setup
 
-
 except Exception as e:
+    """ Dump to the screen """
     print(str(e))
-    d.print_setup(str(e))
+    d.print_err(e)
+    
     
