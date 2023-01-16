@@ -8,7 +8,7 @@
 |<A HREF="https://www.espressif.com/en/news/ESP32-S3-BOX_video">ESP32-S3-BOX Lite</A>
 |<A HREF="https://www.thingiverse.com/thing:3461768">ThingVerse #1</A> 
 |<A HREF="https://www.thingiverse.com/thing:3495445/files">ThingVerse  #2|
-| ------------- | ------------- | ------------- | ------------- |
+| ------------- | ------------- | ------------- | ------------- | -------------|
 |<img src="images/lily_24_esp32.png"      width="200"/>|
  <img src="images/lily_go_watch.png"      width="200"/>|
  <img src="images/esp-32-s3-box-lite.png" width="200"/>|
