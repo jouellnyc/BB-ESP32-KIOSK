@@ -39,7 +39,7 @@ https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp
 - Install libraries 
 ```
 git clone https://github.com/jouellnyc/MLB-ESP32
- upload appsetup, bbbapp, main.py and boot.py to / using Thonny/your IDE
+ upload appsetup, bbbapp, acknowledgements.py, main.py and boot.py to / using Thonny/your IDE
 git clone https://github.com/jouellnyc/mcconfigs
  upload fonts, hardware, and lib to / using Thonny/your IDE
 ```
