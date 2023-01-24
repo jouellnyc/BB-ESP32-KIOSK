@@ -10,7 +10,7 @@
 #### What 
 - Build your own kiosk for your favorite baseball team:
 
-  LilyGo Watch, LilyGo 2.4 ESP32, ESP#@-S3-BOX Lite, or ThingVerse Model using an ESP32 DevKit.  
+  LilyGo Watch, LilyGo 2.4 ESP32, ESP32-S3-BOX Lite, or ThingVerse Model using an ESP32 DevKit.  
 - If it's gametime for you team, the kiosk will refresh the score every 120 seconds.
 - If no game 'today',  it will wait a few hours and retry.
 - If it's the offseason, it will tell you when open day is.
@@ -39,7 +39,7 @@ https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp
 - Install libraries 
 ```
 git clone https://github.com/jouellnyc/MLB-ESP32
- upload appsetup, bbbapp, main.py and boot.py to / using Thonny/your IDE
+ upload appsetup, bbbapp, acknowledgements.py, main.py and boot.py to / using Thonny/your IDE
 git clone https://github.com/jouellnyc/mcconfigs
  upload fonts, hardware, and lib to / using Thonny/your IDE
 ```
