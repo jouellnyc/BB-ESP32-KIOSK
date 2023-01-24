@@ -47,6 +47,22 @@ def days_til_open():
     d.draw_text(5,  start + (2 * delta) + 5 ,f"Day is"              , d.score_font, d.white , d.drk_grn)
     d.draw_text(5,  start + (3 * delta) + 5 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
 
+def show_filler_news():
+    #say_fetching()
+    #news=get_start_date(url, ua)
+    d.clear_fill()
+    d.draw_outline_box()
+    d.draw_text(5,  start + (0 * delta)     ,f"{mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
+    d.draw_text(5,  start + (1 * delta) + 5 ,f"Check out"            , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5,  start + (2 * delta) + 5 ,f"latest  news"         , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5,  start + (3 * delta) + 5 ,f"on mlb.com"           , d.score_font, d.white , d.drk_grn)
+    time.sleep(5)
+    url="https://www.mlb.com/news/cool-jerseys-for-every-mlb-team-2023"
+    d.clear_fill()
+    d.draw_outline_box()
+    d.scroll_print(text=url, scr_len=25)
+    
+
 def get_x_p(pname):
     """ Given 'John Smith (Jr.)'  """
     """ return 'J.Smith'          """
@@ -204,6 +220,8 @@ while True:
     if int(mt) in [11,12,01,02,03]:
         
         days_til_open()
+        time.sleep(5)
+        show_filler_news()
         time.sleep(60 * 60 * 24 ) # check back Tommorow
         
     else:
@@ -225,5 +243,8 @@ while True:
                 if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
                     import machine
                     machine.reset()
-            check_if_game()          
+            else:
+                check_if_game()
+                
+                
 
