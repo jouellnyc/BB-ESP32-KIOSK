@@ -17,14 +17,9 @@ try:
     def upgrade():
         d.print_setup("Upgrading...")
         import hardware.network_setup
-        import ugit
+        import myugit
         d.print_setup("Updating...")
-        ugit.pull_all(isconnected=True)
-   
-    d.print_setup("Booting Up...")
-    time.sleep(5)
-    if d.check_button3():
-        upgrade()
+        myugit.pull_all()
    
     def file_or_dir_exists(filename):
         try:
@@ -33,6 +28,13 @@ try:
             return False
         else:
             return True
+    
+    d.print_setup("Booting Up...")
+    time.sleep(5)
+    
+    if d.check_button3():
+        """ UPGRADE """
+        upgrade()
 
     if file_or_dir_exists('/appsetup/setup_complete.txt'):
 
