@@ -13,16 +13,19 @@ try:
 
     import os
     import time
-
-    d.print_setup("Booting Up...")
-    time.sleep(5)
-    if d.check_button3():
+             
+    def upgrade():
         d.print_setup("Upgrading...")
         import hardware.network_setup
         import ugit
         d.print_setup("Updating...")
         ugit.pull_all(isconnected=True)
-
+   
+    d.print_setup("Booting Up...")
+    time.sleep(5)
+    if d.check_button3():
+        upgrade()
+   
     def file_or_dir_exists(filename):
         try:
             os.stat(filename)
