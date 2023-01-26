@@ -1,3 +1,6 @@
+"""
+Based on https://github.com/turfptax/ugit/
+"""
 import os
 import urequests
 import json
