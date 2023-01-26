@@ -93,8 +93,7 @@ def scroll_print(text='NA', scr_len=30, Error=False):
 
 def check_button3():
     if str(adc.read_u16()).startswith('55'):
-        display.print_setup("Upgrading...")
-
+        return True
 
 display.draw_outline_box = draw_outline_box
 display.clear_fill       = clear_fill
