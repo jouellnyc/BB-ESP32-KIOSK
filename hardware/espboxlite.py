@@ -88,7 +88,7 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30, Error=False, clear=True
             print(text)
         count+=1
         #y_pos+=25  sm font
-        y_pos+=28   #date font
+        y_pos+=30   #date font
 
 def check_button3():
     if str(adc.read_u16()).startswith('55'):
