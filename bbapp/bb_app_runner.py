@@ -1,6 +1,8 @@
 import sys
 import time
-
+import re
+import mrequests
+    
 """ SCREEN SETUP """
 from hardware.screen_runner import display as d
 
@@ -14,7 +16,8 @@ from . import my_mlb_api
 from hardware.ntp_setup import utc_to_local
 url='https://en.wikipedia.org/wiki/2023_Major_League_Baseball_season'
 ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
-    
+news_file = "news.txt"
+
 """ Version """
 from .version import version
    
@@ -32,10 +35,10 @@ def get_start_date(url, ua):
             print(start_date)
             return start_date
 
-def say_fetching():
+def say_fetching(text='Fetching Data'):
     d.clear_fill()
     d.draw_outline_box()
-    d.draw_text(5, 5,'Fetching Data',d.date_font, d.white, d.drk_grn)
+    d.draw_text(5, 5, text, d.date_font, d.white, d.drk_grn)
 
 def days_til_open():
     say_fetching()
@@ -43,26 +46,53 @@ def days_til_open():
     d.clear_fill()
     d.draw_outline_box()
     d.draw_text(5,  start + (0 * delta)     ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
-    d.draw_text(5,  start + (1 * delta) + 5 ,f"Opening"             , d.score_font, d.white , d.drk_grn)
-    d.draw_text(5,  start + (2 * delta) + 5 ,f"Day is"              , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5,  start + (1 * delta) + 5 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5,  start + (2 * delta) + 5 ,f"    is"              , d.score_font, d.white , d.drk_grn)
     d.draw_text(5,  start + (3 * delta) + 5 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
-
-def show_filler_news():
-    #say_fetching()
-    #news=get_start_date(url, ua)
-    d.clear_fill()
-    d.draw_outline_box()
-    d.draw_text(5,  start + (0 * delta)     ,f"{mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
-    d.draw_text(5,  start + (1 * delta) + 5 ,f"Check out"            , d.score_font, d.white , d.drk_grn)
-    d.draw_text(5,  start + (2 * delta) + 5 ,f"latest  news"         , d.score_font, d.white , d.drk_grn)
-    d.draw_text(5,  start + (3 * delta) + 5 ,f"on mlb.com"           , d.score_font, d.white , d.drk_grn)
-    time.sleep(5)
-    url="https://www.mlb.com/news/cool-jerseys-for-every-mlb-team-2023"
-    d.clear_fill()
-    d.draw_outline_box()
-    d.scroll_print(text=url, scr_len=25)
+    d.draw_text(5,  start + (4 * delta) + 5 ,f"Wait for News ..."   , d.score_font, d.white , d.drk_grn)
     
+def get_latest_news():
+    url="https://www.mlb.com/news/"
+    r = mrequests.get(url,headers={b"accept": b"text/html"})
+    if r.status_code == 200:
+        r.save(news_file)
+        print("News saved to '{}'.".format(news_file))
+    else:
+        print("Request failed. Status: {}".format(r.status_code))
+    r.close()
 
+def get_news_from_file():
+    news=[]
+    with open(news_file) as fh:
+        for line in fh:
+            story = re.search('data-headline="(.*?)"',line)
+            if story is not None:
+                news.append(story.group(1))
+    return news
+                
+def show_filler_news():
+    get_latest_news()
+    say_fetching("Fetching News")
+    news=get_news_from_file()
+    d.clear_fill()
+    d.draw_outline_box()
+    d.draw_text(5, start + (0 * delta),f"MLB News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
+    count=0
+    while count < 100:
+        for story in news:
+            #Díaz - í is not supported by the font, make it a simple 'i'
+            story.replace('\xed','i')
+            """ x_pos for fill_rectangle must be at 1     """
+            """ to keep vert lines from being overwritten """
+            print(f"== {story}")
+            d.scroll_print(text=story, y_pos=70, x_pos=8,
+                           scr_len=18, clear=False, font=d.date_font,
+                           bg=d.drk_grn, fg=d.white)
+            d.draw_text(35, 200, "Story at mlb.com", d.date_font,  d.white , d.drk_grn)
+            time.sleep(7)
+            d.fill_rectangle(1, 55, 318, 140, d.drk_grn)
+        count-=1
+            
 def get_x_p(pname):
     """ Given 'John Smith (Jr.)'  """
     """ return 'J.Smith'          """
@@ -78,6 +108,8 @@ def no_gm():
     d.draw_text(5, 5, gm_dt, d.date_font, d.white, d.drk_grn)
     d.draw_text(5, 75, 'No Game Today!', d.date_font, d.white, d.drk_grn)
     print(f"No Game today!")
+    time.sleep(60)
+    show_filler_news()    
 
 def check_if_game():
     if not games:
@@ -163,8 +195,9 @@ def get_score():
             d.draw_text(10, start + (4 * delta) + 5, f"B: {balls} S: {strks} O: {outs }"   , d.sm_font,    d.white , d.drk_grn)
             d.draw_outline_box()
             
-            return 5
-            return 60 * 1# check back every 2 minutes
+            if factory_test == "True":
+                return 5
+            return 60 * 1# check back every x minutes
         
         elif game_status == "Game Over" or game_status == "Final":
             
@@ -183,7 +216,8 @@ def get_score():
             d.draw_text(5, start + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , d.drk_grn)
             d.draw_outline_box()
             
-            return 5
+            if factory_test == "True":
+                return 5
             return 60 * 60 *4 # check back 4 hours from now
         
         else:  #"Scheduled"/"Warm up"/"Pre Game"
@@ -199,7 +233,8 @@ def get_score():
             d.draw_text(5, start + (4 * delta), f"ZZZZZZZZZZZZZZZZZZZZZ"              , d.sm_font,   d.drk_grn, d.drk_grn)
             d.draw_outline_box()
             
-            return 5
+            if factory_test == "True":
+                return 5
             return 60 * 20 # check back every 20 minutes
         
 
@@ -207,7 +242,7 @@ while True:
     
     import gc
     gc.collect()
-    factory_test = "False"
+    factory_test = "True"
     
     print(f"Version: {version}")
     yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]
@@ -217,26 +252,32 @@ while True:
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
     print("Month is",mt)
     
-    if int(mt) in [11,12,01,02,03]:
+    if int(mt) not in [11,12,01,02,03]:
         
         days_til_open()
-        time.sleep(5)
+        gc.collect()
         show_filler_news()
+        gc.collect()
         time.sleep(60 * 60 * 24 ) # check back Tommorow
         
     else:
         
         if factory_test == "True":
             
+            #If no game that day games will be empty, not undefined
+            games = []
+            check_if_game()
             from .test_games import games
             for x in games:
                 games = [x]
                 check_if_game()
             
+            
         else:
             
             try:
                 games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
+                print("No Game Day ", games)
             except OSError as e:
                 #Catch this known weird, unrecoverable issue and reboot
                 #https://github.com/espressif/esp-idf/issues/2907
@@ -245,6 +286,3 @@ while True:
                     machine.reset()
             else:
                 check_if_game()
-                
-                
-

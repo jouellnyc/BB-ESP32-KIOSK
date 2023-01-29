@@ -64,32 +64,31 @@ def get_tb_text(err):
     #Remove the word Traceback/etc
     return buf.getvalue()[35:]
     
-def scroll_print(text='NA', scr_len=30, Error=False):
+def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30, Error=False, clear=True, font=sm_font, bg=drk_grn, fg=white):
 
     """ Pass in a 'text container'                  """
     """ Either and instance of an error or a string """
-    display.clear_fill()
-    display.draw_outline_box()
+    if clear:
+        display.clear_fill()
+        display.draw_outline_box()
     
     """ If an error instance, pull out the text """
     if Error:
         text=get_tb_text(text)
         
     max_rows = 12
-    
     parts = [text[i : i + scr_len] for i in range(0, len(text), scr_len)]
     
     count=0
-    y_pos=5
-    
-    for x in parts:
+    for text in parts:
         if count > max_rows:
             break
         else:
-            display.draw_text(5, y_pos, x, sm_font, drk_grn)
-            print(x)
+            display.draw_text(x_pos, y_pos, text, font=font, color=fg,  background=bg)
+            print(text)
         count+=1
-        y_pos+=25  
+        #y_pos+=25  sm font
+        y_pos+=28   #date font
 
 def check_button3():
     if str(adc.read_u16()).startswith('55'):
