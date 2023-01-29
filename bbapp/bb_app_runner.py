@@ -65,11 +65,10 @@ def days_til_open():
     start_date=get_start_date(url, ua)
     d.clear_fill()
     d.draw_outline_box()
-    d.draw_text(5,  start + (0 * delta)     ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
-    d.draw_text(5,  start + (1 * delta) + 5 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
-    d.draw_text(5,  start + (2 * delta) + 5 ,f"    is"              , d.score_font, d.white , d.drk_grn)
-    d.draw_text(5,  start + (3 * delta) + 5 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
-    d.draw_text(5,  start + (4 * delta) + 5 ,f"Wait for News ..."   , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5,    start + (0 * delta)     ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
+    d.draw_text(42,   start + (1 * delta) + 25 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
+    d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
+    d.draw_text(65,   start + (3 * delta) + 25 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
     
 def get_latest_news():
     url="https://www.mlb.com/news/"
@@ -106,7 +105,7 @@ def show_filler_news():
             """ to keep vert lines from being overwritten """
             print(f"== {story}")
             d.scroll_print(text=story, y_pos=70, x_pos=8,
-                           scr_len=18, clear=False, font=d.date_font,
+                           scr_len=15, clear=False, font=d.date_font,
                            bg=d.drk_grn, fg=d.white)
             d.draw_text(35, 200, "Story at mlb.com", d.date_font,  d.white , d.drk_grn)
             time.sleep(7)
