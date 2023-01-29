@@ -40,6 +40,16 @@ def say_fetching(text='Fetching Data'):
     d.draw_outline_box()
     d.draw_text(5, 5, text, d.date_font, d.white, d.drk_grn)
 
+def reg_season():
+    games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
+    
+def off_season():
+    days_til_open()
+    gc.collect()
+    show_filler_news()
+    gc.collect()
+    time.sleep(60 * 60 * 24 ) # check back Tommorow
+    
 def days_til_open():
     say_fetching()
     start_date=get_start_date(url, ua)
@@ -78,7 +88,7 @@ def show_filler_news():
     d.draw_outline_box()
     d.draw_text(5, start + (0 * delta),f"MLB News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
     count=0
-    while count < 100:
+    while count < 475:     #On Average ~ 23.5 hours
         for story in news:
             #Díaz - í is not supported by the font, make it a simple 'i'
             story.replace('\xed','i')
@@ -240,10 +250,11 @@ def get_score():
 
 while True:
     
+    global games
     import gc
     gc.collect()
-    factory_test = "True"
-    
+    factory_test = False
+    force_offseason = False
     print(f"Version: {version}")
     yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]
     short_yr = f"{int( str(yr)[2:]):02d}"
@@ -252,17 +263,22 @@ while True:
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
     print("Month is",mt)
     
-    if int(mt) not in [11,12,01,02,03]:
+    
+    if force_offseason:
         
-        days_til_open()
-        gc.collect()
-        show_filler_news()
-        gc.collect()
-        time.sleep(60 * 60 * 24 ) # check back Tommorow
+        off_season()
+        
+    
+    if int(mt) in [11,12,01,02,03]:
+
+        if int(mt) == 3 and int(dy) == 30:
+                reg_season()
+                
+        off_season()
         
     else:
         
-        if factory_test == "True":
+        if factory_test:
             
             #If no game that day games will be empty, not undefined
             games = []
@@ -271,13 +287,10 @@ while True:
             for x in games:
                 games = [x]
                 check_if_game()
-            
-            
         else:
             
             try:
-                games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
-                print("No Game Day ", games)
+                reg_season()
             except OSError as e:
                 #Catch this known weird, unrecoverable issue and reboot
                 #https://github.com/espressif/esp-idf/issues/2907
@@ -285,4 +298,4 @@ while True:
                     import machine
                     machine.reset()
             else:
-                check_if_game()
+                check_if_game()                
