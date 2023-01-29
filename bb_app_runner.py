@@ -41,6 +41,7 @@ def say_fetching(text='Fetching Data'):
     d.draw_text(5, 5, text, d.date_font, d.white, d.drk_grn)
 
 def reg_season():
+    global games
     games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
     
 def off_season():
@@ -49,21 +50,16 @@ def off_season():
     show_filler_news()
     gc.collect()
     time.sleep(60 * 60 * 24 ) # check back Tommorow
-    
-def run_factory_test():
-    #If no game that day games will be empty, not undefined
-    global games
-    games = []
-    check_if_game()
-    from .test_games import games
-    for x in games:
-        games = [x]
-        check_if_game()
-    
+
 def days_til_open():
     get_open_day()
     show_open_day()
-    
+   
+def get_open_day():
+    global start_date
+    say_fetching()
+    start_date=get_start_date(url, ua)
+
 def show_open_day():
     d.clear_fill()
     d.draw_outline_box()
@@ -71,12 +67,7 @@ def show_open_day():
     d.draw_text(42,   start + (1 * delta) + 25 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
     d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
     d.draw_text(65,   start + (3 * delta) + 25 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
-    
-def get_open_day():
-    global start_date
-    say_fetching()
-    start_date=get_start_date(url, ua)
-    
+
 def get_latest_news():
     url="https://www.mlb.com/news/"
     r = mrequests.get(url,headers={b"accept": b"text/html"})
@@ -105,22 +96,33 @@ def show_filler_news():
     d.draw_text(5, start + (0 * delta),f"MLB News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
     count=0
     while count < 475:     #On Average ~ 23.5 hours
-        if count %10 == 0:
-            show_open_day()
         for story in news:
+            print(f"count {count}")
+            if count % 10 == 0:
+                show_open_day()
             #Díaz - í is not supported by the font, make it a simple 'i'
             story.replace('\xed','i')
             """ x_pos for fill_rectangle must be at 1     """
             """ to keep vert lines from being overwritten """
             print(f"== {story}")
             d.scroll_print(text=story, y_pos=70, x_pos=8,
-                           scr_len=15, clear=False, font=d.date_font,
+                           scr_len=18, clear=False, font=d.date_font,
                            bg=d.drk_grn, fg=d.white)
             d.draw_text(35, 200, "Story at mlb.com", d.date_font,  d.white , d.drk_grn)
             time.sleep(7)
             d.fill_rectangle(1, 55, 318, 140, d.drk_grn)
-        count-=1
-            
+            count+=1
+
+def run_factory_test():
+    #If no game that day games will be empty, not undefined
+    global games
+    games = []
+    check_if_game()
+    from .test_games import games
+    for x in games:
+        games = [x]
+        check_if_game()
+
 def get_x_p(pname):
     """ Given 'John Smith (Jr.)'  """
     """ return 'J.Smith'          """
@@ -283,18 +285,19 @@ while True:
     
     
     if force_offseason:
-        
         off_season()
+    else:
+        pass
     
     if factory_test:
-        
         run_factory_test()
+    else:
+        pass
     
     if int(mt) in [11,12,01,02,03]:
 
         if int(mt) == 3 and int(dy) == 30:
-                reg_season()
-                
+            reg_season()
         off_season()
         
     else:
@@ -308,5 +311,4 @@ while True:
                 import machine
                 machine.reset()
         else:
-            check_if_game()
-            
+            check_if_game()           
