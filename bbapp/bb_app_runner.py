@@ -50,6 +50,16 @@ def off_season():
     gc.collect()
     time.sleep(60 * 60 * 24 ) # check back Tommorow
     
+def run_factory_test():
+    #If no game that day games will be empty, not undefined
+    global games
+    games = []
+    check_if_game()
+    from .test_games import games
+    for x in games:
+        games = [x]
+        check_if_game()
+    
 def days_til_open():
     say_fetching()
     start_date=get_start_date(url, ua)
@@ -267,7 +277,10 @@ while True:
     if force_offseason:
         
         off_season()
+    
+    if factory_test:
         
+        run_factory_test()
     
     if int(mt) in [11,12,01,02,03]:
 
@@ -278,24 +291,14 @@ while True:
         
     else:
         
-        if factory_test:
-            
-            #If no game that day games will be empty, not undefined
-            games = []
-            check_if_game()
-            from .test_games import games
-            for x in games:
-                games = [x]
-                check_if_game()
+        try:
+            reg_season()
+        except OSError as e:
+            #Catch this known weird, unrecoverable issue and reboot
+            #https://github.com/espressif/esp-idf/issues/2907
+            if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
+                import machine
+                machine.reset()
         else:
+            check_if_game()
             
-            try:
-                reg_season()
-            except OSError as e:
-                #Catch this known weird, unrecoverable issue and reboot
-                #https://github.com/espressif/esp-idf/issues/2907
-                if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
-                    import machine
-                    machine.reset()
-            else:
-                check_if_game()                
