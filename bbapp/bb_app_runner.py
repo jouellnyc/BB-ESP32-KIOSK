@@ -87,16 +87,17 @@ def get_news_from_file():
     return news
                 
 def clear_story_area():
-    d.fill_rectangle(1, 55, 318, 140, d.drk_grn)
+     d.fill_rectangle(1, 41, 318, 159, d.drk_grn)
     
-def cycle_stories(func):
-    count=0 ; ssleep =7
+def cycle_stories(func, sleep=30):
+    count=1 ; ssleep=7
     while count < 475:     #On Average ~ 23.5 hours
+        
         for story in news:
             print(f"=={count}")
-            if count % 7 == 0:
+            if count > 0 and count % 7 == 0:
                 func()
-                time.sleep(ssleep)
+                time.sleep(sleep)
                 clear_story_area()
             else:
                 d.draw_text(5, start + (0 * delta), f"MLB News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
@@ -112,12 +113,12 @@ def cycle_stories(func):
                 clear_story_area()
             count+=1
 
-def show_filler_news(func):
+def show_filler_news(func, sleep=30):
     get_latest_news()
     say_fetching("Fetching News")
     news=get_news_from_file()
     fresh_box()
-    cycle_stories(func)
+    cycle_stories(func, sleep=30)
 
 def fresh_box():
     d.clear_fill()
@@ -126,12 +127,12 @@ def fresh_box():
 def run_factory_test():
     #If no game that day games will be empty, not undefined
     global games
-    games = []
-    check_if_game()
     from .test_games import games
     for x in games:
         games = [x]
         check_if_game()
+    games = []
+    check_if_game()
 
 def get_x_p(pname):
     """ Given 'John Smith (Jr.)'  """
@@ -237,28 +238,32 @@ def get_score():
             d.draw_text(10, start + (4 * delta) + 5, f"B: {balls} S: {strks} O: {outs }"   , d.sm_font,    d.white , d.drk_grn)
             d.draw_outline_box()
             
-            if factory_test == "True":
+            if factory_test:
                 return 5
-            return 60 * 1# check back every x minutes
+            return 60 * 2# check back every x minutes
         
         elif game_status == "Game Over" or game_status == "Final":
             
             """ Stretch the Game Status to minimize ghost pixelation """
             """ here and with ZZZ in Warm up  below                  """
+            fsleep=30
+            def show_final():
+                game_status = "Final Score"
+                lp = get_x_p(games[0]['losing_pitcher'])
+                wp = get_x_p(games[0]['winning_pitcher'])
+                
+                d.clear_fill()
+                d.draw_text(5, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
+                d.draw_text(5, start + (1 * delta), f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , d.drk_grn)
+                d.draw_text(5, start + (2 * delta), f"{team2}:{team2_score} A {away_rec}" , d.score_font, d.white , d.drk_grn)
+                d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , d.drk_grn)
+                d.draw_text(5, 0     + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , d.drk_grn)
+                d.draw_outline_box()
+            show_final()
+            time.sleep(fsleep)
+            show_filler_news(show_final, sleep=fsleep)
             
-            game_status = "Final Score"
-            lp = get_x_p(games[0]['losing_pitcher'])
-            wp = get_x_p(games[0]['winning_pitcher'])
-            
-            d.clear_fill()
-            d.draw_text(5, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
-            d.draw_text(5, start + (1 * delta), f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , d.drk_grn)
-            d.draw_text(5, start + (2 * delta), f"{team2}:{team2_score} A {away_rec}" , d.score_font, d.white , d.drk_grn)
-            d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , d.drk_grn)
-            d.draw_text(5, start + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , d.drk_grn)
-            d.draw_outline_box()
-            
-            if factory_test == "True":
+            if factory_test:
                 return 5
             return 60 * 60 *4 # check back 4 hours from now
         
@@ -275,7 +280,7 @@ def get_score():
             d.draw_text(5, start + (4 * delta), f"ZZZZZZZZZZZZZZZZZZZZZ"              , d.sm_font,   d.drk_grn, d.drk_grn)
             d.draw_outline_box()
             
-            if factory_test == "True":
+            if factory_test:
                 return 5
             return 60 * 20 # check back every 20 minutes
         
@@ -285,7 +290,7 @@ while True:
     global games
     import gc
     gc.collect()
-    factory_test = True
+    factory_test = False
     force_offseason = False
     print(f"Version: {version}")
     yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]

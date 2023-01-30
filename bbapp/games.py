@@ -1,6 +1,6 @@
 """ NON PROD LOCAL TEST FILE """
 
-# statuses = [ 'In Progress', 'Pre Game', 'Game Over', 'Final' ]
+# statuses = [ 'In Progress', 'Final', 'Pre Game', 'Game Over',  ]
 # for x in statuses:
     
 games =  [     {'game_id': 663188, 'away_pitcher_note': '',
