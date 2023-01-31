@@ -102,10 +102,10 @@ def cycle_stories(func, sleep=30):
             else:
                 d.draw_text(5, start + (0 * delta), f"MLB News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
                 """ Díaz - í is not supported by the font, make it a simple 'i' """
-                story = story.replace('\xed','i').replace.('\xe9','e').replace('\xc0','A')\
-                             .replace('\xe8','e').replace.('\xec','i').replace('\xd2','O')\
-                             .replace('\xf9','u').replace.('\xc9','E').replace('\xe1','a')\
-                             .replace('\xcd','I').replace.('\xf3'.'o').replace('\xda','U')
+                story = story.replace('\xed','i').replace('\xe9','e').replace('\xc0','A')\
+                             .replace('\xe8','e').replace('\xec','i').replace('\xd2','O')\
+                             .replace('\xf9','u').replace('\xc9','E').replace('\xe1','a')\
+                             .replace('\xcd','I').replace('\xf3','o').replace('\xda','U')
                 d.draw_text(35, 200, "Story at mlb.com", d.date_font,  d.white , d.drk_grn)
                 d.scroll_print(text=story, y_pos=70, x_pos=8,
                                scr_len=18, clear=False, font=d.date_font,
