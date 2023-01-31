@@ -47,7 +47,7 @@ def reg_season():
 def off_season():
     days_til_open()
     gc.collect()
-    show_filler_news(off_season)
+    show_filler_news(show_open_day)
     gc.collect()
     time.sleep(60 * 60 * 24 ) # check back Tommorow
 
@@ -91,7 +91,7 @@ def clear_story_area():
     
 def cycle_stories(func, sleep=30):
     count=1 ; ssleep=7
-    while count < 475:     #On Average ~ 23.5 hours
+    while count < 12000:     #On Average ~ 23.5 hours
         
         for story in news:
             print(f"=={count}")
