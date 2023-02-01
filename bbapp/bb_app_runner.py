@@ -303,9 +303,10 @@ def get_score():
 
 while True:
     
-    global games
+    
     import gc
     gc.collect()
+    global games
     factory_test = True
     force_offseason = False
     print(f"Version: {version}")
