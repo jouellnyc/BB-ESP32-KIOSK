@@ -66,13 +66,24 @@ def show_open_day():
     d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
     d.draw_text(65,   start + (3 * delta) + 25 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
     
-def get_latest_news():
+def crash_burn(err):
+    fresh_box()
+    print(f"=={err}")
+    d.draw_text(5,start + (0 * delta),err, d.date_font,  d.white , d.drk_grn)
+    import machine
+    machine.reset()
+        
+def get_latest_news(count=1, err="reboot/netfail"):
     url="https://www.mlb.com/news/"
     r = mrequests.get(url,headers={b"accept": b"text/html"})
+    if count == 3:
+        crash_burn(err)
     if r.status_code == 200:
         r.save(news_file)
         print("News saved to '{}'.".format(news_file))
     else:
+        count+=1
+        get_latest_news(count=count)
         print("Request failed. Status: {}".format(r.status_code))
     r.close()
 
@@ -92,7 +103,6 @@ def clear_story_area():
 def cycle_stories(func, sleep=30):
     count=1 ; ssleep=7
     while count < 12000:     #On Average ~ 23.5 hours
-        
         for story in news:
             print(f"=={count}")
             if count > 0 and count % 7 == 0:
