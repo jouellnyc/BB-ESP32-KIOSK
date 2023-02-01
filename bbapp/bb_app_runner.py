@@ -110,7 +110,7 @@ def cycle_stories(func, sleep=30):
                 time.sleep(sleep)
                 clear_story_area()
             else:
-                d.draw_text(5, start + (0 * delta), f"News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
+                d.draw_text(5, start + (0 * delta), f"MLB News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
                 """ Díaz - í is not supported by the font, make it a simple 'i' """
                 story = rm_accents(story)
                 d.draw_text(35, 200, "Story at mlb.com", d.date_font,  d.white , d.drk_grn)
