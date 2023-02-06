@@ -20,8 +20,29 @@ width=320
 height=240
 rotation=180
 
+spi = SPI(1, baudrate=40000000, sck=Pin(7), mosi=Pin(6))
+display = Display(spi, dc=Pin(dc), cs=Pin(cs), rst=Pin(rst), width=width, height=height, rotation=rotation)
+
+adc = ADC(Pin(1))
+""" We only check  Button 3 - It's on GPIO01
+#Unpushed
+>>> adc.read_u16()
+65535
+
+#Pushed
+>>> adc.read_u16()
+55261
+"""
+
 """ How many chars per line  before you hit the end """
-anum = {'r': '36', 'Y': '19', 'Z': '22', 'y': '27', 'x': '27', 'z': '27', 'E': '21', 'D': '19', 'G': '18', 'F': '22', 'A': '21', 'C': '19', 'B': '21', 'M': '18', 'L': '25', 'O': '17', 'N': '21', 'I': '65', 'H': '21', 'K': '19', 'J': '30', 'U': '21', 'T': '22', 'W': '14', 'V': '21', 'Q': '17', 'P': '21', 'S': '21', 'R': '19', 'e': '25', 'd': '25', 'g': '25', 'f': '41', 'a': '25', 'X': '21', 'c': '27', 'b': '23', 'm': '17', 'l': '65', 'o': '25', 'n': '25', 'i': '65', 'h': '25', 'k': '25', 'j': '65', 'u': '25', 't': '41', 'w': '18', 'v': '27', 'q': '25', 'p': '23', 's': '27'}
+anum = {'r': '36', 'Y': '19', 'Z': '22', 'y': '27', 'x': '27', 'z': '27', 'E':'21',
+        'D': '19', 'G': '18', 'F': '22', 'A': '21', 'C': '19', 'B': '21', 'M':'18',
+        'L': '25', 'O': '17', 'N': '21', 'I': '65', 'H': '21', 'K': '19', 'J': '30',
+        'U': '21', 'T': '22', 'W': '14', 'V': '21', 'Q': '17', 'P': '21', 'S': '21',
+        'R': '19', 'e': '25', 'd': '25', 'g': '25', 'f': '41', 'a': '25', 'X': '21',
+        'c': '27', 'b': '23', 'm': '17', 'l': '65', 'o': '25', 'n': '25', 'i': '65',
+        'h': '25', 'k': '25', 'j': '65', 'u': '25', 't': '41', 'w': '18', 'v': '27',
+        'q': '25', 'p': '23', 's': '27'}
 
 """ How many pixels/char, rounded up (/320) """
 apnt3 = {'.':10, 0:13, 1:10, 2:13, 3:13, 4:13, 5:13, 6:13, 7:13, 8:13, 9:13, '-':12,
@@ -42,21 +63,6 @@ apnt2 = {'K': 18, 'J': 11, 'U': 15, 'T': 15, 'W': 22, 'V': 16, 'Q': 19, 'P': 15,
          'x': 11, 'c': 12, 'b': 13, 'm': 19, 'l': 5, 'o': 13, 'n': 13, 'i': 5,
          'h': 13, 'k': 13, 'j': 5, 'u': 13, 0: 14, 1: 10, 2: 13, 3: 14, 4: 14,
           5:14, 6: 14, 7: 14, 8: 14, 9: 14, "'": 4, '-': 8, ' ': 14, '.': 6}
-
-spi = SPI(1, baudrate=40000000, sck=Pin(7), mosi=Pin(6))
-display = Display(spi, dc=Pin(dc), cs=Pin(cs), rst=Pin(rst), width=width, height=height, rotation=rotation)
-
-adc = ADC(Pin(1))
-""" We only check  Button 3 - It's on GPIO01
-#Unpushed
->>> adc.read_u16()
-65535
-
-#Pushed
->>> adc.read_u16()
-55261
-"""
-
 
 def draw_outline_box():
     display.draw_vline(0,    0, 240, white)
