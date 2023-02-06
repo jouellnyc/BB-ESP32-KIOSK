@@ -67,7 +67,6 @@ def show_open_day():
     d.draw_text(65,   start + (3 * delta) + 25 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
     
 def get_latest_news(count=1, err="reboot/netfail"):
-    #TBD
     print('getting news')
     url="https://www.mlb.com/news/"
     r = mrequests.get(url,headers={b"accept": b"text/html"})
@@ -126,8 +125,7 @@ def show_filler_news(func, sleep=30):
     say_fetching("Fetching News")
     news=get_news_from_file()
     d.fresh_box()
-    #TBD back to 30
-    cycle_stories(func, sleep=7)
+    cycle_stories(func, sleep=30)
 
 def run_factory_test():
     #If no game that day games will be empty, not undefined
@@ -157,7 +155,6 @@ def show_no_gm():
     
 def no_gm():
     show_no_gm()
-    #TBD
     time.sleep(7)
     show_filler_news(show_no_gm)    
 
@@ -263,8 +260,10 @@ def get_score():
             
             """ Stretch the Game Status to minimize ghost pixelation """
             """ here and with ZZZ in Warm up  below                  """
-            #TBD back to 30
-            fsleep=7
+            if factory_test:
+                fsleep=5
+            else:
+                fsleep=30            
             def show_final():
                 game_status = "Final Score"
                 lp = get_x_p(games[0]['losing_pitcher'])
