@@ -40,12 +40,30 @@ def main():
     import ntptime
     print("Local time before synchronization：%s" % str(time.localtime()))
     ntptime.host = "time.google.com"
-    ntptime.settime()   # This sets the RTC to UTC.
-    print("Local time after synchronization：%s" % str(time.localtime()))
+
+    def ntp_set():
+        if count == 3:
+            print('NTP timeout, rebooting')
+            import machine
+            machine.reset()
+        else:
+            # This sets the RTC to UTC.
+            ntptime.settime()
+
+    count=0
+    try:
+        ntp_set() 
+    except OSError as e:
+        if 'ETIMEDOUT' in str(e):
+            print('NTP timeout, retrying')
+            count +1
+            ntp_set()
+    else:
+        print("Local time after synchronization：%s" % str(time.localtime()))
 
             
 if __name__ == "__main__":
     
-    main()    
+    main() 
     
     

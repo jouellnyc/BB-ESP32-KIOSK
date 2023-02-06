@@ -37,7 +37,7 @@ def get_start_date(url, ua):
             return start_date
 
 def say_fetching(text='Fetching Data'):
-    fresh_box()
+    d.fresh_box()
     d.draw_text(5, 5, text, d.date_font, d.white, d.drk_grn)
 
 def reg_season():
@@ -60,24 +60,19 @@ def get_open_day():
     get_start_date(url, ua)
 
 def show_open_day():
-    fresh_box()
+    d.fresh_box()
     d.draw_text(5,    start + (0 * delta)      ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
     d.draw_text(42,   start + (1 * delta) + 25 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
     d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
     d.draw_text(65,   start + (3 * delta) + 25 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
     
-def crash_burn(err):
-    fresh_box()
-    print(f"=={err}")
-    d.draw_text(5,start + (0 * delta),err, d.date_font,  d.white , d.drk_grn)
-    import machine
-    machine.reset()
-        
 def get_latest_news(count=1, err="reboot/netfail"):
+    #TBD
+    print('getting news')
     url="https://www.mlb.com/news/"
     r = mrequests.get(url,headers={b"accept": b"text/html"})
     if count == 3:
-        crash_burn(err)
+        d.crash_burn(err)
     if r.status_code == 200:
         r.save(news_file)
         print("News saved to '{}'.".format(news_file))
@@ -98,7 +93,9 @@ def get_news_from_file():
     return news
                 
 def clear_story_area():
-     d.fill_rectangle(1, 41, 318, 159, d.drk_grn)
+     #d.fill_rectangle(1, 41, 318, 159, d.drk_grn)
+    d.fill_rectangle(1, 41, 318, 198, d.drk_grn)
+    #d.draw_text(42, 215, "Story at mlb.com", d.sm_font,  d.white , d.drk_grn)
     
 def cycle_stories(func, sleep=30):
     count=1 ; ssleep=7
@@ -113,8 +110,8 @@ def cycle_stories(func, sleep=30):
                 d.draw_text(5, start + (0 * delta), f"MLB News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
                 """ Díaz - í is not supported by the font, make it a simple 'i' """
                 story = rm_accents(story)
-                d.draw_text(35, 200, "Story at mlb.com", d.date_font,  d.white , d.drk_grn)
-                d.scroll_print(text=story, y_pos=70, x_pos=8,
+                d.draw_text(42, 215, "Story at mlb.com", d.sm_font,  d.white , d.drk_grn)
+                d.scroll_print(text=story, y_pos=60, x_pos=18,
                                scr_len=18, clear=False, font=d.date_font,
                                bg=d.drk_grn, fg=d.white)
                 """ x_pos for fill_rectangle must be at 1     """
@@ -124,20 +121,19 @@ def cycle_stories(func, sleep=30):
             count+=1
 
 def show_filler_news(func, sleep=30):
-    get_latest_news()
+    if factory_test is False:
+        get_latest_news()
     say_fetching("Fetching News")
     news=get_news_from_file()
-    fresh_box()
-    cycle_stories(func, sleep=30)
-
-def fresh_box():
-    d.clear_fill()
-    d.draw_outline_box()
+    d.fresh_box()
+    #TBD back to 30
+    cycle_stories(func, sleep=7)
 
 def run_factory_test():
     #If no game that day games will be empty, not undefined
     global games
     from .test_games import games
+    print(f"Games {games}")
     for x in games:
         games = [x]
         check_if_game()
@@ -154,14 +150,15 @@ def get_x_p(pname):
 
 def show_no_gm():
     yr, mt, dy, hr, mn, s1, s2, s3 = time.localtime()
-    fresh_box()
+    d.fresh_box()
     d.draw_text(5, 5, gm_dt, d.date_font, d.white, d.drk_grn)
     d.draw_text(5, 75, 'No Game Today!', d.date_font, d.white, d.drk_grn)
     print(f"No Game today!")
     
 def no_gm():
     show_no_gm()
-    time.sleep(60)
+    #TBD
+    time.sleep(7)
     show_filler_news(show_no_gm)    
 
 def check_if_game():
@@ -169,16 +166,20 @@ def check_if_game():
         no_gm()
         time.sleep(60 * 60 * 4)  # check back 4 hours from now
     else:
-        print(games[0])
+        print(f"== Game: {games[0]}")
+        print(f"Status: {games[0]['status']}")
         what_sleep=get_score()
         print(f"Sleeping {what_sleep} seconds")
         time.sleep(what_sleep)         
 
 def rm_accents(story):
+    """ Replace Accent Accent aigu, grave, and unicode apostrophes """
     return story.replace('\xed','i').replace('\xe9','e').replace('\xc0','A')\
                 .replace('\xe8','e').replace('\xec','i').replace('\xd2','O')\
                 .replace('\xf9','u').replace('\xc9','E').replace('\xe1','a')\
-                .replace('\xcd','I').replace('\xf3','o').replace('\xda','U')
+                .replace('\xcd','I').replace('\xf3','o').replace('\xda','U')\
+                .replace(u"\u2018", "'").replace(u"\u2019", "'")
+
                 
 def get_score():
         
@@ -262,12 +263,12 @@ def get_score():
             
             """ Stretch the Game Status to minimize ghost pixelation """
             """ here and with ZZZ in Warm up  below                  """
-            fsleep=30
+            #TBD back to 30
+            fsleep=7
             def show_final():
                 game_status = "Final Score"
                 lp = get_x_p(games[0]['losing_pitcher'])
                 wp = get_x_p(games[0]['winning_pitcher'])
-                
                 d.clear_fill()
                 d.draw_text(5, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
                 d.draw_text(5, start + (1 * delta), f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , d.drk_grn)
@@ -275,13 +276,13 @@ def get_score():
                 d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , d.drk_grn)
                 d.draw_text(5, 0     + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , d.drk_grn)
                 d.draw_outline_box()
-            show_final()
-            time.sleep(fsleep)
-            show_filler_news(show_final, sleep=fsleep)
-            
             if factory_test:
-                return 5
-            return 60 * 60 *4 # check back 4 hours from now
+                return 2
+            else:
+                show_final()
+                time.sleep(fsleep)
+                show_filler_news(show_final, sleep=fsleep)
+                return 60 * 60 *4 # check back 4 hours from now
         
         else:  #"Scheduled"/"Warm up"/"Pre Game"
             
@@ -298,7 +299,7 @@ def get_score():
             
             if factory_test:
                 return 2
-            return 60 * 20 # check back every 20 minutes
+            return 60 * 10 # check back every 10 minutes
         
 
 while True:
