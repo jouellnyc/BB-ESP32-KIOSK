@@ -7,7 +7,7 @@ import mrequests
 from hardware.screen_runner import display as d
 
 """ All non caught errors are handled by main.py """  
-from . team_id import team_id
+from . team_id import team_id, team_name
 start=5 
 delta=45
 
@@ -150,7 +150,8 @@ def show_no_gm():
     yr, mt, dy, hr, mn, s1, s2, s3 = time.localtime()
     d.fresh_box()
     d.draw_text(5, 5, gm_dt, d.date_font, d.white, d.drk_grn)
-    d.draw_text(5, 75, 'No Game Today!', d.date_font, d.white, d.drk_grn)
+    d.draw_text(5, 75, f"No {team_name}" , d.date_font, d.white, d.drk_grn)
+    d.draw_text(5, 125, 'Game Today!'     , d.date_font, d.white, d.drk_grn)
     print(f"No Game today!")
     
 def no_gm():

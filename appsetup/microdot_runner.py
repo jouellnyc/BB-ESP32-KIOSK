@@ -67,8 +67,9 @@ def get_alt_team_ids(team_id):
         with open(teams_file) as f:
             all_teams = f.read()
             all_team_ids = ujson.loads(all_teams)
-            team_code = str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == int(team_id)])
-            team_name = str([x["teamName"] for x in all_team_ids["teams"] if x["id"] == int(team_id)])
+            """ list comp returns a list, retrieve the 0th item, which is the data """
+            team_code = f" '{str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == int(team_id)][0])}' "
+            team_name = f" '{str([x["teamName"] for x in all_team_ids["teams"] if x["id"] == int(team_id)][0])}' "
     except Exception as e:
         raise(AltErr(get_tb_text(e)))
     else:

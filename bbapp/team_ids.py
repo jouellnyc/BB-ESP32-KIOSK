@@ -140,7 +140,7 @@
     "name" : "Arizona Diamondbacks",
     "teamCode" : "ari",
     "fileCode" : "ari",
-    "teamName" : "D-backs",
+    "teamName" : "Dbacks",
     "locationName" : "Phoenix",
     "shortName" : "Arizona"
   }, {
