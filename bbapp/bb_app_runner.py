@@ -149,9 +149,9 @@ def get_x_p(pname):
 def show_no_gm():
     yr, mt, dy, hr, mn, s1, s2, s3 = time.localtime()
     d.fresh_box()
-    d.draw_text(5, 5, gm_dt, d.date_font, d.white, d.drk_grn)
-    d.draw_text(5, 75, f"No {team_name}" , d.date_font, d.white, d.drk_grn)
-    d.draw_text(5, 125, 'Game Today!'     , d.date_font, d.white, d.drk_grn)
+    d.draw_text(5,  5,  gm_dt, d.date_font, d.white, d.drk_grn)
+    d.draw_text(5, 75,  f"No {team_name}" , d.score_font, d.white, d.drk_grn)
+    d.draw_text(5, 125, f"Game Today!"    , d.score_font, d.white, d.drk_grn)
     print(f"No Game today!")
     
 def no_gm():
