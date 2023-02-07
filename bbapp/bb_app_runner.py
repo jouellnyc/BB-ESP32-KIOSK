@@ -208,6 +208,7 @@ def get_score():
         
         global our_score
         global opp_score
+        """ These are both strings - Reminder """
         if team_id == home_id:
             print('We are the home team')
             our_score  = team1_score = games[0].get("home_score",'NA')

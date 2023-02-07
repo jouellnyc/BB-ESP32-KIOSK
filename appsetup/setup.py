@@ -39,5 +39,4 @@ try:
 except Exception as e:
     """ Dump to the screen """
     print(str(e))
-    d.print_err(e)
-    
+    d.scroll_print(text=e, scr_len=30, Error=True)    

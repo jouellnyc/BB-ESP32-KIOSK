@@ -302,3 +302,4 @@ display.get_tb_text      = get_tb_text
 display.scroll_print     = scroll_print
 display.check_button3    = check_button3
 display.fresh_box        = fresh_box
+
