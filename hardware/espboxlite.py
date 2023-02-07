@@ -128,47 +128,15 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30, Error=False, clear=True
     max_rows = 6
     scr_len  = scr_len
         
-    def proc_text(text, debug=True):
+    def proc_text(text, debug=False):
         """ Here's where we do the processing of the 'text' """
             
         def get_raw_parts(_text):
             """ Split 'text' to list[] in scr_len increments as a first pass
-                return a list of parts like this:
-                ["Celebrate Aaron's", "birthday with 13 s","tats that show his"] """
+                return a list of 'raw' parts like this:
+                ["Celebrate Aaron's", "birthday with 13 s","tats that show his greatness"] """
             return [ _text[i : i + scr_len] for i in range(0, len(_text), scr_len)]
-    
-        def rm_space(_parts):
-            """ rm final / inital spaces of each part of given list """
-            [ x.pop()  for x in _parts if x[-1] == ' ' ]
-            [ x.pop(0) for x in _parts if x[0]  == ' ' ]
-            return _parts
         
-        def run_on(_t1, _t2):
-            """ check for align() """
-            if _t1[-1] != ' ' and _t2[0] != ' ':
-                return True
-            return False
-            
-        def align(_t1, _t2):
-            """ Given the first 2 portions of the text converted to lists
-                see if the end of the 1st list and the start of the 2nd list are
-                alphanumeric, if so push text to avoid a broken word on the screen
-                
-                Ex.
-                ['W', 'h', 'i', 't', 'e', 'S']['o', 'x', ' ', 'a', 'c', 'q', 'u', 'i', 'r', 'e']
-                to 
-                ['W', 'h', 'i', 't', 'e']['S','o', 'x', ' ', 'a', 'c', 'q', 'u', 'i', 'r', 'e']
-                
-                then return a tuple of strings:
-                
-                
-                """
-            if run_on(_t1, _t2):
-                _t2.insert(0,_t1.pop(-1))                                                                                                                                                     
-                _t1, _t2 = align(_t1,_t2)
-            return ''.join(_t1), ''.join(_t2)
-            
-            
         def mv_parts(text):
             """ Cycle through / Get the 'raw' 'parts' of  'text', convert each to a list.
                 Then align() each item/push characters to the next part if needed. 
@@ -198,6 +166,33 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30, Error=False, clear=True
             #return aligned
             return raw_parts
         
+        def align(_t1, _t2):
+            """ Given the first 2 portions of the text converted to lists,
+                see if the end of the 1st list and the start of the 2nd list are
+                alphanumeric, if so push text to avoid a broken word on the screen
+                
+                Ex.
+                ['W', 'h', 'i', 't', 'e', 'S']['o', 'x', ' ', 'a', 'c', 'q', 'u', 'i', 'r', 'e']
+                to 
+                ['W', 'h', 'i', 't', 'e']['S','o', 'x', ' ', 'a', 'c', 'q', 'u', 'i', 'r', 'e']
+                
+                then return a tuple of strings:
+                
+                
+                """
+            if run_on(_t1, _t2):
+                _t2.insert(0,_t1.pop(-1))                                                                                                                                                     
+                _t1, _t2 = align(_t1,_t2)
+            return ''.join(_t1), ''.join(_t2)
+            
+        
+        def run_on(_t1, _t2):
+            """ check for align() """
+            if _t1[-1] != ' ' and _t2[0] != ' ':
+                return True
+            return False
+        
+            
         def get_tsum(thing, def_size=15):
             """ Given the footprint of each character, return the sum(), "tsum" of it
                 whether it's a string or a list, to determine how to postion the text """
@@ -205,7 +200,12 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30, Error=False, clear=True
                 return sum([ apnt2.get(x,def_size) for x in ' '.join(thing)])
             if isinstance(thing, str):
                 return sum([ apnt2.get(x,def_size) for x in thing ])
-                
+        
+        def rm_space(_parts):
+            """ rm final / inital spaces of each part of given list """
+            [ x.pop()  for x in _parts if x[-1] == ' ' ]
+            [ x.pop(0) for x in _parts if x[0]  == ' ' ]
+            return _parts
             
         def sw_parts(parts):
             """ Swap parts like
@@ -216,7 +216,7 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30, Error=False, clear=True
             
             def bump(each, tsum):
                 """ Insert strategically into a list (push to a non existing 'part'/list to create it)
-                    for the last 'each' or into  a list inside a list (already existing 'each')          """
+                    for the last 'each', or into an (already existing 'each'/list) inside a list         """
                 if tsum > max_x:
                     print(f"over {max_x}") if debug else None
                     if len(_pparts) == each+1:
@@ -268,6 +268,7 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30, Error=False, clear=True
         
         return sw_parts(mv_parts(text))
         
+            
     procd_parts = proc_text(text)
     print(f"Final procd_parts parts {procd_parts}")
     
