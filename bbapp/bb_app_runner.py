@@ -310,7 +310,7 @@ while True:
     gc.collect()
     global games
     factory_test = True
-    force_offseason = False
+    force_offseason = True
     print(f"Version: {version}")
     yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]
     short_yr = f"{int( str(yr)[2:]):02d}"
