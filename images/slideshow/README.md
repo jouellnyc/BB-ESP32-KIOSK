@@ -36,6 +36,6 @@ BB-ESP32-Kiosk will then  rotate through 10 news articles at mlb.com.<P>
 For example:<P>
 <img src="news1.jpg" width="200"/>
 <img src="news2.jpg" width="200"/>
-<img src="news3.jpg" width="200"/>
+<img src="news3b.jpg" width="200"/>
 
 This cycle will repeat infinitely.
