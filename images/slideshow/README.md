@@ -33,7 +33,7 @@ If it is not during the regual season, BB-ESP32-Kiosk
 will tell you when opening day is:<P>
 <img src="opening_day.jpg" width="200"/> <P>
 
-And then rotate through 10 news articles at mlb.com. News Examples:
+And then rotate through 10 news articles at mlb.com. News Examples:<P>
 <img src="news1.jpg" width="200"/>
 <img src="news2.jpg" width="200"/>
 <img src="news3.jpg" width="200"/>
