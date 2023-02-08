@@ -4,7 +4,7 @@
 
 The BB-ESP32-Kiosk will go through several phases:
 
-Booting Up and Launching:
+Booting Up and Launching:<P>
 <img src="boot.jpg" width="200"/>
 <img src="launch.jpg" width="200"/>
 
