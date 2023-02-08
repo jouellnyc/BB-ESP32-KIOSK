@@ -14,7 +14,7 @@ will see if there is a game today. If so will show you one of 4 outcomes:<P>
 1. Pregame. Games time will be show on the screen. Please Wait!<P>
 <img src="pregame.jpg" width="200"/>
 
-2. In Progress. (with Scores, whose at bat, team records and pitch count)<P>
+2. In Progress. (with scores, whose at bat, team records, pitch count, and inning status)<P>
 <img src="progress.jpg" width="200"/>
 
 and refresh the score every two minutes.
