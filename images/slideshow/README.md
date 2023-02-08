@@ -14,7 +14,7 @@ will see if there is a game today. If so will show you one of 3 states:<P>
 Pregame. Please Wait!<P>
 <img src="pregame.jpg" width="200"/>
 
-Currently In Progress With Scores<P>
+Currently In Progress With Scores, whose at bat, team records and pitch count.<P>
 <img src="progress.jpg" width="200"/>
 
 and refresh the score every two minutes.
