@@ -35,8 +35,8 @@ will tell you when opening day is:<P>
 and then rotate through 10 news articles at mlb.com.
 
 News Example 1
-<img src="news1.jpg" width="200"/>
+<img src="news1.jpg" width="200"/><P>
 News Example 2
-<img src="news2.jpg" width="200"/>
+<img src="news2.jpg" width="200"/><P>
 News Example 3
-<img src="news3.jpg" width="200"/>
+<img src="news3.jpg" width="200"/><P>
