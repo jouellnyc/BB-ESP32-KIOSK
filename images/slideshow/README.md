@@ -20,6 +20,7 @@ will see if there is a game today. If so will show you one of 4 outcomes:<P>
 BB-ESP32-KIOSK will refresh the score every two minutes.
 
 3. Final Score. <P> 
+<img src="final_score.jpg" width="200"/>
 The final score will be shown with winning and losing pitchers, scores and records for 30 seconds. 
 BB-ESP32-Kiosk will then  rotate through 10 news articles at mlb.com.
 
