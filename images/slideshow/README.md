@@ -31,8 +31,7 @@ BB-ESP32-Kiosk will then  rotate through 10 news articles at mlb.com for 1200 cy
 If it is not during the regual season, BB-ESP32-Kiosk
 will tell you when opening day is for 30 seconds:<P>
 <img src="opening_day.jpg" width="200"/> <P>
-
-BB-ESP32-Kiosk will then  rotate through 10 news articles at mlb.com.<P>
+BB-ESP32-Kiosk will then  rotate through 10 news articles at mlb.com for 1200 cycles. TBD 
 
 For example:<P>
 <img src="news1.jpg" width="200"/>
