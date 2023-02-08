@@ -9,21 +9,22 @@ Booting Up and Launching:<P>
 <img src="launch.jpg" width="200"/>
 
 If it is during the regual season, BB-ESP32-Kiosk
-will see if there is a game today. If so will show you:
+will see if there is a game today. If so will show you one of 3 states:<P>
 
-Pregame. Please Wait
+Pregame. Please Wait<P>
 <img src="pregame.jpg" width="200"/>
 
-Currently In Progress With Scores
+Currently In Progress With Scores<P>
 <img src="progress.jpg" width="200"/>
+
 and refresh the score every two minutes.
 
-Final Score 
-
+Final Score<P> 
 and then rotate through 10 news articles at mlb.com.
 
 
 If there's no game, BB-ESP32-Kiosk will tell you:
+
 <img src="nogame.jpg" width="200"/>
 and then rotate through 10 news articles at mlb.com.
 
