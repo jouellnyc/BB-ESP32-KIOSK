@@ -11,7 +11,7 @@ Booting Up and Launching:<P>
 If it is during the regual season, BB-ESP32-Kiosk
 will see if there is a game today. If so will show you one of 3 states:<P>
 
-Pregame. Please Wait<P>
+Pregame. Please Wait!<P>
 <img src="pregame.jpg" width="200"/>
 
 Currently In Progress With Scores<P>
