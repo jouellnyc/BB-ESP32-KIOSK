@@ -22,7 +22,7 @@ BB-ESP32-KIOSK will refresh the score every 2 minutes.
 3. Final Score. <P> 
 <img src="final_score.jpg" width="200"/>
 The final score will be shown with winning and losing pitchers, scores and records for 30 seconds. 
-BB-ESP32-Kiosk will then  rotate through all the current news articles for the day  at mlb.com and the cycle is repeated.
+BB-ESP32-Kiosk will then  rotate through all the current news articles for the day  at mlb.com and the cycle is repeated.<P>
 
 4. No Game. If there's no game, BB-ESP32-Kiosk will tell you:
 <img src="nogame.jpg" width="200"/>
