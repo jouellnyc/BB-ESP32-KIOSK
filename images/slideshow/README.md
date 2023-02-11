@@ -17,7 +17,7 @@ will see if there is a game today. If so will show you one of 4 outcomes:<P>
 2. In Progress. (with current score, whose at bat, team records, pitch count, and inning status).<P>
 <img src="progress.jpg" width="200"/>
 
-BB-ESP32-KIOSK will refresh the score every two minutes.
+BB-ESP32-KIOSK will refresh the score ever minute.
 
 3. Final Score. <P> 
 <img src="final_score.jpg" width="200"/>
