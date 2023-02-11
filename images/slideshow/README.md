@@ -38,6 +38,5 @@ BB-ESP32-Kiosk will then  rotate through all the current news articles for the d
 For example:<P>
 <img src="news1.jpg" width="200"/>
 <img src="news2.jpg" width="200"/>
-<img src="news3b.jpg" width="200"/>
 
 This cycle will repeat infinitely.
