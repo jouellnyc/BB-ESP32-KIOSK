@@ -104,7 +104,9 @@ def get_tb_text(err):
     #Remove the word Traceback/etc
     return buf.getvalue()[35:]
     
-def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30, Error=False, clear=True, font=sm_font, bg=drk_grn, fg=white):
+def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
+                 Error=False, clear=True, font=sm_font,
+                 bg=drk_grn, fg=white, , debug=False):
     """ Given a headline from a text string from mlb.com/news like:
 
        'Celebrate Aaron's birthday with 13 stats that show his greatness'
@@ -128,7 +130,7 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30, Error=False, clear=True
     max_rows = 6
     scr_len  = scr_len
         
-    def proc_text(text, debug=False):
+    def proc_text(text):
         """ Here's where we do the processing of the 'text' """
             
         def get_raw_parts(_text):
@@ -270,7 +272,7 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30, Error=False, clear=True
         
             
     procd_parts = proc_text(text)
-    print(f"Final procd_parts parts {procd_parts}")
+    print(f"Final procd_parts parts {procd_parts}") if debug else None
     
     count=0
 

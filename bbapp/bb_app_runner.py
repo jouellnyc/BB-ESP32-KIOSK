@@ -7,7 +7,7 @@ import mrequests
 from hardware.screen_runner import display as d
 
 """ All non caught errors are handled by main.py """  
-from . team_id import team_id, team_name
+from . team_id import team_id, team_name, team_code
 start=5 
 delta=45
 
@@ -20,7 +20,59 @@ news_file = "news.txt"
 
 """ Version """
 from .version import version
-   
+
+def check_if_game(sleep=7):
+    print("Checking if there's a game")
+    if not games:
+        no_gm()
+    else:
+        print(f"== Game: {games[0]}")
+        print(f"Status: {games[0]['status']}")
+        what_sleep=get_score()
+        print(f"  Sleeping {what_sleep} seconds in check_if_game")
+        time.sleep(what_sleep)         
+
+def check_season():
+    if int(mt) in [11,12,01,02,03]:
+        if int(mt) == 3 and int(dy) == 30:
+            print("Regular Season")
+            reg_season()
+            check_if_game()           
+        else:
+            print("Off Season")
+            off_season()
+
+def clear_story_area():
+    d.fill_rectangle(1, 41, 318, 198, d.drk_grn)
+    
+def cycle_stories(func, func_sleep=30):
+    print('Now in cycle_stories')
+    story_count=1 ; story_sleep=2
+    for story in news:
+        print(f"== {story_count}")
+        print(f"== {story}")
+        if story_count > 0 and story_count % 7 == 0:
+            func()
+            time.sleep(func_sleep)
+            clear_story_area()
+        else:
+            d.draw_text(5, start + (0 * delta), f"MLB News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
+            """ Díaz - í is not supported by the font, make it a simple 'i' """
+            story = rm_accents(story)
+            d.draw_text(42, 215, "Story at mlb.com", d.sm_font,  d.white , d.drk_grn)
+            d.scroll_print(text=story, y_pos=60, x_pos=18,
+                           scr_len=18, clear=False, font=d.date_font,
+                           bg=d.drk_grn, fg=d.white)
+            """ x_pos for fill_rectangle must be at 1     """
+            """ to keep vert lines from being overwritten """
+            time.sleep(story_sleep)
+            clear_story_area()
+        story_count+=1
+        
+def days_til_open():
+    get_open_day()
+    show_open_day()
+
 def get_start_date(url, ua):
     global start_date
     import re
@@ -36,38 +88,8 @@ def get_start_date(url, ua):
             print(start_date)
             return start_date
 
-def say_fetching(text='Fetching Data'):
-    d.fresh_box()
-    d.draw_text(5, 5, text, d.date_font, d.white, d.drk_grn)
-
-def reg_season():
-    global games
-    games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
-    
-def off_season():
-    days_til_open()
-    gc.collect()
-    show_filler_news(show_open_day)
-    gc.collect()
-    time.sleep(60 * 60 * 24 ) # check back Tommorow
-
-def days_til_open():
-    get_open_day()
-    show_open_day()
-   
-def get_open_day():
-    say_fetching()
-    get_start_date(url, ua)
-
-def show_open_day():
-    d.fresh_box()
-    d.draw_text(5,    start + (0 * delta)      ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
-    d.draw_text(42,   start + (1 * delta) + 25 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
-    d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
-    d.draw_text(65,   start + (3 * delta) + 25 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
-    
 def get_latest_news(count=1, err="reboot/netfail"):
-    print('getting news')
+    print('Actually getting news from the web')
     url="https://www.mlb.com/news/"
     r = mrequests.get(url,headers={b"accept": b"text/html"})
     if count == 3:
@@ -89,96 +111,13 @@ def get_news_from_file():
             story = re.search('data-headline="(.*?)"',line)
             if story is not None:
                 news.append(story.group(1))
+    print('get new from file len', len(news))
     return news
-                
-def clear_story_area():
-     #d.fill_rectangle(1, 41, 318, 159, d.drk_grn)
-    d.fill_rectangle(1, 41, 318, 198, d.drk_grn)
-    #d.draw_text(42, 215, "Story at mlb.com", d.sm_font,  d.white , d.drk_grn)
-    
-def cycle_stories(func, sleep=30):
-    count=1 ; ssleep=7
-    while count < 12000:     #On Average ~ 23.5 hours
-        for story in news:
-            print(f"=={count}")
-            if count > 0 and count % 7 == 0:
-                func()
-                time.sleep(sleep)
-                clear_story_area()
-            else:
-                d.draw_text(5, start + (0 * delta), f"MLB News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
-                """ Díaz - í is not supported by the font, make it a simple 'i' """
-                story = rm_accents(story)
-                d.draw_text(42, 215, "Story at mlb.com", d.sm_font,  d.white , d.drk_grn)
-                d.scroll_print(text=story, y_pos=60, x_pos=18,
-                               scr_len=18, clear=False, font=d.date_font,
-                               bg=d.drk_grn, fg=d.white)
-                """ x_pos for fill_rectangle must be at 1     """
-                """ to keep vert lines from being overwritten """
-                time.sleep(ssleep)
-                clear_story_area()
-            count+=1
 
-def show_filler_news(func, sleep=30):
-    if factory_test is False:
-        get_latest_news()
-    say_fetching("Fetching News")
-    news=get_news_from_file()
-    d.fresh_box()
-    cycle_stories(func, sleep=30)
+def get_open_day():
+    say_fetching()
+    get_start_date(url, ua)
 
-def run_factory_test():
-    #If no game that day games will be empty, not undefined
-    global games
-    from .test_games import games
-    print(f"Games {games}")
-    for x in games:
-        games = [x]
-        check_if_game()
-    games = []
-    check_if_game()
-
-def get_x_p(pname):
-    """ Given 'John Smith (Jr.)'  """
-    """ return 'J.Smith'          """
-    fn,ln, *_ = pname.split(' ')
-    fi = list(fn.split(' ')[0])[0]
-    pn = fi + '.' + ln
-    return pn        
-
-def show_no_gm():
-    yr, mt, dy, hr, mn, s1, s2, s3 = time.localtime()
-    d.fresh_box()
-    d.draw_text(5,  5,  gm_dt, d.date_font, d.white, d.drk_grn)
-    d.draw_text(5, 75,  f"No {team_name}" , d.score_font, d.white, d.drk_grn)
-    d.draw_text(5, 125, f"Game Today!"    , d.score_font, d.white, d.drk_grn)
-    print(f"No Game today!")
-    
-def no_gm():
-    show_no_gm()
-    time.sleep(7)
-    show_filler_news(show_no_gm)    
-
-def check_if_game():
-    if not games:
-        no_gm()
-        time.sleep(60 * 60 * 4)  # check back 4 hours from now
-    else:
-        print(f"== Game: {games[0]}")
-        print(f"Status: {games[0]['status']}")
-        what_sleep=get_score()
-        print(f"Sleeping {what_sleep} seconds")
-        time.sleep(what_sleep)         
-
-def rm_accents(story):
-    """ Replace Accent Accent aigu, grave, and unicode apostrophes """
-    return story.replace('\xed','i').replace('\xe9','e').replace('\xc0','A')\
-                .replace('\xe8','e').replace('\xec','i').replace('\xd2','O')\
-                .replace('\xf9','u').replace('\xc9','E').replace('\xe1','a')\
-                .replace('\xcd','I').replace('\xf3','o').replace('\xda','U')\
-                .replace(u"\u2018", "'").replace(u"\u2019", "'")
-
-                
 def get_score():
         
         """ Determine home or away from Team Ids Data """
@@ -277,13 +216,10 @@ def get_score():
                 d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , d.drk_grn)
                 d.draw_text(5, 0     + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , d.drk_grn)
                 d.draw_outline_box()
-            if factory_test:
-                return 2
-            else:
-                show_final()
-                time.sleep(fsleep)
-                show_filler_news(show_final, sleep=fsleep)
-                return 60 * 60 *4 # check back 4 hours from now
+            show_final()
+            time.sleep(fsleep)
+            show_filler_news(show_final, func_sleep=fsleep)
+        
         
         else:  #"Scheduled"/"Warm up"/"Pre Game"
             
@@ -297,12 +233,89 @@ def get_score():
             d.draw_text(5, start + (3 * delta), f"Game at {tm}"                       , d.sm_font,    d.white , d.drk_grn)
             d.draw_text(5, start + (4 * delta), f"ZZZZZZZZZZZZZZZZZZZZZ"              , d.sm_font,   d.drk_grn, d.drk_grn)
             d.draw_outline_box()
-            
             if factory_test:
                 return 2
             return 60 * 10 # check back every 10 minutes
         
 
+def get_x_p(pname):
+    """ Given 'John Smith (Jr.)'  """
+    """ return 'J.Smith'          """
+    fn,ln, *_ = pname.split(' ')
+    fi = list(fn.split(' ')[0])[0]
+    pn = fi + '.' + ln
+    return pn        
+
+def no_gm(sleep=7):
+    show_no_gm()
+    print(f"Sleeping for {sleep} seconds in show_no_gm")
+    time.sleep(sleep)
+    show_filler_news(show_no_gm)    
+
+def off_season():
+    days_til_open()
+    gc.collect()
+    show_filler_news(show_open_day)
+    gc.collect()
+    
+def reg_season():
+    global games
+    games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
+
+def rm_accents(story):
+    """ Replace Accent Accent aigu, grave, and unicode apostrophes """
+    return story.replace('\xed','i').replace('\xe9','e').replace('\xc0','A')\
+                .replace('\xe8','e').replace('\xec','i').replace('\xd2','O')\
+                .replace('\xf9','u').replace('\xc9','E').replace('\xe1','a')\
+                .replace('\xcd','I').replace('\xf3','o').replace('\xda','U')\
+                .replace(u"\u2018", "'").replace(u"\u2019", "'")\
+                .replace(u'\xa0', u' ')
+
+def run_factory_test():
+    #If no game that day games will be empty, not undefined
+    global games
+    from .test_games import games
+    print(f"Games {games}")
+    for x in games:
+        games = [x]
+        check_if_game()
+    games = []
+    check_if_game()
+
+def say_fetching(text='Fetching Data'):
+    d.fresh_box()
+    d.draw_text(5, 5, text, d.date_font, d.white, d.drk_grn)
+
+   
+def show_open_day():
+    d.fresh_box()
+    show_logo()
+    d.draw_text(5,    start + (0 * delta)      ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
+    d.draw_text(42,   start + (1 * delta) + 25 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
+    d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
+    d.draw_text(65,   start + (3 * delta) + 25 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
+                
+def show_filler_news(func, func_sleep=30):
+    print('show_filler_news')
+    if factory_test is False:
+        get_latest_news()
+    say_fetching("Fetching News")
+    news=get_news_from_file()
+    d.fresh_box()
+    cycle_stories(func, func_sleep=1)
+
+def show_logo():
+    d.draw_text(235, 5,  team_code.upper(), d.date_font, d.white, d.drk_grn)
+    
+def show_no_gm():
+    yr, mt, dy, hr, mn, s1, s2, s3 = time.localtime()
+    d.fresh_box()
+    d.draw_text(5,   5,  gm_dt, d.date_font, d.white, d.drk_grn)
+    show_logo()
+    d.draw_text(40, 75,  f"No {team_name}" , d.score_font, d.white, d.drk_grn)
+    d.draw_text(40, 125, f"Game Today!"    , d.score_font, d.white, d.drk_grn)
+    
+    
 while True:
     
     
@@ -310,7 +323,7 @@ while True:
     gc.collect()
     global games
     factory_test = True
-    force_offseason = True
+    force_offseason = False
     print(f"Version: {version}")
     yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]
     short_yr = f"{int( str(yr)[2:]):02d}"
@@ -318,32 +331,18 @@ while True:
     print("Date: ",gm_dt)
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
     print("Month is",mt)
-    
-    if factory_test:
-        run_factory_test()
-    else:
-        pass
-    
-    if force_offseason:
-        off_season()
-    else:
-        pass
-    
-    if int(mt) in [11,12,01,02,03]:
-
-        if int(mt) == 3 and int(dy) == 30:
-            reg_season()
-        off_season()
         
-    else:
-        
-        try:
-            reg_season()
-        except OSError as e:
-            #Catch this known weird, unrecoverable issue and reboot
-            #https://github.com/espressif/esp-idf/issues/2907
-            if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
-                import machine
-                machine.reset()
+    try:
+        if force_offseason:
+            off_season()
+        elif factory_test:
+            run_factory_test()
         else:
-            check_if_game()           
+            check_season()        
+    except OSError as e:
+        #Catch this known weird, unrecoverable issue and reboot
+        #https://github.com/espressif/esp-idf/issues/2907
+        if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
+            import machine
+            machine.reset()
+            

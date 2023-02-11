@@ -77,7 +77,7 @@ games =  [     {'game_id': 663188, 'away_pitcher_note': '',
                   'current_inning' : 7,
                   'venue_id': 3, 'away_rec': '66-46'},
              
-                              {'game_id': 663188, 'away_pitcher_note': '',
+                {'game_id': 663188, 'away_pitcher_note': '',
                             'winning_pitcher': 'Kyle Wright',
                             'winning_team': 'Atlanta Braves',
                                  'home_probable_pitcher': '',

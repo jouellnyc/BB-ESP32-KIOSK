@@ -83,6 +83,8 @@ The kiosk should boot and show startup mesages:
 
 Once Done, it will show you status of Your Team's Game if in progress.
 
+For more details of the flow of information see the <a href="https://github.com/jouellnyc/BB-ESP32-KIOSK/tree/main/images/slideshow">slideshow</A>
+
 ### BreadBoard Version with OLEDs
 Looking for the [BreadBoard Version with OLEDs](README.BREAD.BOARD.md) for the old school effect?
 
