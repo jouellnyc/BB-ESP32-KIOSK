@@ -18,13 +18,10 @@ from hardware.ntp_setup import utc_to_local
 od_url='https://en.wikipedia.org/wiki/2023_Major_League_Baseball_season'
 ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
 opening_day = 'March 30'
-news_url="https://www.mlb.com/newsQ/"
+news_url="https://www.mlb.com/news/"
 
 """ Version """
 from .version import version
-
-class HTTPErr(Exception):
-    pass
 
 def check_if_game(sleep=7):
     print("Checking if there's a game") if DEBUG else None
