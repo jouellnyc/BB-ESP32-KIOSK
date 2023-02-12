@@ -47,7 +47,7 @@ def check_season():
         print("Regular Season")
         reg_season()
         check_if_game()
-
+    
 def check_http_code(request):
     
     if request.status_code != 200:
@@ -126,14 +126,11 @@ def get_news_from_file():
                     news.append(story.group(1))
         print('Get news from file len', len(news)) if DEBUG else None
     except OSError:
-        return ["Fail to get new news"]
-    return news
-
+        raise
+    
 
 def get_open_day():
-    print('od_sf')
     say_fetching()
-    print('od_gs')
     get_start_date(od_url, ua)
 
 def get_score():
@@ -211,15 +208,15 @@ def get_score():
             d.draw_text(10, start + (4 * delta) + 5, f"B: {balls} S: {strks} O: {outs }"   , d.sm_font,    d.white , d.drk_grn)
             d.draw_outline_box()
             
-            if factory_test:
+            if regular_season_test:
                 return 2
-            return 60 # check back every x minutes
+            return 60 # check back every x seconds
         
         elif game_status == "Game Over" or game_status == "Final":
             
             """ Stretch the Game Status to minimize ghost pixelation """
             """ here and with ZZZ in Warm up  below                  """
-            if factory_test:
+            if regular_season_test:
                 fsleep=5
             else:
                 fsleep=30            
@@ -235,6 +232,7 @@ def get_score():
                 d.draw_text(5, 0     + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , d.drk_grn)
                 d.draw_outline_box()
             show_final()
+            print(f'sleeping for {fsleep}') if DEBUG else None
             time.sleep(fsleep)
             show_filler_news(show_final, func_sleep=fsleep)
             return 1
@@ -251,7 +249,7 @@ def get_score():
             d.draw_text(5, start + (3 * delta), f"Game at {tm}"                       , d.sm_font,    d.white , d.drk_grn)
             d.draw_text(5, start + (4 * delta), f"ZZZZZZZZZZZZZZZZZZZZZ"              , d.sm_font,   d.drk_grn, d.drk_grn)
             d.draw_outline_box()
-            if factory_test:
+            if regular_season_test:
                 return 2
             return 60 * 10 # check back every 10 minutes
         
@@ -285,113 +283,29 @@ def opening_day_screen():
     d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
     d.draw_text(65,   start + (3 * delta) + 25 ,f"{opening_day}"        , d.score_font, d.white , d.drk_grn)
     
-def off_season():
+def off_season(sleep=30):
     opening_day_screen()
+    print(f"Sleeping for {sleep} seconds in off_season")
+    time.sleep(sleep)
     gc.collect()
     show_filler_news(opening_day_screen)
     gc.collect()
-    
+
 def reg_season():
     global games
     games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
-    """ games  = [   {'game_id': 663188, 'away_pitcher_note': '',
-                            'winning_pitcher': 'Kyle Wright',
-                            'winning_team': 'Atlanta Braves',
-                                 'home_probable_pitcher': '',
-                                   'game_date': '2022-08-10',
-                                             'away_score': 8,
-                                 'venue_name': 'Fenway Park',
-                  'summary': '2022-08-10 - Atlanta Braves (8) @ Boston Red Sox (4) (Final)',
-                  'home_rec': '54-58',
-                  'inning_state': 'Bottom',
-                  'status': 'In Progress',
-                  # 'status': 'Pre Game',
-                  #'status' : 'Game Over',
-                  # 'status': 'Final',
-                  'home_score': 4,
-                  'save_pitcher': None,
-                  'Balls'   : 1,
-                  'Strikes' : 0,
-                  'Outs'     :2 ,
-                  'game_num': 1, 'away_name': 'Atlanta Braves', 'game_datetime': '2022-08-10T23:10:00Z',
-                  'doubleheader': 'N', 'losing_team': 'Boston Red Sox', 'home_pitcher_note': '',
-                  'away_probable_pitcher': '', 'game_type': 'R', 'home_name': 'Boston Red Sox',
-                  'away_id': 144, 'current_inning': 9, 'home_id': 111, 'losing_pitcher': 'Nick Pivetta',
-                  'Batter': 'James Heehan',
-                  'current_inning' : 7,
-                  'venue_id': 3, 'away_rec': '66-46'},
-                              {'game_id': 663188, 'away_pitcher_note': '',
-                            'winning_pitcher': 'Kyle Wright',
-                            'winning_team': 'Atlanta Braves',
-                                 'home_probable_pitcher': '',
-                                   'game_date': '2022-08-10',
-                                             'away_score': 8,
-                                 'venue_name': 'Fenway Park',
-                  'summary': '2022-08-10 - Atlanta Braves (8) @ Boston Red Sox (4) (Final)',
-                  'home_rec': '54-58',
-                  'inning_state': 'Bottom',
-                   'status': 'Final',
-                  'home_score': 4,
-                  'save_pitcher': None,
-                  'Balls'   : 1,
-                  'Strikes' : 0,
-                  'Outs'     :2 ,
-                  'game_num': 1, 'away_name': 'Atlanta Braves', 'game_datetime': '2022-08-10T23:10:00Z',
-                  'doubleheader': 'N', 'losing_team': 'Boston Red Sox', 'home_pitcher_note': '',
-                  'away_probable_pitcher': '', 'game_type': 'R', 'home_name': 'Boston Red Sox',
-                  'away_id': 144, 'current_inning': 9, 'home_id': 111, 'losing_pitcher': 'Nick Pivetta',
-                  'Batter': 'James Heehan',
-                  'current_inning' : 7,
-                  'venue_id': 3, 'away_rec': '66-46'}]
-    games = [ {'game_id': 663188, 'away_pitcher_note': '',
-                            'winning_pitcher': 'Kyle Wright',
-                            'winning_team': 'Atlanta Braves',
-                                 'home_probable_pitcher': '',
-                                   'game_date': '2022-08-10',
-                                             'away_score': 8,
-                                 'venue_name': 'Fenway Park',
-                  'summary': '2022-08-10 - Atlanta Braves (8) @ Boston Red Sox (4) (Final)',
-                  'home_rec': '54-58',
-                  'inning_state': 'Bottom',
-                  'status': 'Pre Game',
-                  'home_score': 4,
-                  'save_pitcher': None,
-                  'Balls'   : 1,
-                  'Strikes' : 0,
-                  'Outs'     :2 ,
-                  'game_num': 1, 'away_name': 'Atlanta Braves', 'game_datetime': '2022-08-10T23:10:00Z',
-                  'doubleheader': 'N', 'losing_team': 'Boston Red Sox', 'home_pitcher_note': '',
-                  'away_probable_pitcher': '', 'game_type': 'R', 'home_name': 'Boston Red Sox',
-                  'away_id': 144, 'current_inning': 9, 'home_id': 111, 'losing_pitcher': 'Nick Pivetta',
-                  'Batter': 'James Heehan',
-                  'current_inning' : 7,
-                  'venue_id': 3, 'away_rec': '66-46'}
-              ]	
     
-    games = [ {'game_id': 663188, 'away_pitcher_note': '',
-                            'winning_pitcher': 'Kyle Wright',
-                            'winning_team': 'Atlanta Braves',
-                                 'home_probable_pitcher': '',
-                                   'game_date': '2022-08-10',
-                                             'away_score': 8,
-                                 'venue_name': 'Fenway Park',
-                  'summary': '2022-08-10 - Atlanta Braves (8) @ Boston Red Sox (4) (Final)',
-                  'home_rec': '54-58',
-                  'inning_state': 'Bottom',
-                  'status' : 'Game Over',
-                  'home_score': 4,
-                  'save_pitcher': None,
-                  'Balls'   : 1,
-                  'Strikes' : 0,
-                  'Outs'     :2 ,
-                  'game_num': 1, 'away_name': 'Atlanta Braves', 'game_datetime': '2022-08-10T23:10:00Z',
-                  'doubleheader': 'N', 'losing_team': 'Boston Red Sox', 'home_pitcher_note': '',
-                  'away_probable_pitcher': '', 'game_type': 'R', 'home_name': 'Boston Red Sox',
-                  'away_id': 144, 'current_inning': 9, 'home_id': 111, 'losing_pitcher': 'Nick Pivetta',
-                  'Batter': 'James Heehan',
-                  'current_inning' : 7,
-                  'venue_id': 3, 'away_rec': '66-46'} ] """
-    
+def regular_season_test():
+    #If no game that day games will be empty, not undefined
+    global games
+    from .test_games import games
+    print(f"Games {games}")
+    for x in games:
+        games = [x]
+        check_if_game()
+    games = []
+    check_if_game()
+
 def rm_accents(story):
     """ Replace Accent Accent aigu, grave, and unicode apostrophes """
     return story.replace('\xed','i').replace('\xe9','e').replace('\xc0','A')\
@@ -408,17 +322,6 @@ def rm_old_news():
     else:
         return True
 
-def run_factory_test():
-    #If no game that day games will be empty, not undefined
-    global games
-    from .test_games import games
-    print(f"Games {games}")
-    for x in games:
-        games = [x]
-        check_if_game()
-    games = []
-    check_if_game()
-
 def save_news_file(r):
     try:
         r.save(news_file)
@@ -433,7 +336,7 @@ def say_fetching(text='Fetching Data'):
    
 def show_filler_news(func, func_sleep=30):
     print('In show_filler_news') if DEBUG else None
-    if factory_test or news_is_current():
+    if regular_season_test or news_is_current():
         print('News is current - getting from file') if DEBUG else None
         say_fetching("Fetching News")
         get_news_from_file()
@@ -465,8 +368,8 @@ while True:
     gc.collect()
     
     global games
-    factory_test = False
     force_offseason = False
+    test_regular_season = False
     
     print(f"Version: {version}")
     yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]
@@ -481,8 +384,8 @@ while True:
     try:
         if force_offseason:
             off_season()
-        elif factory_test:
-            run_factory_test()
+        elif test_regular_season:
+            regular_season_test()
         else:
             check_season()        
     except OSError as e:
