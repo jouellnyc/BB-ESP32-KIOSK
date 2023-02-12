@@ -120,7 +120,7 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
        
        ...but do so in a way that does not step outside the character/pixel limits  """
     
-    debug = True
+    debug = False
     
     """ We will pass in a 'text container' which will be either
         and instance of an error or a string                                        """
