@@ -83,7 +83,7 @@ def cycle_stories(func, func_sleep=30):
         print(f"== {story_count}")
         if story_count > 0 and story_count % 7 == 0:
             func()
-            print(f"Sleeping for {story_sleep} in after {func.__name__}") if DEBUG else None
+            print(f"Sleeping for {func_sleep} in cycle stories for {func.__name__}") if DEBUG else None
             time.sleep(func_sleep)
             clear_story_area()
         else:
