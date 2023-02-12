@@ -15,10 +15,8 @@ delta=45
 """ BB SETUP """
 from . import my_mlb_api
 from hardware.ntp_setup import utc_to_local
-od_url='https://en.wikipedia.org/wiki/2023_Major_League_Baseball_season'
+url='https://en.wikipedia.org/wiki/2023_Major_League_Baseball_season'
 ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
-opening_day = 'March 30'
-news_url="https://www.mlb.com/newsQ/"
 
 """ Version """
 from .version import version
@@ -27,20 +25,20 @@ class HTTPErr(Exception):
     pass
 
 def check_if_game(sleep=7):
-    print("Checking if there's a game") if DEBUG else None
+    print("Checking if there's a game")
     if not games:
         no_gm()
     else:
         print(f"== Game: {games[0]}")
         print(f"Status: {games[0]['status']}")
         what_sleep=get_score()
-        print(f"  Sleeping {what_sleep} seconds in check_if_game") if DEBUG else None
+        print(f"  Sleeping {what_sleep} seconds in check_if_game")
         time.sleep(what_sleep)         
 
 def check_season():
     if int(mt) in [11,12,01,02,03]:
         if int(mt) == 3 and int(dy) == 30:
-            print("Regular Season") 
+            print("Regular Season")
             reg_season()
             check_if_game()
         else:
@@ -50,37 +48,12 @@ def check_season():
         print("Regular Season")
         reg_season()
         check_if_game()
-
-def check_http_code(request):
-    
-    if request.status_code != 200:
-        err=f"Request failed: {request.status_code} at {news_url}"
-        print(err)
-        count+=1
-        time.sleep(5)
-        get_latest_news(count=count, err=err)
-    else:
-        cleanup_news_files(request)
             
-            
-def cleanup_news_files(request):
-    
-    if save_news_file(request):
-        
-        print(f"News save to {news_file} OK")
-
-        if rm_old_news():
-            print("old news deleted OK")
-        else:
-            print("old news delete failed")
-    else:
-        print(f"News save to {news_file} failed")
-
 def clear_story_area():
     d.fill_rectangle(1, 41, 318, 198, d.drk_grn)
     
 def cycle_stories(func, func_sleep=30):
-    print('Now in cycle_stories') if DEBUG else None
+    print('Now in cycle_stories')
     story_count=1 ; story_sleep=7
     for story in news:
         print(f"== {story_count}")
@@ -104,19 +77,40 @@ def cycle_stories(func, func_sleep=30):
             clear_story_area()
         story_count+=1
         
-def get_latest_news(count=1, err="reboot/netfail"):
+def days_til_open():
+    print('6')
+    get_open_day()
+    print('7')
+    show_open_day()	
+    print('8')
     
+def get_latest_news(count=1, err="reboot/netfail"):
+    print('Actually getting news from the web')
+    url="https://www.mlb.com/newsA/"
     if count == 3:
         d.crash_burn(err)
     try:
-        request = mrequests.get(news_url,headers={b"accept": b"text/html"})
+        r = mrequests.get(url,headers={b"accept": b"text/html"})
     except OSError:
-        print(f"Request failed. count: {count}")
+        print("Request failed. count: {count}")
         count+=1
         get_latest_news(count=count)
     else:
-        check_http_code(request)
-
+        if r.status_code == 200:
+            
+            if save_news_file(r):
+                
+                print(f"News save to {news_file} OK")
+        
+                if rm_old_news():
+                    print("old news deleted OK")
+                else:
+                    print("old news delete failed")
+            else:
+                print(f"News save to {news_file} failed")
+        else:
+            raise(HTTPErr(f"HTTP ERROR {r.status_code} at "))
+                
 
 def get_news_from_file():
     global news
@@ -132,12 +126,11 @@ def get_news_from_file():
         return ["Fail to get new news"]
     return news
 
-
 def get_open_day():
-    print('od_sf')
+    print('9')
     say_fetching()
-    print('od_gs')
-    get_start_date(od_url, ua)
+    print('10')
+    print("get_start_date(url, ua)")
 
 def get_score():
         
@@ -257,7 +250,23 @@ def get_score():
             if factory_test:
                 return 2
             return 60 * 10 # check back every 10 minutes
-        
+
+def get_start_date(url, ua):
+    print('11')
+    global start_date
+    import re
+    import mrequests
+    t=mrequests.get(url, headers={"User-Agent" : ua})
+    _mtch= re.search("scheduled to begin on\s+([A-Z][a-z]+\s+[0-9]+)",t.text)
+    if _mtch:
+        try:
+            start_date = _mtch.group(1)
+        except IndexError as e:
+            start_date = "??"
+        finally:
+            print(start_date)
+            return start_date
+
 def get_x_p(pname):
     """ Given 'John Smith (Jr.)'  """
     """ return 'J.Smith'          """
@@ -269,8 +278,8 @@ def get_x_p(pname):
         
 def news_is_current():
     try:
-        if os.stat(news_file):
-            return True
+        os.stat(news_file)
+        return True
     except OSError:
         return False
 
@@ -280,19 +289,16 @@ def no_gm(sleep=7):
     time.sleep(sleep)
     show_filler_news(show_no_gm)    
 
-def opening_day_screen():
-    d.fresh_box()
-    show_logo()
-    d.draw_text(5,    start + (0 * delta)      ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
-    d.draw_text(42,   start + (1 * delta) + 25 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
-    d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
-    d.draw_text(65,   start + (3 * delta) + 25 ,f"{opening_day}"        , d.score_font, d.white , d.drk_grn)
-    
 def off_season():
-    opening_day_screen()
+    print('1')
+    days_til_open()
+    print('2')
     gc.collect()
-    show_filler_news(opening_day_screen)
+    print('3')
+    show_filler_news(show_open_day)
+    print('4')
     gc.collect()
+    print('5')
     
 def reg_season():
     global games
@@ -433,18 +439,28 @@ def save_news_file(r):
 def say_fetching(text='Fetching Data'):
     d.fresh_box()
     d.draw_text(5, 5, text, d.date_font, d.white, d.drk_grn)
+
    
+def show_open_day():
+    d.fresh_box()
+    show_logo()
+    d.draw_text(5,    start + (0 * delta)      ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
+    d.draw_text(42,   start + (1 * delta) + 25 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
+    d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
+    d.draw_text(65,   start + (3 * delta) + 25 ,f"{start_date}"        , d.score_font, d.white , d.drk_grn)
+                
 def show_filler_news(func, func_sleep=30):
     print('In show_filler_news') if DEBUG else None
     if factory_test or news_is_current():
-        print('News is current - getting from file') if DEBUG else None
-        say_fetching("Fetching News")
-        get_news_from_file()
+        news = get_news_from_file()
     else:
-        print('News is old - actually getting news from the web')
-        get_latest_news()
-        say_fetching("Fetching News")
-        get_news_from_file()
+        try:
+            get_latest_news()
+        except HTTPErr as e:
+            d.crash_burn(f"str{e}")
+            time.sleep(5)
+    say_fetching("Fetching News")
+    news=get_news_from_file()
     d.fresh_box()
     cycle_stories(func, func_sleep=30)
 
@@ -493,5 +509,5 @@ while True:
         #https://github.com/espressif/esp-idf/issues/2907
         if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
             import machine
-            machine.reset()            
-
+            machine.reset()
+            

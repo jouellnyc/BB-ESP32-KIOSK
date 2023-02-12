@@ -1,5 +1,6 @@
 """ These value are for the ESP32-S3-BOX-LITE """
 from machine import Pin, SPI, ADC
+import time
 
 from .ili9341 import color565, Display
 
@@ -89,7 +90,8 @@ def print_setup(boot_stage):
 def crash_burn(err):
     display.fresh_box()
     print(f"=={err}")
-    display.draw_text(5,start + (0 * delta),err, d.date_font,  d.white , d.drk_grn)
+    display.draw_text(5, 5, err, date_font, white, drk_grn)
+    time.sleep(5)
     import machine
     machine.reset()
 
@@ -102,11 +104,12 @@ def get_tb_text(err):
     buf = io.StringIO()
     sys.print_exception(err, buf)
     #Remove the word Traceback/etc
+    print(buf.getvalue()[35:])
     return buf.getvalue()[35:]
     
 def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
                  Error=False, clear=True, font=sm_font,
-                 bg=drk_grn, fg=white, , debug=False):
+                 bg=drk_grn, fg=white, debug=False):
     """ Given a headline from a text string from mlb.com/news like:
 
        'Celebrate Aaron's birthday with 13 stats that show his greatness'
@@ -117,15 +120,13 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
        
        ...but do so in a way that does not step outside the character/pixel limits  """
     
-
+    debug = True
+    
     """ We will pass in a 'text container' which will be either
         and instance of an error or a string                                        """
     if clear:
         display.fresh_box()        
-    """ If an error instance, pull out the text """
-    if Error:
-        text=get_tb_text(text)
-
+    
     """ 5 is already tight, 6 partly off the screen """
     max_rows = 6
     scr_len  = scr_len
@@ -155,17 +156,14 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
             
             max_num_raw_parts = len(raw_parts)-2
             start=0
-            #aligned=[]
             while start <= max_num_raw_parts:
                 """Convert Text parts to lists to be able to pop easily """
                 t1=list(raw_parts[start])
                 t2=list(raw_parts[start+1])
                 """ Move upstream through raw_parts align()ing to a new list as you go """
-                #aligned[start], aligned[start+1] = align(t1,t2)
                 raw_parts[start], raw_parts[start+1] = align(t1,t2)
                 print(f"Parts after round {start} {raw_parts}") if debug else None
                 start+=1
-            #return aligned
             return raw_parts
         
         def align(_t1, _t2):
@@ -269,20 +267,31 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
             return _parts
         
         return sw_parts(mv_parts(text))
-        
-            
-    procd_parts = proc_text(text)
-    print(f"Final procd_parts parts {procd_parts}") if debug else None
     
-    count=0
+    """ If an error instance, pull out the text other process the beast ...   """
 
-    for text in procd_parts:
+    if Error:
+        
+        _text = get_tb_text(text)
+        print(f"_text: {text} type: {type(_text)}, len: {len(_text)}") if debug else None
+        procd_parts =   [ _text[-150:-125], _text[-125:-100],
+                          _text[-100:-75],   _text[-75:-50],
+                          _text[-50:-25],    _text[-25:-1] ]
+    else:
+        
+        procd_parts = proc_text(text)
+    
+    
+    print(f"Final procd_parts parts {procd_parts}") if debug else None
+
+    count=0
+    for each_text in procd_parts:
         """ sm font = 25, date font =30  """
         if count > max_rows:
             break
         else:
-            display.draw_text(x_pos, y_pos, text, font=font, color=fg,  background=bg)
-            print(text)
+            display.draw_text(x_pos, y_pos, each_text, font=font, color=fg,  background=bg)
+            print(f"{each_text}") #This will be each story or the error message
         count+=1
         y_pos+=30
 
@@ -305,4 +314,4 @@ display.get_tb_text      = get_tb_text
 display.scroll_print     = scroll_print
 display.check_button3    = check_button3
 display.fresh_box        = fresh_box
-
+display.crash_burn       = crash_burn
