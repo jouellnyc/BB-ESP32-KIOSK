@@ -35,6 +35,7 @@ def check_if_game(sleep=7):
         time.sleep(what_sleep)         
 
 def check_season():
+    print("start check_season") if DEBUG else None
     if int(mt) in [11,12,01,02,03]:
         if int(mt) == 3 and int(dy) == 30:
             print("Regular Season") 
@@ -102,7 +103,7 @@ def cycle_stories(func, func_sleep=30):
         story_count+=1
         
 def get_latest_news(count=1, err="reboot/netfail"):
-    
+    print("get_latest_news") if DEBUG else None
     if count == 3:
         d.crash_burn(err)
     try:
@@ -116,6 +117,7 @@ def get_latest_news(count=1, err="reboot/netfail"):
 
 
 def get_news_from_file():
+    print("start get_news_from_file") if DEBUG else None
     global news
     news=[]
     try:
@@ -124,17 +126,14 @@ def get_news_from_file():
                 story = re.search('data-headline="(.*?)"',line)
                 if story is not None:
                     news.append(story.group(1))
-        print('Get news from file len', len(news)) if DEBUG else None
-    except OSError:
+    except OSError as e:
+        print("News Error:",str(e))
         raise
-    
-
-def get_open_day():
-    say_fetching()
-    get_start_date(od_url, ua)
-
-def get_score():
+    else:
+        print(f"News [] len: {len(news)}") if DEBUG else None
         
+def get_score():
+        print("start get_score") if DEBUG else None
         """ Determine home or away from Team Ids Data """
         home_id = games[0].get("home_id",'NA')
         away_id = games[0].get("away_id",'NA')
@@ -208,7 +207,7 @@ def get_score():
             d.draw_text(10, start + (4 * delta) + 5, f"B: {balls} S: {strks} O: {outs }"   , d.sm_font,    d.white , d.drk_grn)
             d.draw_outline_box()
             
-            if regular_season_test:
+            if test_regular_season:
                 return 2
             return 60 # check back every x seconds
         
@@ -216,7 +215,7 @@ def get_score():
             
             """ Stretch the Game Status to minimize ghost pixelation """
             """ here and with ZZZ in Warm up  below                  """
-            if regular_season_test:
+            if test_regular_season:
                 fsleep=5
             else:
                 fsleep=30            
@@ -249,7 +248,7 @@ def get_score():
             d.draw_text(5, start + (3 * delta), f"Game at {tm}"                       , d.sm_font,    d.white , d.drk_grn)
             d.draw_text(5, start + (4 * delta), f"ZZZZZZZZZZZZZZZZZZZZZ"              , d.sm_font,   d.drk_grn, d.drk_grn)
             d.draw_outline_box()
-            if regular_season_test:
+            if test_regular_season:
                 return 2
             return 60 * 10 # check back every 10 minutes
         
@@ -275,15 +274,8 @@ def no_gm(sleep=7):
     time.sleep(sleep)
     show_filler_news(show_no_gm)    
 
-def opening_day_screen():
-    d.fresh_box()
-    show_logo()
-    d.draw_text(5,    start + (0 * delta)      ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
-    d.draw_text(42,   start + (1 * delta) + 25 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
-    d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
-    d.draw_text(65,   start + (3 * delta) + 25 ,f"{opening_day}"        , d.score_font, d.white , d.drk_grn)
-    
 def off_season(sleep=30):
+    print("start off season") if DEBUG else None
     opening_day_screen()
     print(f"Sleeping for {sleep} seconds in off_season")
     time.sleep(sleep)
@@ -291,6 +283,15 @@ def off_season(sleep=30):
     show_filler_news(opening_day_screen)
     gc.collect()
 
+def opening_day_screen():
+    print("start opening_day_screen") if DEBUG else None
+    d.fresh_box()
+    show_logo()
+    d.draw_text(5,    start + (0 * delta)      ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
+    d.draw_text(42,   start + (1 * delta) + 25 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
+    d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
+    d.draw_text(65,   start + (3 * delta) + 25 ,f"{opening_day}"        , d.score_font, d.white , d.drk_grn)
+    
 def reg_season():
     global games
     games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
@@ -336,7 +337,7 @@ def say_fetching(text='Fetching Data'):
    
 def show_filler_news(func, func_sleep=30):
     print('In show_filler_news') if DEBUG else None
-    if regular_season_test or news_is_current():
+    if news_is_current():
         print('News is current - getting from file') if DEBUG else None
         say_fetching("Fetching News")
         get_news_from_file()
@@ -349,6 +350,7 @@ def show_filler_news(func, func_sleep=30):
     cycle_stories(func, func_sleep=30)
 
 def show_logo():
+    print("start show_logo") if DEBUG else None
     d.draw_text(235, 5,  team_code.upper(), d.date_font, d.white, d.drk_grn)
     
 def show_no_gm():

@@ -12,7 +12,9 @@ from bbapp.version import version
 drk_grn=color565(255,222,255)
 white=color565(0, 0, 0)
 black=color565(255,255,255)
-red=color565(255, 0, 0)
+yellow=color565(255, 0, 0)
+green=color565(0,0,255)
+pink=color565(0, 255, 0)
 
 dc=4
 cs=5
@@ -305,7 +307,6 @@ display.clear_fill       = clear_fill
 display.print_setup      = print_setup
 display.white            = white
 display.drk_grn          = drk_grn
-display.red              = red
 display.black            = black
 display.sm_font          = sm_font
 display.score_font       = score_font
