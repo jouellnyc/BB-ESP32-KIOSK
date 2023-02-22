@@ -9,7 +9,8 @@ from bbapp.version import version
 
 """ BOX-LITE specifics """
 #NOTE: S3-ESP32-BOX-LITE - INVERTED w/ili9341
-drk_grn=color565(255,222,255)
+#drk_grn=color565(255,222,255)  #Temp Workaround
+drk_grn=color565(255,255,255)
 white=color565(0, 0, 0)
 black=color565(255,255,255)
 yellow=color565(255, 0, 0)
