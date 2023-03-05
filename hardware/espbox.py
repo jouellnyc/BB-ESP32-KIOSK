@@ -313,6 +313,6 @@ display.score_font       = score_font
 display.date_font        = date_font
 display.get_tb_text      = get_tb_text
 display.scroll_print     = scroll_print
-display.check_button3    = check_button3
+display.check_upgrade    = check_upgrade
 display.fresh_box        = fresh_box
 display.crash_burn       = crash_burn
