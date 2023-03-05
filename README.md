@@ -26,6 +26,8 @@ Anywhere Mini usb cables are sold (short - 3 ft or less are best)
 
 - Configs / Libraries shared in https://github.com/jouellnyc/mcconfigs 
 
+- 2.4 GHZ WIFI SSID (esp hardware does not support 5 GHZ) 
+
 
 #### Steps
 
