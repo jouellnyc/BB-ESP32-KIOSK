@@ -9,8 +9,7 @@ from bbapp.version import version
 
 """ BOX-LITE specifics """
 #NOTE: S3-ESP32-BOX-LITE - INVERTED w/ili9341
-#drk_grn=color565(255,222,255)  #Temp Workaround
-drk_grn=color565(255,255,255)
+drk_grn=color565(255,222,255)
 white=color565(0, 0, 0)
 black=color565(255,255,255)
 yellow=color565(255, 0, 0)
@@ -123,8 +122,7 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
        
        ...but do so in a way that does not step outside the character/pixel limits  """
     
-    debug = False
-    
+        
     """ We will pass in a 'text container' which will be either
         and instance of an error or a string                                        """
     if clear:
