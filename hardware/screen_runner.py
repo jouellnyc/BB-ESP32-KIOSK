@@ -17,3 +17,6 @@ elif screen == 'esp32-s3-box-lite':
 
     from .espboxlite import display
     
+elif screen == 'esp32-s3-box':
+    
+    from .espbox import display

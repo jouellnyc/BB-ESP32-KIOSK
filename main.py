@@ -32,10 +32,9 @@ try:
     d.print_setup("Booting Up...")
     time.sleep(5)
     
-    if d.check_button3():
-        """ UPGRADE """
+    if d.check_upgrade():
         upgrade()
-
+        
     if file_or_dir_exists('/appsetup/setup_complete.txt'):
 
         """ NETWORK SETUP """
@@ -59,4 +58,4 @@ try:
 except Exception as e:
     """ Dump to the screen """
     print(str(e))
-    d.scroll_print(text=e, scr_len=30, Error=True)
+    d.scroll_print(text=e, scr_len=30, Error=True)    
