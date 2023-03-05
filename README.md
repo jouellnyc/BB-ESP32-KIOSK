@@ -49,9 +49,9 @@ git clone https://github.com/jouellnyc/mcconfigs
 To connect the esp32 to an ili9341, you can follow https://www.youtube.com/watch?v=rq5yPJbX_uk
 
 #### Setup
-At boot the esp32 launches a wifi SSID named 'bbkiosk32' and a password of '123456789'.
+At boot BB-ESP32-KIOSK launches a temporary wifi SSID named 'bbkiosk32' with a wifi password of '123456789'.
 
-Connect your mobile phone/PC w/wifi to that SSID.
+Connect your mobile phone/PC  to that SSID temporarily.
 
 There will be no Internet Access via this ssid:
 
@@ -59,7 +59,7 @@ There will be no Internet Access via this ssid:
 
 Navigate to http://192.168.4.1
 
-Enter your local Wifi SSID, Credentials: 
+Now, enter the name the Wifi SSID and Credentials you want BB-Kiosk to use permanently:
 
 <img src="images/1_setup.jpg" width="200"/>
 
