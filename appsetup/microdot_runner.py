@@ -23,7 +23,9 @@ def get_tb_text(err):
     return buf.getvalue()[35:]
 
 """ All these functions are displayed back to the WebServer and the user's Device """
+
 def write_wifi_creds(ssid, pswd):
+    """ NOTE spaces in the SSID come over as spaces w/o any need to convert  """
     try:
         fh=open(wifi_file,'w')
         fh.write(f"SSID='{ssid}'\n")
