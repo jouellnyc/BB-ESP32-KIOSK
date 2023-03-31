@@ -37,7 +37,7 @@ def check_if_game(sleep=7):
 def check_season():
     print("start check_season") if DEBUG else None
     if int(mt) in [11,12,01,02,03]:
-        if int(mt) == 3 and int(dy) == 30:
+        if int(mt) == 3 and (int(dy) == 30 or int(dy) == 31):
             print("Regular Season") 
             reg_season()
             check_if_game()
