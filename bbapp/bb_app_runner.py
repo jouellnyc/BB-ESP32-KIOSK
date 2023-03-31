@@ -8,7 +8,7 @@ import mrequests
 from hardware.screen_runner import display as d
 
 """ All non caught errors are handled by main.py """  
-from . team_id import team_id, team_name, team_code
+from bbapp.team_id import team_id, team_name, team_code
 start=5 
 delta=45
 
