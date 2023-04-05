@@ -22,6 +22,7 @@ raw = f"https://raw.githubusercontent.com/{user}/{repository}/master/"
 ignore_files = [
     "hardware/wifi_config.py",
     "hardware/config.py",
+    "bbapp/team_id.py",
     "appsetup/setup_complete.txt",
 ]
 ignore_dirs = ['images']
