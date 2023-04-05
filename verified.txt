@@ -1,0 +1,1 @@
+MicroPython v1.19.1 on 2022-06-18; ESP32 module (spiram) with ESP32
