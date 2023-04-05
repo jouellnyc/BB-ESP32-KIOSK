@@ -15,8 +15,7 @@ ENDPOINTS = endpoints.ENDPOINTS
 """MLB Stats API endpoint configuration"""
 
 logger = logging.getLogger("statsapi")
-###JJO
-logger.setLevel(logging.DEBUG)
+###JJO logger.setLevel(logging.DEBUG)
 
 
 def schedule(
