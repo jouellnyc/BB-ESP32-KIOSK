@@ -143,6 +143,8 @@ def get_score():
             all_teams = f.read()
         all_team_ids = ujson.loads(all_teams)
         
+        global team1
+        global team2
         team1 = str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == home_id][0]).upper()
         team2 = str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == away_id][0]).upper()
         
@@ -162,6 +164,9 @@ def get_score():
         
         global our_score
         global opp_score
+        global team1_score
+        global team2_score
+        
         """ These are both strings - Reminder """
         if team_id == home_id:
             print('We are the home team')
@@ -174,6 +179,8 @@ def get_score():
         
                     
         """ Records """
+        global home_rec
+        global away_rec
         home_rec = games[0].get('home_rec','NA')
         away_rec = games[0].get('away_rec','NA')
         
@@ -219,17 +226,6 @@ def get_score():
                 fsleep=5
             else:
                 fsleep=30            
-            def show_final():
-                game_status = "Final Score"
-                lp = get_x_p(games[0]['losing_pitcher'])
-                wp = get_x_p(games[0]['winning_pitcher'])
-                d.clear_fill()
-                d.draw_text(5, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
-                d.draw_text(5, start + (1 * delta), f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , d.drk_grn)
-                d.draw_text(5, start + (2 * delta), f"{team2}:{team2_score} A {away_rec}" , d.score_font, d.white , d.drk_grn)
-                d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , d.drk_grn)
-                d.draw_text(5, 0     + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , d.drk_grn)
-                d.draw_outline_box()
             show_final()
             print(f'sleeping for {fsleep}') if DEBUG else None
             time.sleep(fsleep)
@@ -349,6 +345,18 @@ def show_filler_news(func, func_sleep=30):
     d.fresh_box()
     cycle_stories(func, func_sleep=30)
 
+def show_final():
+    game_status = "Final Score"
+    lp = get_x_p(games[0]['losing_pitcher'])
+    wp = get_x_p(games[0]['winning_pitcher'])
+    d.clear_fill()
+    d.draw_text(5, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
+    d.draw_text(5, start + (1 * delta), f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5, start + (2 * delta), f"{team2}:{team2_score} A {away_rec}" , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , d.drk_grn)
+    d.draw_text(5, 0     + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , d.drk_grn)
+    d.draw_outline_box()
+                
 def show_logo():
     print("start show_logo") if DEBUG else None
     d.draw_text(235, 5,  team_code.upper(), d.date_font, d.white, d.drk_grn)
@@ -371,7 +379,7 @@ while True:
     
     global games
     force_offseason = False
-    test_regular_season = False
+    test_regular_season = True
     
     print(f"Version: {version}")
     yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]
