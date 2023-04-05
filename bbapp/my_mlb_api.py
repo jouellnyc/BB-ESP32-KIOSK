@@ -5,8 +5,7 @@ Credit: https://github.com/toddrob99/MLB-StatsAPI
 import sys
 ###JJO import copy
 import logging
-###JJO import urequests as requests
-import mrequests as requests
+import urequests as requests
 
 from . import endpoints
 
@@ -16,6 +15,8 @@ ENDPOINTS = endpoints.ENDPOINTS
 """MLB Stats API endpoint configuration"""
 
 logger = logging.getLogger("statsapi")
+###JJO
+logger.setLevel(logging.DEBUG)
 
 
 def schedule(
@@ -198,6 +199,7 @@ def get(endpoint, params, force=False):
         raise ValueError("Invalid endpoint (" + str(endpoint) + ").")
 
     url = ep["url"]
+    print(url)
     logger.debug("URL: {}".format(url))
 
     path_params = {}
