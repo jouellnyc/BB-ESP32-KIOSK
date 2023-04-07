@@ -1,0 +1,2 @@
+are old news file being deleted?
+what if zero len news happens? - why does that happen?

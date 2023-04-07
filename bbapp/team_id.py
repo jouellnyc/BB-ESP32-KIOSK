@@ -1,1 +1,3 @@
-team_id=133
+team_id=111
+team_name= 'Red Sox' 
+team_code= 'bos' 

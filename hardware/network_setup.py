@@ -1,5 +1,6 @@
 """
-Credit: https://forum.micropython.org/viewtopic.php?t=12294&p=66757
+Credits: https://forum.micropython.org/viewtopic.php?t=12294&p=66757
+        https://forum.micropython.org/viewtopic.php?t=5145
 """
 
 import time

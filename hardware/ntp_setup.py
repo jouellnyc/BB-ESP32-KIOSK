@@ -1,3 +1,15 @@
+""" NTP - Setup
+    We set the local time via ntp because we do not trust the device to store time
+    ntpsettime does not support timezones, it defaults to UTC
+    We calculate the non-UTC local time (NULT) in bb_app_runner using 'timezone'
+    We submit *that* date to MLB API to get the game day date in UTC(z)
+    We *that* ('game_datetime': '2023-04-06T17:10:00Z') to NULT to display the upcoming game time """
+
+
+#EDT
+timezone = -4
+clockmode = 12
+
 def utc_to_local(_time):
     
     import time
@@ -8,10 +20,6 @@ def utc_to_local(_time):
     _w=tuple(_w)
     utc_time = time.mktime(_w)
 
-
-    #EDT
-    timezone = -4
-    clockmode = 12
 
     # Constants
     DAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
@@ -42,7 +50,7 @@ def main():
     ntptime.host = "time.google.com"
 
     def ntp_set():
-        if count == 3:
+        if count == 5:
             print('NTP timeout, rebooting')
             import machine
             machine.reset()
@@ -59,6 +67,7 @@ def main():
             count +1
             ntp_set()
     else:
+        print("Set Time to UTC")
         print("Local time after synchronization：%s" % str(time.localtime()))
 
             

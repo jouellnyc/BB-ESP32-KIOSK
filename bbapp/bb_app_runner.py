@@ -1,9 +1,12 @@
 import os
 import sys
+import utime
 import time
 import re
 import mrequests
-    
+import ujson
+
+
 """ SCREEN SETUP """ 
 from hardware.screen_runner import display as d
 
@@ -14,7 +17,7 @@ delta=45
 
 """ BB SETUP """
 from . import my_mlb_api
-from hardware.ntp_setup import utc_to_local
+from hardware.ntp_setup import utc_to_local, timezone
 od_url='https://en.wikipedia.org/wiki/2023_Major_League_Baseball_season'
 ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
 opening_day = 'March 30'
@@ -36,18 +39,14 @@ def check_if_game(sleep=7):
 
 def check_season():
     print("start check_season") if DEBUG else None
-    if int(mt) in [11,12,01,02,03]:
-        if int(mt) == 3 and (int(dy) == 30 or int(dy) == 31):
-            print("Regular Season") 
-            reg_season()
-            check_if_game()
-        else:
-            print("Off Season")
-            off_season()
-    else:
-        print("Regular Season")
+    if (int(mt) in [04, 05, 06, 07, 08, 09, 10]) or \
+       (int(mt) == 3 and (int(dy) == 30 or int(dy) == 31)):
+        print("Regular Season") 
         reg_season()
         check_if_game()
+    else:
+        print("Off Season")
+        off_season()
     
 def check_http_code(request):
     
@@ -97,7 +96,7 @@ def cycle_stories(func, func_sleep=30):
                            bg=d.drk_grn, fg=d.white)
             """ x_pos for fill_rectangle must be at 1     """
             """ to keep vert lines from being overwritten """
-            print(f"Sleeping for {story_sleep} in {__name__}") if DEBUG else None
+            print(f"Sleeping for {story_sleep} in cycle stories_else {__name__}") if DEBUG else None
             time.sleep(story_sleep)
             clear_story_area()
         story_count+=1
@@ -130,7 +129,11 @@ def get_news_from_file():
         print("News Error:",str(e))
         raise
     else:
-        print(f"News [] len: {len(news)}") if DEBUG else None
+        print(f"news=[] len: {len(news)} stories") if DEBUG else None
+
+def get_all_team_ids():
+    with open("/bbapp/team_ids.py") as f:
+        return ujson.loads(f.read())
         
 def get_score():
         print("start get_score") if DEBUG else None
@@ -138,10 +141,8 @@ def get_score():
         home_id = games[0].get("home_id",'NA')
         away_id = games[0].get("away_id",'NA')
         
-        import ujson
-        with open("/bbapp/team_ids.py") as f:
-            all_teams = f.read()
-        all_team_ids = ujson.loads(all_teams)
+        
+        all_team_ids = get_all_team_ids()
         
         global team1
         global team2
@@ -196,7 +197,9 @@ def get_score():
         """
 
         """ Status Check """
+        global game_status
         game_status = games[0].get("status",'NA')
+        
         if game_status == "In Progress" or "eview" in game_status:
             
             balls   = games[0].get('Balls','NA')
@@ -216,7 +219,7 @@ def get_score():
             
             if test_regular_season:
                 return 2
-            return 60 # check back every x seconds
+            return 20 # check back every x seconds
         
         elif game_status == "Game Over" or game_status == "Final":
             
@@ -227,23 +230,24 @@ def get_score():
             else:
                 fsleep=30            
             show_final()
-            print(f'sleeping for {fsleep}') if DEBUG else None
+            print(f'sleeping for {fsleep} in  {game_status}') if DEBUG else None
             time.sleep(fsleep)
             show_filler_news(show_final, func_sleep=fsleep)
             return 1
         
-        else:  #"Scheduled"/"Warm up"/"Pre Game"
-            
-            gm_time=games[0].get('game_datetime','NA')
-            tm=utc_to_local(gm_time)
-            
-            d.clear_fill()
-            d.draw_text(5, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
-            d.draw_text(5, start + (1 * delta), f"{team1}:N H {home_rec}"             , d.score_font, d.white , d.drk_grn)
-            d.draw_text(5, start + (2 * delta), f"{team2}:N A {away_rec}"             , d.score_font, d.white , d.drk_grn)
-            d.draw_text(5, start + (3 * delta), f"Game at {tm}"                       , d.sm_font,    d.white , d.drk_grn)
-            d.draw_text(5, start + (4 * delta), f"ZZZZZZZZZZZZZZZZZZZZZ"              , d.sm_font,   d.drk_grn, d.drk_grn)
-            d.draw_outline_box()
+        elif game_status == "Scheduled":
+            if test_regular_season:
+                fsleep=5
+            else:
+                fsleep=30            
+            show_scheduled()
+            print(f'sleeping for {fsleep} in  {game_status}') if DEBUG else None
+            time.sleep(fsleep)
+            show_filler_news(show_scheduled, func_sleep=fsleep)
+            return 1
+        
+        else:  # Warm up"/"Pre Game / Delayed"
+            show_scheduled()
             if test_regular_season:
                 return 2
             return 60 * 10 # check back every 10 minutes
@@ -356,7 +360,20 @@ def show_final():
     d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , d.drk_grn)
     d.draw_text(5, 0     + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , d.drk_grn)
     d.draw_outline_box()
-                
+
+def show_scheduled():
+    gm_time=games[0].get('game_datetime','NA')
+    """ Take the UTC Time in MLB Api and display it in the local timezone """
+    tm=utc_to_local(gm_time)
+    d.clear_fill()
+    d.draw_text(5, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
+    d.draw_text(5, start + (1 * delta), f"{team1}:N H {home_rec}"             , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5, start + (2 * delta), f"{team2}:N A {away_rec}"             , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5, start + (3 * delta), f"Game at {tm}"                       , d.sm_font,    d.white , d.drk_grn)
+    d.draw_text(5, start + (4 * delta), f"ZZZZZZZZZZZZZZZZZZZZZ"              , d.sm_font,   d.drk_grn, d.drk_grn)
+    d.draw_outline_box()
+    
+    
 def show_logo():
     print("start show_logo") if DEBUG else None
     d.draw_text(235, 5,  team_code.upper(), d.date_font, d.white, d.drk_grn)
@@ -382,19 +399,20 @@ while True:
     test_regular_season = False
     
     print(f"Version: {version}")
-    yr, mt, dy, hr, mn, s1, s2, s3 = [ f"{x:02d}" for x in time.localtime() ]
-    short_yr = f"{int( str(yr)[2:]):02d}"
+    yr, mt, dy, hr, mn, s1, s2, s3 = [  f"{x:02d}" for x in utime.localtime(utime.mktime(utime.localtime()) + (int(timezone)*3600)) ]
+    """ Game Time to query  MLB API for game data using timezone in ntp_setup.py """
     gm_dt = f"{mt}/{dy}/{yr}"
+    print(f"Today's Local Game Date: {gm_dt}")
+    short_yr = f"{int( str(yr)[2:]):02d}"
     news_file = f"news.{mt}-{dy}-{yr}.txt"
-    
-    print("Date: ",gm_dt)
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
-    print("Month is",mt)
         
     try:
         if force_offseason:
+            #Will go on infinitely ...
             off_season()
         elif test_regular_season:
+            #Will go on infinitely ...
             regular_season_test()
         else:
             check_season()        
@@ -403,5 +421,4 @@ while True:
         #https://github.com/espressif/esp-idf/issues/2907
         if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
             import machine
-            machine.reset()            
-
+            machine.reset()
