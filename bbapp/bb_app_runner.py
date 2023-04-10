@@ -3,7 +3,7 @@ import sys
 import utime
 import time
 import re
-import mrequests
+import mrequests as requests
 import ujson
 
 
@@ -106,7 +106,7 @@ def get_latest_news(count=1, err="reboot/netfail"):
     if count == 3:
         d.crash_burn(err)
     try:
-        request = mrequests.get(news_url,headers={b"accept": b"text/html"})
+        request = requests.get(news_url,headers={b"accept": b"text/html"})
     except OSError:
         print(f"Request failed. count: {count}")
         count+=1
@@ -323,9 +323,9 @@ def rm_old_news():
     else:
         return True
 
-def save_news_file(r):
+def save_news_file(request):
     try:
-        r.save(news_file)
+        request.save(news_file)
     except OSError:
         raise
     else:
@@ -396,7 +396,7 @@ while True:
     
     global games
     force_offseason = False
-    test_regular_season = False
+    test_regular_season = True
     
     print(f"Version: {version}")
     yr, mt, dy, hr, mn, s1, s2, s3 = [  f"{x:02d}" for x in utime.localtime(utime.mktime(utime.localtime()) + (int(timezone)*3600)) ]

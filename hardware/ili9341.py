@@ -1,5 +1,6 @@
 """
 Credit : https://github.com/rdagger/micropython-ili9341
+See    : https://github.com/rdagger/micropython-ili9341/issues/13
 """
 
 """ILI9341 LCD/Touch module."""
@@ -86,12 +87,24 @@ class Display(object):
     ENABLE3G = const(0xF2)  # Enable 3 gamma control
     PUMPRC = const(0xF7)  # Pump ratio control
 
+    """ Original
+
     ROTATE = {
         0: 0x88,
         90: 0xE8,
         180: 0x48,
         270: 0x28
     }
+    
+    """
+    
+    ROTATE = {
+        0: 0xC8,
+        90: 0xA8,
+        180: 0x48,
+        270: 0x28
+    }
+    
 
     def __init__(self, spi, cs, dc, rst,
                  width=240, height=320, rotation=0):
