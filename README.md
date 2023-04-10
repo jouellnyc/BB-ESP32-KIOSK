@@ -14,6 +14,7 @@
 - If it's gametime for you team, the kiosk will refresh the score every 120 seconds.
 - If no game 'today',  it will wait a few hours and retry.
 - If it's the offseason, it will tell you when open day is.
+- Stories from mlb.com will display afterward for 7 seconds and rotate
 
 #### Requirements
 - ESP32 DevKitC
