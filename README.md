@@ -3,13 +3,7 @@
 #### ESP32 Game Day BaseBall Kiosk
 
 
-|<A HREF="https://www.tindie.com/products/lilygo/lilygo-ttgo-t4-v13-ili9341-24-inch-lcd-display/">LilyGo 2.4 Inch ili9341 ESP32</A> 
-|<A HREF="https://www.aliexpress.us/item/3256802898629918.html">LilyGO T-WATCH-2020 V3 </A> 
-|<A HREF="https://www.espressif.com/en/news/ESP32-S3-BOX_video">ESP32-S3-BOX Lite      </A> 
-| ------------- | ------------- | ------------- |
-|<img src="images/lily_24_esp32.png" width="200"/>
-|<img src="images/lily_go_watch.png" width="200"/>
-|<img src="images/esp-32-s3-box-lite.png" width="200"/>|
+|<A HREF="https://www.tindie.com/products/lilygo/lilygo-ttgo-t4-v13-ili9341-24-inch-lcd-display/">LilyGo 2.4 Inch ili9341 ESP32</A> |<A HREF="https://www.aliexpress.us/item/3256802898629918.html">LilyGO T-WATCH-2020 V3 </A> |<A HREF="https://www.espressif.com/en/news/ESP32-S3-BOX_video">ESP32-S3-BOX Lite      </A> | ------------- | ------------- | ------------- | |<img src="images/lily_24_esp32.png" width="200"/> |<img src="images/lily_go_watch.png" width="200"/> |<img src="images/esp-32-s3-box-lite.png" width="200"/>|
 
 
 |<A HREF="https://www.thingiverse.com/thing:3461768"      >ThingVerse #1          </A> 
