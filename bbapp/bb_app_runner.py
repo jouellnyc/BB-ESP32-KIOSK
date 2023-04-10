@@ -218,6 +218,7 @@ def get_score():
             d.draw_outline_box()
             
             if test_regular_season:
+                print("Testing Regular Season")
                 return 2
             return 20 # check back every x seconds
         
@@ -314,7 +315,7 @@ def rm_accents(story):
                 .replace('\xf9','u').replace('\xc9','E').replace('\xe1','a')\
                 .replace('\xcd','I').replace('\xf3','o').replace('\xda','U')\
                 .replace(u"\u2018", "'").replace(u"\u2019", "'")\
-                .replace(u'\xa0', u' ')
+                .replace(u'\xa0', u' ').replace(u'\xc1','A')
 def rm_old_news():
     try:
         [ os.unlink(x) for x in os.listdir() if 'news' in x and news_file not in x ]
