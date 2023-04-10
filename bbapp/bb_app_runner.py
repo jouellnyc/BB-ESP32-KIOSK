@@ -397,7 +397,7 @@ while True:
     
     global games
     force_offseason = False
-    test_regular_season = True
+    test_regular_season = False
     
     print(f"Version: {version}")
     yr, mt, dy, hr, mn, s1, s2, s3 = [  f"{x:02d}" for x in utime.localtime(utime.mktime(utime.localtime()) + (int(timezone)*3600)) ]
