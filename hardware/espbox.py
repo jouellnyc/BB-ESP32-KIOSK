@@ -111,12 +111,13 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
        
        ["Celebrate Aaron's", 'birthday with 13', 'stats that show his', 'greatness']
        
-       ...but do so in a way that does not step outside the character/pixel limits  """
+       ...but do so in a way that does not step outside the character/pixel limits  
+         
+       We  pass in a 'text container' to scroll_print which will be either
+       and instance of an error or a string                                        """
     
-    debug = False
+    debug = True
     
-    """ We will pass in a 'text container' which will be either
-        and instance of an error or a string                                        """
     if clear:
         display.fresh_box()        
     
@@ -126,26 +127,31 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
         
     def proc_text(text):
         """ Here's where we do the processing of the 'text' """
-            
+        
         def get_raw_parts(_text):
             """ Split 'text' to list[] in scr_len increments as a first pass
-                return a list of 'raw' parts like this:
-                ["Celebrate Aaron's", "birthday with 13 s","tats that show his greatness"] """
-            return [ _text[i : i + scr_len] for i in range(0, len(_text), scr_len)]
-        
+            return a list of 'raw' parts like this:
+            ["Celebrate Aaron's", "birthday with 13 s","tats that show his greatness"] """
+            return [ _text[i:i + scr_len]
+                     for i in range(0,len(_text),scr_len)
+                         if any([ x.isalpha() for x in _text[i:i + scr_len]])
+                   ]
+                
         def mv_parts(text):
             """ Cycle through / Get the 'raw' 'parts' of  'text', convert each to a list.
                 Then align() each item/push characters to the next part if needed. 
                 
-                Return a list of strings that do no 'run on', but still need to be processed for length.
+                Return a list of strings that do not 'run on', but still need to be processed for length.
                 Ex. ["Celebrate Aaron's ", 'birthday with 13 ', 'stats that show his', ' greatness']   """
             
             print(f"Text: {text}") if debug else None
             raw_parts = get_raw_parts(text)
+            print (f"len() raw_parts: {len(raw_parts)}") if debug else None
+            print(f"Raw Parts: {raw_parts}") if debug else None
             
             if debug:
-                for _each in raw_parts:
-                    print(f"Raw Part: {_each} -  Raw tsum: {get_tsum(_each)}")  
+                for idx, _each in enumerate(raw_parts):
+                    print(f"Raw Part {idx}: {_each} -  Raw tsum: {get_tsum(_each)}")  
             
             max_num_raw_parts = len(raw_parts)-2
             start=0
