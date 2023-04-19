@@ -2,22 +2,22 @@ import os
 import sys
 import utime
 import time
-import re
 import mrequests as requests
 import ujson
-
+from .news import News
 
 """ SCREEN SETUP """ 
 from hardware.screen_runner import display as d
 
 """ All non caught errors are handled by main.py """  
 from bbapp.team_id import team_id, team_name, team_code
+from bbapp.team_colors import TEAM_COLORS
+from hardware.ili9341 import color565
 start=5 
 delta=45
 
 """ BB SETUP """
 from . import my_mlb_api
-from hardware.ntp_setup import utc_to_local, timezone
 od_url='https://en.wikipedia.org/wiki/2023_Major_League_Baseball_season'
 ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
 opening_day = 'March 30'
@@ -25,6 +25,11 @@ news_url="https://www.mlb.com/news/"
 
 """ Version """
 from .version import version
+
+def set_team_color():
+    global your_team_color
+    r, g, b = TEAM_COLORS[team_code.upper()]
+    your_team_color = color565(r, g, b)
 
 def check_if_game(sleep=7):
     print("Checking if there's a game") if DEBUG else None
@@ -47,38 +52,17 @@ def check_season():
     else:
         print("Off Season")
         off_season()
-    
-def check_http_code(request):
-    
-    if request.status_code != 200:
-        err=f"Request failed: {request.status_code} at {news_url}"
-        print(err)
-        count+=1
-        time.sleep(5)
-        get_latest_news(count=count, err=err)
-    else:
-        cleanup_news_files(request)
-            
-            
-def cleanup_news_files(request):
-    
-    if save_news_file(request):
-        
-        print(f"News save to {news_file} OK")
-
-        if rm_old_news():
-            print("old news deleted OK")
-        else:
-            print("old news delete failed")
-    else:
-        print(f"News save to {news_file} failed")
 
 def clear_story_area():
     d.fill_rectangle(1, 41, 318, 198, d.drk_grn)
     
-def cycle_stories(func, func_sleep=30):
+def cycle_stories(func, news=0, func_sleep=30):
     print('Now in cycle_stories') if DEBUG else None
-    story_count=1 ; story_sleep=7
+    story_count=1 ;
+    if test_regular_season:
+        story_sleep=1
+    else:
+        story_sleep=7
     for story in news:
         print(f"== {story_count}")
         if story_count > 0 and story_count % 7 == 0:
@@ -101,36 +85,6 @@ def cycle_stories(func, func_sleep=30):
             clear_story_area()
         story_count+=1
         
-def get_latest_news(count=1, err="reboot/netfail"):
-    print("get_latest_news") if DEBUG else None
-    if count == 3:
-        d.crash_burn(err)
-    try:
-        request = requests.get(news_url,headers={b"accept": b"text/html"})
-    except OSError:
-        print(f"Request failed. count: {count}")
-        count+=1
-        get_latest_news(count=count)
-    else:
-        check_http_code(request)
-
-
-def get_news_from_file():
-    print("start get_news_from_file") if DEBUG else None
-    global news
-    news=[]
-    try:
-        with open(news_file) as fh:
-            for line in fh:
-                story = re.search('data-headline="(.*?)"',line)
-                if story is not None:
-                    news.append(story.group(1))
-    except OSError as e:
-        print("News Error:",str(e))
-        raise
-    else:
-        print(f"news=[] len: {len(news)} stories") if DEBUG else None
-
 def get_all_team_ids():
     with open("/bbapp/team_ids.py") as f:
         return ujson.loads(f.read())
@@ -146,8 +100,15 @@ def get_score():
         
         global team1
         global team2
+        global t1_color
+        global t2_color
+        
         team1 = str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == home_id][0]).upper()
         team2 = str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == away_id][0]).upper()
+        r, g, b = TEAM_COLORS[team1]
+        t1_color = color565(r, g, b)
+        r, g, b = TEAM_COLORS[team2]
+        t2_color = color565(r, g, b)
         
         """ typical 'x' above
         ...
@@ -206,13 +167,14 @@ def get_score():
             strks   = games[0].get('Strikes','NA')
             outs    = games[0].get('Outs','NA')	
             inn_cur = games[0].get("current_inning",'NA')
+            ordinals = {1: 'st', 2: 'nd', 3: 'rd', 4: 'th', 5: 'th', 6: 'th', 7: 'th', 8: 'th', 9: 'th', 10: 'th'}
             in_sta  = games[0].get("inning_state",'NA')
             batter  = get_x_p(games[0].get("Batter",'NA'))
                     
             d.clear_fill()
-            d.draw_text(5,  start + (0 * delta), f"{mt}-{dy}-{short_yr} {in_sta} {inn_cur}", d.date_font,  d.white , d.drk_grn)
-            d.draw_text(5,  start + (1 * delta) + 5, f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , d.drk_grn)
-            d.draw_text(5,  start + (2 * delta) + 5, f"{team2}:{team2_score} A {away_rec}" , d.score_font, d.white , d.drk_grn)
+            d.draw_text(5,  start + (0 * delta),     f"{in_sta} {inn_cur}{ordinals[inn_cur]} {mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
+            d.draw_text(5,  start + (1 * delta) + 5, f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , t1_color)
+            d.draw_text(5,  start + (2 * delta) + 5, f"{team2}:{team2_score} A {away_rec}" , d.score_font, d.white , t2_color)
             d.draw_text(5,  start + (3 * delta) + 5, f"AB: {batter}"                       , d.sm_font,    d.white , d.drk_grn)
             d.draw_text(10, start + (4 * delta) + 5, f"B: {balls} S: {strks} O: {outs }"   , d.sm_font,    d.white , d.drk_grn)
             d.draw_outline_box()
@@ -260,15 +222,7 @@ def get_x_p(pname):
     fi = list(fn.split(' ')[0])[0]
     pn = fi + '.' + ln
     return pn        
-
         
-def news_is_current():
-    try:
-        if os.stat(news_file):
-            return True
-    except OSError:
-        return False
-
 def no_gm(sleep=7):
     show_no_gm()
     print(f"Sleeping for {sleep} seconds in show_no_gm")
@@ -291,7 +245,7 @@ def opening_day_screen():
     d.draw_text(5,    start + (0 * delta)      ,f"{mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
     d.draw_text(42,   start + (1 * delta) + 25 ,f"Opening Day"         , d.score_font, d.white , d.drk_grn)
     d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
-    d.draw_text(65,   start + (3 * delta) + 25 ,f"{opening_day}"        , d.score_font, d.white , d.drk_grn)
+    d.draw_text(65,   start + (3 * delta) + 25 ,f"{opening_day}"       , d.score_font, d.white , d.drk_grn)
     
 def reg_season():
     global games
@@ -316,21 +270,6 @@ def rm_accents(story):
                 .replace('\xcd','I').replace('\xf3','o').replace('\xda','U')\
                 .replace(u"\u2018", "'").replace(u"\u2019", "'")\
                 .replace(u'\xa0', u' ').replace(u'\xc1','A')
-def rm_old_news():
-    try:
-        [ os.unlink(x) for x in os.listdir() if 'news' in x and news_file not in x ]
-    except OSError:
-        return False
-    else:
-        return True
-
-def save_news_file(request):
-    try:
-        request.save(news_file)
-    except OSError:
-        raise
-    else:
-        return True
 
 def say_fetching(text='Fetching Data'):
     d.fresh_box()
@@ -338,28 +277,22 @@ def say_fetching(text='Fetching Data'):
    
 def show_filler_news(func, func_sleep=30):
     print('In show_filler_news') if DEBUG else None
-    if news_is_current():
-        print('News is current - getting from file') if DEBUG else None
-        say_fetching("Fetching News")
-        get_news_from_file()
-    else:
-        print('News is old - actually getting news from the web')
-        get_latest_news()
-        say_fetching("Fetching News")
-        get_news_from_file()
+    say_fetching("Fetching News")
+    news = n.get_latest_news()
+    print(n.news)
     d.fresh_box()
-    cycle_stories(func, func_sleep=30)
+    cycle_stories(func, news, func_sleep=30)
 
 def show_final():
     game_status = "Final Score"
     lp = get_x_p(games[0]['losing_pitcher'])
     wp = get_x_p(games[0]['winning_pitcher'])
     d.clear_fill()
-    d.draw_text(5, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
-    d.draw_text(5, start + (1 * delta), f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , d.drk_grn)
-    d.draw_text(5, start + (2 * delta), f"{team2}:{team2_score} A {away_rec}" , d.score_font, d.white , d.drk_grn)
-    d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , d.drk_grn)
-    d.draw_text(5, 0     + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , d.drk_grn)
+    d.draw_text(5, start + (0 * delta), f"{game_status} {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
+    d.draw_text(5, start + (1 * delta), f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , t1_color)
+    d.draw_text(5, start + (2 * delta), f"{team2}:{team2_score} A {away_rec}" , d.score_font, d.white , t2_color)
+    d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , t1_color)
+    d.draw_text(5, 0     + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , t2_color)
     d.draw_outline_box()
 
 def show_scheduled():
@@ -367,9 +300,9 @@ def show_scheduled():
     """ Take the UTC Time in MLB Api and display it in the local timezone """
     tm=utc_to_local(gm_time)
     d.clear_fill()
-    d.draw_text(5, start + (0 * delta), f"{mt}-{dy}-{short_yr} {game_status}" , d.date_font,  d.white , d.drk_grn)
-    d.draw_text(5, start + (1 * delta), f"{team1}:N H {home_rec}"             , d.score_font, d.white , d.drk_grn)
-    d.draw_text(5, start + (2 * delta), f"{team2}:N A {away_rec}"             , d.score_font, d.white , d.drk_grn)
+    d.draw_text(5, start + (0 * delta), f"{game_status} {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
+    d.draw_text(5, start + (1 * delta), f"{team1}:N H {home_rec}"             , d.score_font, d.white , t1_color)
+    d.draw_text(5, start + (2 * delta), f"{team2}:N A {away_rec}"             , d.score_font, d.white , t2_color)
     d.draw_text(5, start + (3 * delta), f"Game at {tm}"                       , d.sm_font,    d.white , d.drk_grn)
     d.draw_text(5, start + (4 * delta), f"ZZZZZZZZZZZZZZZZZZZZZ"              , d.sm_font,   d.drk_grn, d.drk_grn)
     d.draw_outline_box()
@@ -384,10 +317,11 @@ def show_no_gm():
     d.fresh_box()
     d.draw_text(5,   5,  gm_dt, d.date_font, d.white, d.drk_grn)
     show_logo()
-    d.draw_text(40, 75,  f"No {team_name}" , d.score_font, d.white, d.drk_grn)
-    d.draw_text(40, 125, f"Game Today!"    , d.score_font, d.white, d.drk_grn)
+    d.draw_text(40, 75,  f"No {team_name}" , d.score_font, d.white, your_team_color)
+    d.draw_text(40, 125, f"Game Today!"    , d.score_font, d.white, your_team_color)
     
-    
+
+
 while True:
     
     DEBUG=True
@@ -398,8 +332,10 @@ while True:
     global games
     force_offseason = False
     test_regular_season = False
+    set_team_color()
     
     print(f"Version: {version}")
+    from hardware.ntp_setup import utc_to_local, timezone
     yr, mt, dy, hr, mn, s1, s2, s3 = [  f"{x:02d}" for x in utime.localtime(utime.mktime(utime.localtime()) + (int(timezone)*3600)) ]
     """ Game Time to query  MLB API for game data using timezone in ntp_setup.py """
     gm_dt = f"{mt}/{dy}/{yr}"
@@ -407,7 +343,8 @@ while True:
     short_yr = f"{int( str(yr)[2:]):02d}"
     news_file = f"news.{mt}-{dy}-{yr}.txt"
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
-        
+    n = News(news_file)
+ 
     try:
         if force_offseason:
             #Will go on infinitely ...
