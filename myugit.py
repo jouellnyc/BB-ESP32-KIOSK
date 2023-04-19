@@ -21,7 +21,6 @@ call_trees_url = f"https://api.github.com/repos/{user}/{repository}/git/trees/ma
 raw = f"https://raw.githubusercontent.com/{user}/{repository}/master/"
 ignore_files = [
     "hardware/wifi_config.py",
-    "hardware/config.py",
     "bbapp/team_id.py",
     "appsetup/setup_complete.txt",
 ]
