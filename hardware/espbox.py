@@ -1,32 +1,29 @@
-""" These value are for the ESP32-S3-BOX """
-from machine import Pin, SPI, ADC
-import time
+""" These value are for the ESP32-S3-BOX as per Russ      """
+""" https://github.com/orgs/micropython/discussions/10435 """
+""" https://github.com/orgs/micropython/discussions/10391 """
 
-from .ili9341 import color565, Display
+import hardware.russ_config  as tft_config
+ldisplay = tft_config.config(3)
+ldisplay.init()
 
-from .font_runner import sm_font, score_font, date_font
 from bbapp.version import version
 
+from machine import ADC, SPI, Pin
+adc = ADC(Pin(1))
+
+""" At this point the ili9341 display driver take over after being init'ed above """
+from .ili9341 import color565, Display
+spi = SPI(1, baudrate=40000000, sck=Pin(7), mosi=Pin(6))
+display = Display(spi, dc=Pin(4), cs=Pin(5), rst=Pin(48), width=320, height=240, rotation=0)
+
+from .font_runner import sm_font, score_font, date_font
 drk_grn=color565(58, 124, 14)   # esp full box
 black=color565(0, 0, 0)
 white=color565(255,255,255)
 yellow=color565(255, 0, 0)
 green=color565(0,0,255)
 pink=color565(0, 255, 0)
-
-dc=4
-cs=5
-rst=48
-rotation=0
-width=320
-height=240
-
-spi = SPI(1, baudrate=40000000, sck=Pin(7), mosi=Pin(6))
-display = Display(spi, dc=Pin(dc), cs=Pin(cs), rst=Pin(rst), width=width, height=height, rotation=rotation)
-
-adc = ADC(Pin(1))
-
-
+red =  color565(255, 0, 0)
 
 """ How many chars per line  before you hit the end """
 anum = {'r': '36', 'Y': '19', 'Z': '22', 'y': '27', 'x': '27', 'z': '27', 'E':'21',
@@ -57,6 +54,8 @@ apnt2 = {'K': 18, 'J': 11, 'U': 15, 'T': 15, 'W': 22, 'V': 16, 'Q': 19, 'P': 15,
          'x': 11, 'c': 12, 'b': 13, 'm': 19, 'l': 5, 'o': 13, 'n': 13, 'i': 5,
          'h': 13, 'k': 13, 'j': 5, 'u': 13, 0: 14, 1: 10, 2: 13, 3: 14, 4: 14,
           5:14, 6: 14, 7: 14, 8: 14, 9: 14, "'": 4, '-': 8, ' ': 14, '.': 6}
+
+""" The methods to attach to  DisplayProxy instance: """
 
 def draw_outline_box():
     display.draw_vline(0,    0, 240, white)
@@ -116,7 +115,7 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
        We  pass in a 'text container' to scroll_print which will be either
        and instance of an error or a string                                        """
     
-    debug = True
+    debug = False
     
     if clear:
         display.fresh_box()        
@@ -311,6 +310,7 @@ def check_upgrade():
 display.draw_outline_box = draw_outline_box
 display.clear_fill       = clear_fill
 display.print_setup      = print_setup
+display.red              = white
 display.white            = white
 display.drk_grn          = drk_grn
 display.black            = black

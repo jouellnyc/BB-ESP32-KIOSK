@@ -8,6 +8,7 @@
 
 #EDT
 timezone = -4
+tz_name  = 'et'
 clockmode = 12
 
 def utc_to_local(_time):
@@ -47,32 +48,31 @@ def main():
     import time
     import ntptime
     print("Local time before synchronization：%s" % str(time.localtime()))
+    """ Thing can hang for a really long time if DNS is not working """
+    """ https://github.com/micropython/micropython/issues/7137      """
     ntptime.host = "time.google.com"
 
-    def ntp_set():
-        if count == 5:
-            print('NTP timeout, rebooting')
-            import machine
-            machine.reset()
-        else:
+    ntp_count=0
+    while True:
+        try:
             # This sets the RTC to UTC.
             ntptime.settime()
-
-    count=0
-    try:
-        ntp_set() 
-    except OSError as e:
-        if 'ETIMEDOUT' in str(e):
-            print('NTP timeout, retrying')
-            count +1
-            ntp_set()
-    else:
-        print("Set Time to UTC")
-        print("Local time after synchronization：%s" % str(time.localtime()))
-
-            
+        except OSError as e:
+            if 'ETIMEDOUT' in str(e):
+                print('NTP timeout, retrying')
+                ntp_count+=1
+                print(f"NTP retry count {ntp_count}")
+                time.sleep(1)
+                if ntp_count > 4:
+                    print("Fatal NTP Error")
+                    import machine
+                    machine.reset()
+        else:
+            print("Set Time to UTC")
+            print("Local time after synchronization：%s" % str(time.localtime()))
+            break
+    
 if __name__ == "__main__":
     
-    main() 
-    
+    main()    
     
