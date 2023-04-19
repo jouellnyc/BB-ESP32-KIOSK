@@ -1,2 +1,0 @@
-
-https://statsapi.mlb.com/api/v1/schedule?teamId=111&hydrate=decisions,linescore&sportId=1&endDate=03/30/2023&startDate=03/30/2023
