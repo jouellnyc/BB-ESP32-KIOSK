@@ -1,4 +1,5 @@
-"""ESP32 Box or Box Lite with ili9342c 320x240 display"""
+""" ESP32 Box or Box Lite with ili9342c 320x240 display """
+""" https://github.com/orgs/micropython/discussions/10391 """
 
 from machine import Pin, SPI, freq
 import st7789
