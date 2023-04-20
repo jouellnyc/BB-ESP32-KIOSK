@@ -26,6 +26,7 @@ ignore_files = [
 ]
 ignore_dirs = ['images']
 myugit_log='myugit.log'
+
 def pull(f_path, raw_url):
     print(f"pulling {f_path} from github")
     # files = os.listdir()
@@ -47,8 +48,17 @@ def pull(f_path, raw_url):
 
 
 def pull_all(tree=call_trees_url, raw=raw):
+    main_dirs=['appsetup', 'bbapp','fonts', 'hardware', 'lib']
     log = []
+    """JJO
     os.chdir("/")
+    for one_dir in main_dirs:
+        try:
+            os.stat(one_dir)
+        except OSError:
+            os.mkdir(one_dir)
+            log.append(f"Created {one_dir}")
+    """  
     tree = pull_git_tree()
     for i in tree["tree"]:
         print(i['path'])
