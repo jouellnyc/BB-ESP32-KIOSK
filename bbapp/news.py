@@ -105,8 +105,8 @@ class News:
         print(f"Checking {self.news_file} as news file") if self.DEBUG else None
         try:
             if os.stat(self.news_file):
-                print(f"{os.stat(self.news_file)[6]/1024} k")
-                print('News File Exists: OK')
+                print(f"{os.stat(self.news_file)[6]/1024} k") if self.DEBUG else None
+                print('News File Exists: OK') if self.DEBUG else None
                 return True
         except OSError as e:
             print(f"{self.news_file} - Error: {e}")
@@ -130,7 +130,7 @@ class News:
                     
     def save_news_file(self):
         try:
-            print(f"Trying to save news to {self.news_file}")
+            print(f"Trying to save news to {self.news_file}") if self.DEBUG else None
             self.request.save(self.news_file)
         except OSError:
             print(f"{self.news_file} - news save Failed: {e}")
