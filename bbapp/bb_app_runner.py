@@ -279,7 +279,7 @@ def show_filler_news(func, func_sleep=30):
     print('In show_filler_news') if DEBUG else None
     say_fetching("Fetching News")
     news = n.get_latest_news()
-    print(n.news)
+    print(n.news) if DEBUG else None
     d.fresh_box()
     cycle_stories(func, news, func_sleep=30)
 
@@ -324,7 +324,7 @@ def show_no_gm():
 
 while True:
     
-    DEBUG=True
+    DEBUG=False
     
     import gc
     gc.collect()
