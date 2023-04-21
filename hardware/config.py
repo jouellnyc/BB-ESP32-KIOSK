@@ -1,4 +1,15 @@
-""" Is the Screen 'oled', 'esp32_ili9341_2_8', 'lilygo_ili9341_2_4', 'lilygo_watch' or 'esp32-s3-box-lite'? """
+""" Sceen types:
+
+Options are:
+
+['oled',
+ 'lilygo_watch',
+ 'esp32-s3-box,
+ 'esp32-s3-box-lite'
+ 'esp32_ili9341_2_8',
+ 'lilygo_ili9341_2_4']
+
+"""
 screen = 'esp32-s3-box'
 
 """ Below values are valid only for screens with ili in the name """
