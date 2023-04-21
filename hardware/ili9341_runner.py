@@ -347,7 +347,7 @@ def fresh_box():
     display.clear_fill()
     display.draw_outline_box()
 
-def check_upgrade()
+def check_upgrade():
     return False
         
 display.draw_outline_box = draw_outline_box
