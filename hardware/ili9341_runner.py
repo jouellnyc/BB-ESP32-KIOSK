@@ -347,6 +347,8 @@ def fresh_box():
     display.clear_fill()
     display.draw_outline_box()
 
+def check_upgrade()
+    return False
         
 display.draw_outline_box = draw_outline_box
 display.clear_fill       = clear_fill
@@ -361,3 +363,4 @@ display.date_font        = date_font
 display.print_err        = print_err
 display.scroll_print     = scroll_print
 display.fresh_box        = fresh_box
+display.check_upgrade    = check_upgrade
