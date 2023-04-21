@@ -4,7 +4,13 @@
 from machine import Pin, SPI
 spi = SPI(2, baudrate=51200000, sck=Pin(18), mosi=Pin(23))
 
-from .ili9341 import color565, Display
+"""
+espbox needs a custom ili9341, others need the 'normal' one:
+https://github.com/orgs/micropython/discussions/10391
+
+"""
+
+from .ili9341_no_madctl import color565, Display
 white=color565(255,255,255)
 drk_grn=color565(50,100,30)
 red=color565(255, 0, 0)
