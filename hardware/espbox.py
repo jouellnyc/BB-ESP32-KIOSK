@@ -101,7 +101,7 @@ def get_tb_text(err):
     
 def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
                  Error=False, clear=True, font=sm_font,
-                 bg=drk_grn, fg=white, debug=False):
+                 bg=drk_grn, fg=white, debug=None):
     """ Given a headline from a text string from mlb.com/news like:
 
        'Celebrate Aaron's birthday with 13 stats that show his greatness'
@@ -115,14 +115,12 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
        We  pass in a 'text container' to scroll_print which will be either
        and instance of an error or a string                                        """
     
-    debug = False
-    
     if clear:
         display.fresh_box()        
     
     """ 5 is already tight, 6 partly off the screen """
     max_rows = 6
-    scr_len  = scr_len
+    #scr_len  = scr_len
         
     def proc_text(text):
         """ Here's where we do the processing of the 'text' """
@@ -133,7 +131,7 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
             ["Celebrate Aaron's", "birthday with 13 s","tats that show his greatness"] """
             return [ _text[i:i + scr_len]
                      for i in range(0,len(_text),scr_len)
-                         if any([ x.isalpha() for x in _text[i:i + scr_len]])
+                         if any([ ( x.isalpha() or x.isdigit() ) for x in _text[i:i + scr_len] ])
                    ]
                 
         def mv_parts(text):
