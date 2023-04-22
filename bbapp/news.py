@@ -132,7 +132,7 @@ class News:
         try:
             print(f"Trying to save news to {self.news_file}") if self.DEBUG else None
             self.request.save(self.news_file)
-        except OSError:
+        except OSError as e:
             print(f"{self.news_file} - news save Failed: {e}")
             raise
         else:
