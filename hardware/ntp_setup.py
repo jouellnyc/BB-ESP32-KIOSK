@@ -1,15 +1,14 @@
 """ NTP - Setup
     We set the local time via ntp because we do not trust the device to store time
     ntpsettime does not support timezones, it defaults to UTC
-    We calculate the non-UTC local time (NULT) in bb_app_runner using 'timezone'
-    We submit *that* date to MLB API to get the game day date in UTC(z)
-    We *that* ('game_datetime': '2023-04-06T17:10:00Z') to NULT to display the upcoming game time """
-
+    We calculate the non-UTC local date (NULD) in bb_app_runner using 'timezone' to find out what 'today' is
+    We submit *that* date to MLB API to find the games for today and there start times (in UTC (z) )
+    We convert *that* ('game_datetime': '2023-04-06T17:10:00Z') to NULT to display the upcoming game time """
 
 #EDT
 timezone = -4
 tz_name  = 'et'
-clockmode = 12
+
 
 def utc_to_local(_time):
     
@@ -35,11 +34,12 @@ def utc_to_local(_time):
     if hh >= 13:
         am_pm = 'p'
         hh    = hh - 12
-    elif hh == 0:
-        hh = 12
+    elif hh == 12:
+        #JJO noon should be pm
+        am_pm = 'p'
     else:
         am_pm = 'a'
-            
+    print('hh', hh)
     then_time = '%2.2d-%2.2d %1.1d:%2.2d' % (mo, dd, hh, mm, ) + am_pm
     return then_time
 
