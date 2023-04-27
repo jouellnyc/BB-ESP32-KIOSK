@@ -3,20 +3,21 @@ Credit: https://github.com/toddrob99/MLB-StatsAPI
 """
 
 import sys
-###JJO import copy
 import logging
-import urequests as requests
-
 from . import endpoints
+
+### - JJO
+ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
+http_headers= { 'User-Agent': ua }
+import urequests as requests
+logger = logging.getLogger("statsapi")
+### JJO - logger.setLevel(logging.DEBUG)
+### JJO - import copy
 
 BASE_URL = endpoints.BASE_URL
 """Base MLB Stats API URL"""
 ENDPOINTS = endpoints.ENDPOINTS
 """MLB Stats API endpoint configuration"""
-
-logger = logging.getLogger("statsapi")
-###JJO logger.setLevel(logging.DEBUG)
-
 
 def schedule(
     date=None,
@@ -308,7 +309,7 @@ def get(endpoint, params, force=False):
         )
 
     # Make the request
-    r = requests.get(url)
+    r = requests.get(url,headers=http_headers)
     if r.status_code not in [200, 201]:
         r.raise_for_status()
     else:

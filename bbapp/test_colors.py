@@ -21,7 +21,7 @@ def grep_team(letter):
             print("")
             
 """
-from bbapp.test_colors import show_teams
-bbapp.test_colors.show_teams('y')
+from bbapp.test_colors import grep_team
+grep_team('Car')
 """    
     

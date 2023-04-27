@@ -218,7 +218,7 @@
   }, {
     "id" : 119,
     "name" : "Los Angeles Dodgers",
-    "teamCode" : "lan",
+    "teamCode" : "lad",
     "fileCode" : "la",
     "teamName" : "Dodgers",
     "locationName" : "Los Angeles",
