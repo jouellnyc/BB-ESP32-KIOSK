@@ -2,7 +2,6 @@ import os
 import sys
 import utime
 import time
-#import mrequests as requests
 import urequests
 import ujson
 
@@ -28,19 +27,10 @@ def timing_decorator(func):
         result = func(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"     >> {func.__name__} = Elapsed time: {elapsed_time:.2f} seconds")
+        print(f"    << {func.__name__} = Elapsed time: {elapsed_time:.2f} seconds")
         return result
     return wrapper
 
-def check_if_game(sleep=7):
-    if not games:
-        no_gm()
-    else:
-        print(f"> Game: {games[0]}")
-        print(f"Status: {games[0]['status']}")
-        what_sleep=get_score()
-        print(f" Sleeping {what_sleep} seconds after get_score") if DEBUG else None
-        time.sleep(what_sleep)
         
 @timing_decorator        
 def check_season():
@@ -48,11 +38,78 @@ def check_season():
        (int(mt) == 3 and (int(dy) == 30 or int(dy) == 31)):
         print("It's the Regular Season") 
         reg_season()
-        check_if_game()
     else:
         print("Off Season")
         off_season()
 
+@timing_decorator
+def reg_season():
+    check_if_game()
+    
+def check_if_game():
+    get_todays_games()
+    if not games:
+        no_gm()
+    else:
+        show_gm(sleep=7)
+
+@timing_decorator
+def get_todays_games():
+    global games
+    global game_id
+    print("Connecting to MLB live sched data") if DEBUG else None
+    games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
+    if len(games) > 1:
+        print("More that one game Today!")
+        if games[0]['status'] == "Final":
+            games[0]=games[1]
+    game_id=games[0].get('game_id','NA')
+
+def show_gm(sleep=7):
+    print(f"> Game: {games[0]}")
+    print(f"Status: {games[0]['status']}")
+    set_teams()
+    what_sleep=get_score()
+    print(f" Sleeping {what_sleep} seconds after get_score") if DEBUG else None
+    time.sleep(what_sleep)
+
+def set_teams():
+    set_team_records()
+    set_team_ids()
+    set_team_colors()
+
+def set_team_records():
+    """ Records """
+    global home_rec
+    global away_rec
+    home_rec = games[0].get('home_rec','NA')
+    away_rec = games[0].get('away_rec','NA')
+    
+def set_team_ids():
+    global home_id
+    global away_id
+    """ Determine home or away from Team Ids Data """
+    home_id = games[0].get("home_id",'NA')
+    away_id = games[0].get("away_id",'NA')
+    """ These are both strings - Reminder """
+    if team_id == home_id:
+        print('Who: We are the home team')
+    else:
+        print('We are the away team')
+    
+def set_team_colors():
+    global home_team
+    global away_team
+    global home_team_color
+    global away_team_color
+    home_team = str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == home_id][0]).upper()
+    away_team = str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == away_id][0]).upper()
+    r, g, b = TEAM_COLORS[home_team]
+    home_team_color = color565(r, g, b)
+    r, g, b = TEAM_COLORS[away_team]
+    away_team_color = color565(r, g, b)
+        
+    
 def clear_story_area():
     d.fill_rectangle(1, 41, 318, 198, d.drk_grn)
     
@@ -86,42 +143,22 @@ def cycle_stories(func, news=0, func_sleep=30):
         story_count+=1
 
 def gc_status_flush():
-    #print("Mem: ", gc.mem_free()) if DEBUG else None
+    print("Mem: ", gc.mem_free()) if DEBUG else None
     gc.collect()
-    #print("Mem: ", gc.mem_free()) if DEBUG else None
+    print("Mem: ", gc.mem_free()) if DEBUG else None
             
 def get_all_team_ids():
     with open("/bbapp/team_ids.py") as f:
         return ujson.loads(f.read())
 
 @timing_decorator
-def get_runners():
-    game_id=games[0]['game_id']
-    url=f"https://statsapi.mlb.com/api/v1.1/game/{game_id}/feed/live"
-    print("Connecting to MLB live data") if DEBUG else None
-    print(utime.localtime())
-    #return ujson.loads(urequests.get(url).text)['liveData']['plays']['currentPlay']['matchup']
-    return ujson.loads(urequests.get(url,headers=http_headers).text)['liveData']['plays']['currentPlay']
-    ##return { 'postOnFirst': {'fullName' :'Frank Smithers'},  'postOnSecond':  {'fullName' :'Samual Hdithers'}, 'postOnThird':  {'fullName' :'Theodore Thumb'} }
+def get_latest_data():
+    url=f"https://statsapi.mlb.com/api/v1.1/game/{game_id}/feed/live?fields=gamePk,liveData,plays,currentPlay,result,description,awayScore,homeScore,about,batter,count,inning,halfInning,balls,strikes,outs,matchup,postOnFirst,postOnSecond,postOnThird,fullName,gameData,status,detailedState,decisions,winner,loser"
+    print(f"Connecting to MLB live data at {url}") if DEBUG else None
+    return ujson.loads(urequests.get(url).text)
+    ####return { 'postOnFirst': {'fullName' :'Frank Smithers'},  'postOnSecond':  {'fullName' :'Samual Hdithers'}, 'postOnThird':  {'fullName' :'Theodore Thumb'} }
    
                                                
-def runners_changed(runners):
-    
-    current_bases =  {}
-    current_bases['1st']=runners.get('postOnFirst', {}).get('fullName')
-    current_bases['2nd']=runners.get('postOnSecond', {}).get('fullName')
-    current_bases['3rd']=runners.get('postOnThird' , {}).get('fullName')
-    
-    global bases
-    print('Inside Checking for runners changed : bases: ',  bases) if DEBUG else None
-    print('Inside Checking for runners changed : current_bases:', current_bases) if DEBUG else None
-    
-    if current_bases != bases:
-        bases = current_bases
-        return True
-    return False
-
-
 def get_x_p(pname):
     """ Given 'John Smith (Jr.)'  """
     """ return 'J.Smith'          """
@@ -130,196 +167,160 @@ def get_x_p(pname):
     fi = list(fn.split(' ')[0])[0]
     pn = fi + '.' + ln
     return pn        
-        
+
 @timing_decorator
 def get_score():
- 
-        """ Determine home or away from Team Ids Data """
-        home_id = games[0].get("home_id",'NA')
-        away_id = games[0].get("away_id",'NA')
-        
-        global team1
-        global team2
-        global t1_color
-        global t2_color
-        
-        team1 = str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == home_id][0]).upper()
-        team2 = str([x["teamCode"] for x in all_team_ids["teams"] if x["id"] == away_id][0]).upper()
-        r, g, b = TEAM_COLORS[team1]
-        t1_color = color565(r, g, b)
-        r, g, b = TEAM_COLORS[team2]
-        t2_color = color565(r, g, b)
-        
-        """ typical 'x' above
-        ...
-         "teams" : [ {
-            "id" : 133,
-            "name" : "Oakland Athletics",
-            "teamCode" : "oak",
-            "fileCode" : "oak",
-            "teamName" : "Athletics",
-            "locationName" : "Oakland",
-            "shortName" : "Oakland"
-          }
-        ...
-        """
-        
-        global our_score
-        global opp_score
-        global team1_score
-        global team2_score
-        
-        """ These are both strings - Reminder """
-        if team_id == home_id:
-            print('Who: We are the home team')
-            our_score  = team1_score = games[0].get("home_score",'NA')
-            opp_score  = team2_score = games[0].get("away_score",'NA')
-        else:
-            print('We are the away team')
-            our_score  = team2_score = games[0].get("away_score",'NA')
-            opp_score  = team1_score = games[0].get("home_score",'NA')
-        
-                    
-        """ Records """
-        global home_rec
-        global away_rec
-        home_rec = games[0].get('home_rec','NA')
-        away_rec = games[0].get('away_rec','NA')
-        
-        """ Statuses are one of:
-            "In Progress"
-            "Umpire Review"?
-            "Scheduled"
-            "Pre-Game"
-            "Warmup"
-            "Final"
-            "Game Over"
-            "Delayed"
-            "Manager challenge: XXX"
-        """
 
-        """ Status Check """
-        global game_status
-        game_status = games[0].get("status",'NA')
+    global latest_data
+    latest_data=get_latest_data()
+    gc_status_flush()
+    
+    """ Status Check - Statuses are one of:
+        "In Progress"
+        "Umpire Review"?
+        "Scheduled"
+        "Pre-Game"
+        "Warmup"
+        "Final"
+        "Game Over"
+        "Delayed"
+        "Manager challenge: XXX"
+                                        """
+    global game_status
+    game_status = latest_data['gameData']['status']['detailedState']
+    currentPlay = latest_data['liveData']['plays']['currentPlay']
+    ###game_status = "In Progress"
+    
+    global away_score
+    global home_score
+    away_score   = currentPlay['result']['awayScore']
+    home_score   = currentPlay['result']['homeScore']
+    
+    if (game_status == "In Progress")  or (( "eview" or "challenge" ) in game_status):
         
-        if (game_status == "In Progress")  or (( "eview" or "challenge" ) in game_status):
-                
-            global in_sta
-            global inn_cur
-            global ordinals
-            
-            balls   = games[0].get('Balls','NA')
-            strks   = games[0].get('Strikes','NA')
-            outs    = games[0].get('Outs','NA')	
-            inn_cur = games[0].get("current_inning",'NA')
-            ordinals = {1: 'st', 2: 'nd', 3: 'rd', 4: 'th', 5: 'th', 6: 'th', 7: 'th', 8: 'th', 9: 'th', 10: 'th', 11: 'th'}
-            in_sta  = games[0].get("inning_state",'NA')
-            batter  = get_x_p(games[0].get("Batter",'N A'))
-                    
-            d.clear_fill()
-            
-            if "Bottom" in in_sta:
-                up=f"{team1} up"
-            elif "Top" in in_sta:
-                up=f"{team2} up"
-            elif "End" or "Middle" in in_sta:
-                up=f"{mt}-{dy}-{short_yr}"
-                
-            d.draw_text(5, start + (0 * delta),     f"{in_sta} {inn_cur}{ordinals[inn_cur]} {up}", d.date_font,  d.white , d.drk_grn)
-            d.draw_text(5, start + (1 * delta) + 5, f"{team1}:{team1_score} H {home_rec}"   , d.score_font, d.white , t1_color)
-            d.draw_text(5, start + (2 * delta) + 5, f"{team2}:{team2_score} A {away_rec}"   , d.score_font, d.white , t2_color)
-            d.draw_text(5, start + (3 * delta) + 5, f"AB: {batter}"                         , d.sm_font,    d.white , d.drk_grn)
-            d.draw_text(10,start + (4 * delta) + 5, f"B: {balls} S: {strks} O: {outs }"     , d.sm_font,    d.white , d.drk_grn)
-            show_runners_front()
-            d.draw_outline_box()
-            
-            """ pause 3 secs after showing score """
-            print("sleeping 3 after showing score")
-            time.sleep(3)
-            
-            """ Now, Check Runners """
-            gc_status_flush()
-            data = get_runners()
-            runners = data['matchup']
-            
-            """ Cur play """
-            print("Checking current play")
-            global play
-            cur_play = data.get('result', {}).get('description')
-            
-            if cur_play and cur_play != play:
-                
-                print(f"Play {cur_play}") if DEBUG else None
-                play = cur_play
+        global balls
+        global strks
+        global outs
+        global inn_cur
+        global in_sta
+        global batter
+        global up
+        
+        balls         = currentPlay['count']['balls']
+        strks         = currentPlay['count']['strikes']
+        outs          = currentPlay['count']['outs']
+        inn_cur       = currentPlay['about']['inning']
+        in_sta        = currentPlay['about']['halfInning']
+        in_sta        = in_sta[0].upper() + in_sta[1:]
+        batter        = get_x_p(latest_data[currentPlay]['matchup']['batter']['fullName'])
+        
+        d.clear_fill()
+        
+        if "Bottom" in in_sta:
+            up=f"{team2_score} up"
+        elif "Top" in in_sta:
+            up=f"{team2} up"
+        elif "End" or "Middle" in in_sta:
+            up=f"{mt}-{dy}-{short_yr}"
+        
+        """ Show the Current Score """
+        show_in_progress()
+        in_progress_sleep=7
+        print(f"sleeping {in_progress_sleep} after showing score/in_progress")
+        time.sleep(in_progress_sleep)
+        gc_status_flush()
+        
+        """ Check the Current play vs Previous Play """
+        global previous_play
+        """ current_play_index may or may not have 'result' => 'description' """
+        """ allPlays'][current_play_index] may have it's 'result' => 'description' updated from the 'current' to the final one """
+        cur_play  = latest_data['liveData']['plays']['currentPlay'].get('result', {}).get('description')
+        
+        if cur_play is not None:
+            if cur_play != previous_play:
+                print(f"Play {cur_play} end") if DEBUG else None
+                previous_play = cur_play
                 d.fresh_box()
-                d.draw_text(5,  start + (0 * delta),     f"{in_sta} {inn_cur}{ordinals[inn_cur]} {mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
+                d.draw_text(5,  start + (0 * delta), f"{in_sta} {inn_cur}{ordinals[inn_cur]} {mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
                 d.scroll_print(text=cur_play, y_pos=60, x_pos=18,
                                scr_len=18, clear=False, font=d.date_font,
                                bg=d.drk_grn, fg=d.white)
-                print("Sleeping 3 after update current play")
-                time.sleep(3)
             else:
+                print(f"cur_play {cur_play} previous_play {previous_play}")
                 print("no update to current play")
+        play_check_sleep=5
+        print(f"Sleeping {play_check_sleep} after Current Play Check/Show")
+        time.sleep(play_check_sleep)
+        gc_status_flush()
+                    
+        
+        """ Now, Check Runners """
+        runners       = latest_data['liveData']['plays']['currentPlay']['matchup']
+        if runners_changed(runners):
+            print('Runners Changed')
+            show_runners(runners)
+        else:
+            print('Runners Did not Change')
+        runners_sleep=5
+        print(f"Sleeping {runners_sleep} after runners")
+        time.sleep(runners_sleep)
+        gc_status_flush()
             
-            gc_status_flush()
-                        
-            #print("sleeping 7 after get runners")
-            #time.sleep(3)
-            
-            if runners_changed(runners):
-                print('Runners Changed')
-                show_runners(runners)
-                """ pause  after showing runners """
-                #print("Sleeping 7 after showing runners")
-                #time.sleep(7)
-                return 10
-            else:
-                print('Runners Did not Change')
-            
-            if test_regular_season:
-                print("Testing Regular Season")
-                return 2
-            
-            return 15 # check back every x seconds
+        if test_regular_season:
+            print("Testing Regular Season")
+            return 2
         
-        elif game_status == "Game Over" or game_status == "Final":
-            
-            """ Stretch the Game Status to minimize ghost pixelation """
-            """ here and with ZZZ in Warm up  below                  """
-            if test_regular_season:
-                fsleep=5
-            else:
-                fsleep=30            
-            show_final()
-            print(f'sleeping for {fsleep} in  {game_status}') if DEBUG else None
-            time.sleep(fsleep)
-            show_filler_news(show_final, func_sleep=fsleep)
-            return 1
+        return 1 # Delay another check back for  x more  seconds
+    
+    elif game_status == "Game Over" or game_status == "Final":
         
-        elif game_status == "Scheduled":
-            if test_regular_season:
-                fsleep=5
-            else:
-                fsleep=30            
-            show_scheduled()
-            print(f'sleeping for {fsleep} in  {game_status}') if DEBUG else None
-            time.sleep(fsleep)
-            show_filler_news(show_scheduled, func_sleep=fsleep)
-            return 1
-        
-        
-        elif game_status == "Warmup":
-            show_scheduled()
-            if test_regular_season:
-                return 2
-            return 60 * 2# check back every 2 minutes
-        
-        
-        else:  #"Pre Game / Delayed"
-            show_scheduled()
-            if test_regular_season:
-                return 2
-            return 60 * 10 # check back every 10 minutes
+        """ Stretch the Game Status to minimize ghost pixelation """
+        """ here and with ZZZ in Warm up  below                  """
+        if test_regular_season:
+            fsleep=5
+        else:
+            fsleep=30            
+        show_final()
+        print(f'sleeping for {fsleep} in  {game_status}') if DEBUG else None
+        time.sleep(fsleep)
+        show_filler_news(show_final, func_sleep=fsleep)
+        return 1
+    
+    elif game_status == "Scheduled":
+        if test_regular_season:
+            fsleep=5
+        else:
+            fsleep=30            
+        show_scheduled()
+        print(f'sleeping for {fsleep} in  {game_status}') if DEBUG else None
+        time.sleep(fsleep)
+        show_filler_news(show_scheduled, func_sleep=fsleep)
+        return 1
+    
+    
+    elif game_status == "Warmup":
+        show_scheduled()
+        if test_regular_season:
+            return 2
+        return 60 * 2# check back every 2 minutes
+    
+    
+    else:  #"Pre Game / Delayed"
+        show_scheduled()
+        if test_regular_season:
+            return 2
+        return 60 * 10 # check back every 10 minutes
+
+def show_in_progress():
+    print(f"balls:{balls} strikes:{strks} outs:{outs}")  if DEBUG else None
+    print(f"{in_sta} {inn_cur}{ordinals[inn_cur]} {up}")           if DEBUG else None
+    d.draw_text(5, start + (0 * delta),     f"{in_sta} {inn_cur}{ordinals[inn_cur]} {up}", d.date_font,  d.white , d.drk_grn)
+    d.draw_text(5, start + (1 * delta) + 5, f"{team1}:{away_score} H {home_rec}"   , d.score_font, d.white , home_team_color)
+    d.draw_text(5, start + (2 * delta) + 5, f"{team2}:{home_score} A {away_rec}"   , d.score_font, d.white , away_team_color)
+    d.draw_text(5, start + (3 * delta) + 5, f"AB: {batter}"                         , d.sm_font,    d.white , d.drk_grn)
+    d.draw_text(10,start + (4 * delta) + 5, f"B: {balls} S: {strks} O: {outs }"     , d.sm_font,    d.white , d.drk_grn)
+    show_runners_front()
+    d.draw_outline_box()
         
 def no_gm(sleep=7):
     show_no_gm()
@@ -345,13 +346,7 @@ def opening_day_screen():
     d.draw_text(127,  start + (2 * delta) + 25 ,f"is"                  , d.score_font, d.white , d.drk_grn)
     d.draw_text(65,   start + (3 * delta) + 25 ,f"{opening_day}"       , d.score_font, d.white , d.drk_grn)
 
-@timing_decorator
-def reg_season():
-    global games
-    print(utime.localtime())
-    print("Connecting to MLB live sched data") if DEBUG else None
-    games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
-    
+
 def regular_season_test():
     #If no game that day games will be empty, not undefined
     global games
@@ -372,6 +367,22 @@ def rm_accents(story):
                 .replace(u"\u2018", "'").replace(u"\u2019", "'")\
                 .replace(u'\xa0', u' ').replace(u'\xc1','A')
 
+def runners_changed(runners):
+    
+    current_bases =  {}
+    current_bases['1st']=runners.get('postOnFirst', {}).get('fullName')
+    current_bases['2nd']=runners.get('postOnSecond', {}).get('fullName')
+    current_bases['3rd']=runners.get('postOnThird' , {}).get('fullName')
+    
+    global bases
+    print('Inside Checking for runners changed : bases: ',  bases) if DEBUG else None
+    print('Inside Checking for runners changed : current_bases:', current_bases) if DEBUG else None
+    
+    if current_bases != bases:
+        bases = current_bases
+        return True
+    return False
+
 def say_fetching(text='Fetching Data'):
     d.fresh_box()
     d.draw_text(5, 5, text, d.date_font, d.white, d.drk_grn)
@@ -391,14 +402,14 @@ def show_filler_news(func, func_sleep=30):
 
 def show_final():
     game_status = "Final Score"
-    lp = get_x_p(games[0]['losing_pitcher'])
-    wp = get_x_p(games[0]['winning_pitcher'])
+    lp = get_x_p(latest_data['liveData']['decisions']['winner']['fullName']) 
+    wp = get_x_p(latest_data['liveData']['decisions']['loser']['fullName'])
     d.clear_fill()
     d.draw_text(5, start + (0 * delta), f"{game_status} {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
-    d.draw_text(5, start + (1 * delta), f"{team1}:{team1_score} H {home_rec}" , d.score_font, d.white , t1_color)
-    d.draw_text(5, start + (2 * delta), f"{team2}:{team2_score} A {away_rec}" , d.score_font, d.white , t2_color)
-    d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , t1_color)
-    d.draw_text(5, 0     + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , t2_color)
+    d.draw_text(5, start + (1 * delta), f"{home_team}:{home_score} H {home_rec}" , d.score_font, d.white , home_team_color)
+    d.draw_text(5, start + (2 * delta), f"{away_team}:{away_score} A {away_rec}" , d.score_font, d.white , away_team_color)
+    d.draw_text(5, start + (3 * delta), f"WP: {wp}"                           , d.sm_font,    d.white , home_team_color)
+    d.draw_text(5, 0     + (4 * delta), f"LP: {lp}"                           , d.sm_font,    d.white , away_team_color)
     d.draw_outline_box()
 
 def show_logo():
@@ -485,8 +496,8 @@ def show_scheduled():
     tm=utc_to_local(gm_time)
     d.clear_fill()
     d.draw_text(5, start + (0 * delta), f"{game_status} {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
-    d.draw_text(5, start + (1 * delta), f"{team1}:N H {home_rec}"             , d.score_font, d.white , t1_color)
-    d.draw_text(5, start + (2 * delta), f"{team2}:N A {away_rec}"             , d.score_font, d.white , t2_color)
+    d.draw_text(5, start + (1 * delta), f"{team1}:N H {home_rec}"             , d.score_font, d.white , home_team_color)
+    d.draw_text(5, start + (2 * delta), f"{team2}:N A {away_rec}"             , d.score_font, d.white , away_team_color)
     d.draw_text(5, start + (3 * delta), f"Game at {tm} {tz_name}"             , d.sm_font,    d.white , d.drk_grn)
     d.draw_text(5, start + (4 * delta), f"ZZZZZZZZZZZZZZZZZZZZZ"              , d.sm_font,   d.drk_grn, d.drk_grn)
     d.draw_outline_box()
@@ -496,6 +507,7 @@ od_url='https://en.wikipedia.org/wiki/2023_Major_League_Baseball_season'
 opening_day = 'March 30'
 news_url="https://www.mlb.com/news/"
 ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
+ordinals      = {1: 'st', 2: 'nd', 3: 'rd', 4: 'th', 5: 'th', 6: 'th', 7: 'th', 8: 'th', 9: 'th', 10: 'th', 11: 'th', 12:'th'}
 http_headers= { 'User-Agent': ua }
 start=5 
 delta=45
@@ -507,8 +519,7 @@ DEBUG = True
     
 """ Globals """
 bases = {'1st':None, '2nd': None, '3rd':None}
-play  = None
-global games
+previous_play  = None
 
 all_team_ids = get_all_team_ids()
 set_team_color()
@@ -521,7 +532,7 @@ while True:
     print(f"==== Version: {version}")
     
     """ Game Time to query  MLB API for game data using timezone in ntp_setup.py """
-    yr, mt, dy, hr, mn, s1, s2, s3 = [  f"{x:02d}" for x in utime.localtime(utime.mktime(utime.localtime()) + (int(timezone)*3600)) ]
+    yr, mt, dy, hr, mn, *_ = [  f"{x:02d}" for x in utime.localtime(utime.mktime(utime.localtime()) + (int(timezone)*3600)) ]
     gm_dt = f"{mt}/{dy}/{yr}"
     short_yr = f"{int( str(yr)[2:]):02d}"
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
