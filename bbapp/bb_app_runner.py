@@ -315,8 +315,8 @@ def show_in_progress():
     print(f"balls:{balls} strikes:{strks} outs:{outs}")  if DEBUG else None
     print(f"{in_sta} {inn_cur}{ordinals[inn_cur]} {up}")           if DEBUG else None
     d.draw_text(5, start + (0 * delta),     f"{in_sta} {inn_cur}{ordinals[inn_cur]} {up}", d.date_font,  d.white , d.drk_grn)
-    d.draw_text(5, start + (1 * delta) + 5, f"{team1}:{away_score} H {home_rec}"   , d.score_font, d.white , home_team_color)
-    d.draw_text(5, start + (2 * delta) + 5, f"{team2}:{home_score} A {away_rec}"   , d.score_font, d.white , away_team_color)
+    d.draw_text(5, start + (1 * delta) + 5, f"{home_team}:{away_score} H {home_rec}"   , d.score_font, d.white , home_team_color)
+    d.draw_text(5, start + (2 * delta) + 5, f"{away_team}:{home_score} A {away_rec}"   , d.score_font, d.white , away_team_color)
     d.draw_text(5, start + (3 * delta) + 5, f"AB: {batter}"                         , d.sm_font,    d.white , d.drk_grn)
     d.draw_text(10,start + (4 * delta) + 5, f"B: {balls} S: {strks} O: {outs }"     , d.sm_font,    d.white , d.drk_grn)
     show_runners_front()
@@ -496,8 +496,8 @@ def show_scheduled():
     tm=utc_to_local(gm_time)
     d.clear_fill()
     d.draw_text(5, start + (0 * delta), f"{game_status} {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
-    d.draw_text(5, start + (1 * delta), f"{team1}:N H {home_rec}"             , d.score_font, d.white , home_team_color)
-    d.draw_text(5, start + (2 * delta), f"{team2}:N A {away_rec}"             , d.score_font, d.white , away_team_color)
+    d.draw_text(5, start + (1 * delta), f"{home_team}:N H {home_rec}"             , d.score_font, d.white , home_team_color)
+    d.draw_text(5, start + (2 * delta), f"{away_team}:N A {away_rec}"             , d.score_font, d.white , away_team_color)
     d.draw_text(5, start + (3 * delta), f"Game at {tm} {tz_name}"             , d.sm_font,    d.white , d.drk_grn)
     d.draw_text(5, start + (4 * delta), f"ZZZZZZZZZZZZZZZZZZZZZ"              , d.sm_font,   d.drk_grn, d.drk_grn)
     d.draw_outline_box()
