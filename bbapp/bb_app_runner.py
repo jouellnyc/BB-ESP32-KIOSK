@@ -143,9 +143,9 @@ def cycle_stories(func, news=0, func_sleep=30):
         story_count+=1
 
 def gc_status_flush():
-    print("Mem: ", gc.mem_free()) if DEBUG else None
+    print("Mem: ", gc.mem_free()) if MEM_DEBUG else None
     gc.collect()
-    print("Mem: ", gc.mem_free()) if DEBUG else None
+    print("Mem: ", gc.mem_free()) if MEM_DEBUG else None
             
 def get_all_team_ids():
     with open("/bbapp/team_ids.py") as f:
@@ -173,6 +173,7 @@ def get_score():
 
     global latest_data
     latest_data=get_latest_data()
+    print('latest_data',latest_data)
     gc_status_flush()
     
     """ Status Check - Statuses are one of:
@@ -212,14 +213,14 @@ def get_score():
         inn_cur       = currentPlay['about']['inning']
         in_sta        = currentPlay['about']['halfInning']
         in_sta        = in_sta[0].upper() + in_sta[1:]
-        batter        = get_x_p(latest_data[currentPlay]['matchup']['batter']['fullName'])
+        batter        = get_x_p(currentPlay['matchup']['batter']['fullName'])
         
         d.clear_fill()
         
         if "Bottom" in in_sta:
-            up=f"{team2_score} up"
+            up=f"{home_team} up"
         elif "Top" in in_sta:
-            up=f"{team2} up"
+            up=f"{away_team} up"
         elif "End" or "Middle" in in_sta:
             up=f"{mt}-{dy}-{short_yr}"
         
@@ -236,9 +237,11 @@ def get_score():
         """ allPlays'][current_play_index] may have it's 'result' => 'description' updated from the 'current' to the final one """
         cur_play  = latest_data['liveData']['plays']['currentPlay'].get('result', {}).get('description')
         
+        print(f"cur_play {cur_play} previous_play {previous_play}") if DEBUG else None
+        
         if cur_play is not None:
             if cur_play != previous_play:
-                print(f"Play {cur_play} end") if DEBUG else None
+                print(f"Play change: {cur_play}")
                 previous_play = cur_play
                 d.fresh_box()
                 d.draw_text(5,  start + (0 * delta), f"{in_sta} {inn_cur}{ordinals[inn_cur]} {mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
@@ -246,8 +249,10 @@ def get_score():
                                scr_len=18, clear=False, font=d.date_font,
                                bg=d.drk_grn, fg=d.white)
             else:
-                print(f"cur_play {cur_play} previous_play {previous_play}")
-                print("no update to current play")
+                print(f"Play change: No")
+        else:
+            print("Play is None")
+            
         play_check_sleep=5
         print(f"Sleeping {play_check_sleep} after Current Play Check/Show")
         time.sleep(play_check_sleep)
@@ -271,7 +276,7 @@ def get_score():
             return 2
         
         return 1 # Delay another check back for  x more  seconds
-    
+        
     elif game_status == "Game Over" or game_status == "Final":
         
         """ Stretch the Game Status to minimize ghost pixelation """
@@ -516,7 +521,8 @@ delta=45
 force_offseason = False
 test_regular_season = False
 DEBUG = True
-    
+MEM_DEBUG = True
+
 """ Globals """
 bases = {'1st':None, '2nd': None, '3rd':None}
 previous_play  = None
