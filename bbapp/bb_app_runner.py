@@ -152,7 +152,7 @@ def get_all_team_ids():
         return ujson.loads(f.read())
 
 @timing_decorator
-def get_latest_data():
+def get_current_play_data():
     url=f"https://statsapi.mlb.com/api/v1.1/game/{game_id}/feed/live?fields=gamePk,liveData,plays,currentPlay,result,description,awayScore,homeScore,about,batter,count,inning,halfInning,balls,strikes,outs,matchup,postOnFirst,postOnSecond,postOnThird,fullName,gameData,status,detailedState,decisions,winner,loser"
     print(f"Connecting to MLB live data at {url}") if DEBUG else None
     return ujson.loads(urequests.get(url).text)
@@ -171,9 +171,9 @@ def get_x_p(pname):
 @timing_decorator
 def get_score():
 
-    global latest_data
-    latest_data=get_latest_data()
-    print('latest_data',latest_data)
+    global current_play_data
+    current_play_data=get_current_play_data()
+    print('current_play_data',current_play_data)
     gc_status_flush()
     
     """ Status Check - Statuses are one of:
@@ -188,17 +188,19 @@ def get_score():
         "Manager challenge: XXX"
                                         """
     global game_status
-    game_status = latest_data['gameData']['status']['detailedState']
-    currentPlay = latest_data['liveData']['plays']['currentPlay']
+    game_status = current_play_data['gameData']['status']['detailedState']
     ###game_status = "In Progress"
     
-    global away_score
-    global home_score
-    away_score   = currentPlay['result']['awayScore']
-    home_score   = currentPlay['result']['homeScore']
     
     if (game_status == "In Progress")  or (( "eview" or "challenge" ) in game_status):
+
+        currentPlay = current_play_data['liveData']['plays']['currentPlay']
         
+        global away_score
+        global home_score
+        away_score   = currentPlay['result']['awayScore']
+        home_score   = currentPlay['result']['homeScore']
+    
         global balls
         global strks
         global outs
@@ -235,7 +237,7 @@ def get_score():
         global previous_play
         """ current_play_index may or may not have 'result' => 'description' """
         """ allPlays'][current_play_index] may have it's 'result' => 'description' updated from the 'current' to the final one """
-        cur_play  = latest_data['liveData']['plays']['currentPlay'].get('result', {}).get('description')
+        cur_play  = current_play_data['liveData']['plays']['currentPlay'].get('result', {}).get('description')
         
         print(f"cur_play {cur_play} previous_play {previous_play}") if DEBUG else None
         
@@ -260,7 +262,7 @@ def get_score():
                     
         
         """ Now, Check Runners """
-        runners       = latest_data['liveData']['plays']['currentPlay']['matchup']
+        runners       = current_play_data['liveData']['plays']['currentPlay']['matchup']
         if runners_changed(runners):
             print('Runners Changed')
             show_runners(runners)
@@ -407,8 +409,8 @@ def show_filler_news(func, func_sleep=30):
 
 def show_final():
     game_status = "Final Score"
-    lp = get_x_p(latest_data['liveData']['decisions']['winner']['fullName']) 
-    wp = get_x_p(latest_data['liveData']['decisions']['loser']['fullName'])
+    lp = get_x_p(current_play_data['liveData']['decisions']['winner']['fullName']) 
+    wp = get_x_p(current_play_data['liveData']['decisions']['loser']['fullName'])
     d.clear_fill()
     d.draw_text(5, start + (0 * delta), f"{game_status} {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
     d.draw_text(5, start + (1 * delta), f"{home_team}:{home_score} H {home_rec}" , d.score_font, d.white , home_team_color)
