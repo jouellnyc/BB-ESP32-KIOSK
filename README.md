@@ -16,7 +16,10 @@
 - Build your own kiosk for your favorite baseball team:
 
   LilyGo Watch, LilyGo 2.4 ESP32, ESP32-S3-BOX/BoxLite, or ThingVerse Model using an ESP32 DevKit.  
-- If it's gametime for you team, the kiosk will refresh the score every 20 seconds using small http call.
+- If it's gametime for your team, the kiosk will refresh the score every 20 seconds using small http call.
+  - then show any 'event' (hit/walk/timeout/homerun/etc) using mlb stats http calls. 
+  - then show runners on base if they have changed.
+ 
 - If no game 'today',  it will wait a few hours and retry.
 - If it's the offseason, it will tell you when open day is.
 - Stories from mlb.com will display afterward for 7 seconds and rotate
