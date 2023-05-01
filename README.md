@@ -8,7 +8,9 @@
 |<img src="images/lily_24_esp32.png"  width="200"/>| <img src="images/lily_go_watch.png"  width="200"/>| <img src="images/esp-32-s3-box-lite.png" width="200"/>| <img src="images/side_view_black.jpg"    width="200"/>| <img src="images/orange.png" width="200"/>| <img src="images/esp_box.jpg" width="200"/>|
 
 
-|Plain Old ESP32 on a bread board with 2.8 Inch Screen|<img src="images/esp32_plain.png"  width="200"/>|
+|Plain Old ESP32 on a bread board with 2.8 Inch Screen|
+| ------------- | 
+|<img src="images/esp32_plain.png"  width="200"/>|
 
 - Build your own kiosk for your favorite baseball team:
 
