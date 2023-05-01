@@ -38,10 +38,7 @@ if 'esp32-s3-box' in screen:
         drk_grn=color565(255,222,255)
         white=color565(0, 0, 0)
         black=color565(255,255,255)
-        yellow=color565(255, 0, 0)
-        green=color565(0,0,255)
-        pink=color565(0, 255, 0)
-
+        
         def check_upgrade():
             """ We only check  Button 3 - It's on GPIO01
             #Unpushed
@@ -62,11 +59,7 @@ if 'esp32-s3-box' in screen:
         drk_grn=color565(58, 124, 14)   # esp full box
         black=color565(0, 0, 0)
         white=color565(255,255,255)
-        yellow=color565(255, 0, 0)
-        green=color565(0,0,255)
-        pink=color565(0, 255, 0)
-        red =  color565(255, 0, 0)
-    
+        
         def check_upgrade():
             """ We only check the Mute Button on the ESP BOX - It's on GPIO01
             #Unpushed:
