@@ -17,9 +17,11 @@
 
   LilyGo Watch, LilyGo 2.4 ESP32, ESP32-S3-BOX/BoxLite, or ThingVerse Model using an ESP32 DevKit.  
 - If it's gametime for your team, the kiosk will refresh the score every 20 seconds using small http call.
+
   - then show any 'event' (hit/walk/timeout/homerun/etc) using mlb stats http calls:
    <img src="images/home_run.jpg"    width="200"/>
-  - then show runners on base if they have changed.
+
+  - then show runners on base if they have changed:
    <img src="images/on_base.jpg"    width="200"/>
  
 - If no game 'today',  it will wait a few hours and retry.
