@@ -16,21 +16,20 @@
 - Build your own kiosk for your favorite baseball team:
 
   LilyGo Watch, LilyGo 2.4 ESP32, ESP32-S3-BOX/BoxLite, or ThingVerse Model using an ESP32 DevKit.  
-- If it's gametime for you team, the kiosk will refresh the score every 120 seconds.
+- If it's gametime for you team, the kiosk will refresh the score every 20 seconds using small http call.
 - If no game 'today',  it will wait a few hours and retry.
 - If it's the offseason, it will tell you when open day is.
 - Stories from mlb.com will display afterward for 7 seconds and rotate
 
-#### Requirements
-- ESP32 DevKitC
+#### Requirements (if you are building your own)
+
+- ESP32 DevKitC (or above hardware)
 https://www.amazon.com/gp/product/B087TNPQCV/
 
-- Mini USB Cable
-Anywhere Mini usb cables are sold (short - 3 ft or less are best)
+- Mini USB or USB-C Cable
+Anywhere cables are sold (short - 3 ft or less are best)
 
 - 320x240 SPI Serial ILI9341 - https://www.amazon.com/dp/B09XHJ9KRX
-
-- Configs / Libraries shared in https://github.com/jouellnyc/mcconfigs 
 
 - 2.4 GHZ WIFI SSID (esp hardware does not support 5 GHZ) 
 
@@ -38,6 +37,7 @@ Anywhere Mini usb cables are sold (short - 3 ft or less are best)
 #### Steps
 
 - Install MicroPython with <A HREF="https://micropython.org/download/esp32spiram/">SPIRAM</A> to the ESP32:
+
 - (For the LilyGo Watch use <A HREF="https://github.com/russhughes/st7789_mpy/tree/master/firmware/TWATCH-2020">this </A> firmware.)
 
 - Get a REPL on the ESP32:
@@ -46,10 +46,9 @@ https://microcontrollerslab.com/getting-started-thonny-micropython-ide-esp32-esp
 
 - Install libraries 
 ```
-git clone https://github.com/jouellnyc/MLB-ESP32
- upload appsetup, bbbapp, acknowledgements.py, main.py and boot.py to / using Thonny/your IDE
-git clone https://github.com/jouellnyc/mcconfigs
- upload fonts, hardware, and lib to / using Thonny/your IDE
+git clone https://github.com/jouellnyc/BB-ESP32-KIOSK
+ upload appsetup, bbbapp, hardware, fonts, and lib to / using Thonny/your IDE
+ upload acknowledgements.py, main.py, boot.py and myugit.py to / using Thonny/IDE.
 ```
 
 To connect the esp32 to an ili9341, you can follow https://www.youtube.com/watch?v=rq5yPJbX_uk
@@ -62,7 +61,6 @@ Connect your mobile phone/PC  to that SSID temporarily.
 There will be no Internet Access via this ssid:
 
 <img src="images/6_wifi.png" width="200"/>
-
 Navigate to http://192.168.4.1
 
 Now, enter the name the Wifi SSID and Credentials you want BB-Kiosk to use permanently:
