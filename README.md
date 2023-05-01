@@ -8,7 +8,7 @@
 |<img src="images/lily_24_esp32.png"  width="200"/>| <img src="images/lily_go_watch.png"  width="200"/>| <img src="images/esp-32-s3-box-lite.png" width="200"/>| <img src="images/esp_box.jpg" width="200"/>|
 
 
-|<A HREF="https://www.thingiverse.com/thing:3461768"  >ThingVerse #1</A> |<A HREF="https://www.thingiverse.com/thing:3495445/files">ThingVerse #2 </A>|Plain Old ESP32 on a bread board with 2.8 Inch Screen|
+|<A HREF="https://www.thingiverse.com/thing:3461768"  >ThingVerse #1</A> |<A HREF="https://www.thingiverse.com/thing:3495445/files">ThingVerse #2 </A>|ESP32 on bread board with 2.8" Screen|
 | ------------- | ------------- | ------------- | 
 |<img src="images/side_view_black.jpg"    width="200"/>| <img src="images/orange.png" width="200"/>| <img src="images/esp32_plain.png"  width="200"/>|
 
