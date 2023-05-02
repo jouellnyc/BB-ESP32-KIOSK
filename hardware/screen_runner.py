@@ -147,7 +147,7 @@ def get_tb_text(err):
     
 def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
                  Error=False, clear=True, font=sm_font,
-                 bg=drk_grn, fg=white, debug=False):
+                 bg=drk_grn, fg=white, max_x=300, debug=False):
     """ Given a headline from a text string from mlb.com/news like:
 
        'Celebrate Aaron's birthday with 13 stats that show his greatness'
@@ -280,9 +280,7 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
             _pparts = [ x.split(' ') for x in _parts ]
             print(f"_pparts Current list cand to bump {_pparts}") if debug else None
             print(f"lp {len(_parts)}") if debug else None
-            
-            max_x=230
-            
+                        
             for each in range(0, len(_parts)):
                 if debug:        
                     print(f"---- Each {each}") 
