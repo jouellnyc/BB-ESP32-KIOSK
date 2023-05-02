@@ -199,13 +199,18 @@ def get_score():
         global game_status
         game_status = current_play_data['gameData']['status']['detailedState']
         ###game_status = "In Progress"
+        
         global currentPlay
-        currentPlay = current_play_data['liveData']['plays']['currentPlay']
-        print(f"The currentPlay: {currentPlay}")        
-        global away_score
-        global home_score
-        away_score   = currentPlay['result']['awayScore']
-        home_score   = currentPlay['result']['homeScore']
+        try:
+            currentPlay = current_play_data['liveData']['plays']['currentPlay']
+            global away_score
+            global home_score
+            away_score   = currentPlay['result']['awayScore']
+            home_score   = currentPlay['result']['homeScore']
+        except KeyError:
+            print(f"No currentPlay")
+        else:
+            print(f"The currentPlay: {currentPlay}")
 
     set_status_score()
     
@@ -259,7 +264,8 @@ def get_score():
                 previous_play = cur_play
                 ####d.fresh_box()
                 clear_story_area()
-                d.draw_text(5,  start + (0 * delta), f"{in_sta} {inn_cur}{ordinals[inn_cur]} {mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
+                #d.draw_text(5,  start + (0 * delta), f"{in_sta} {inn_cur}{ordinals[inn_cur]} {mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
+                d.draw_text(5, start + (0 * delta),     f"{in_sta} {inn_cur}{ordinals[inn_cur]} {up}", d.date_font,  d.white , d.drk_grn)
                 if len(cur_play.split(' ')) > 12:
                     sp_font=d.sm_font; sp_max_x=300; sp_scr_len=26
                 else:
@@ -492,8 +498,9 @@ def show_runners(runners):
 
     d.clear_fill()
     d.draw_outline_box()
-    d.draw_text(5,  start + (0 * delta), f"{in_sta} {inn_cur}{ordinals[inn_cur]} {mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
-            
+    #d.draw_text(5,  start + (0 * delta), f"{in_sta} {inn_cur}{ordinals[inn_cur]} {mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
+    d.draw_text(5, start + (0 * delta),     f"{in_sta} {inn_cur}{ordinals[inn_cur]} {up}", d.date_font,  d.white , d.drk_grn)
+    
     fn='fullName'
     what='postOnFirst'
     print('Show Runners bases ',bases)
