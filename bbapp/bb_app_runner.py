@@ -112,6 +112,13 @@ def set_team_colors():
     
 def clear_story_area():
     d.fill_rectangle(1, 41, 318, 198, d.drk_grn)
+
+def clear_status_area():
+    d.fill_rectangle(1, 1, 318, 38, d.drk_grn)
+    
+def clear_leave_outline():
+    clear_status_area()
+    clear_story_area()
     
 def cycle_stories(func, news=0, func_sleep=30):
     print('Now in cycle_stories') if DEBUG else None
@@ -173,7 +180,7 @@ def get_score():
 
     global current_play_data
     current_play_data=get_current_play_data()
-    print('current_play_data',current_play_data)
+    print('The larger current_play_data',current_play_data)
     gc_status_flush()
     
     """ Status Check - Statuses are one of:
@@ -187,20 +194,23 @@ def get_score():
         "Delayed"
         "Manager challenge: XXX"
                                         """
-    global game_status
-    game_status = current_play_data['gameData']['status']['detailedState']
-    ###game_status = "In Progress"
     
-    
-    if (game_status == "In Progress")  or (( "eview" or "challenge" ) in game_status):
-
+    def set_status_score():
+        global game_status
+        game_status = current_play_data['gameData']['status']['detailedState']
+        ###game_status = "In Progress"
+        global currentPlay
         currentPlay = current_play_data['liveData']['plays']['currentPlay']
-        
+        print(f"The currentPlay: {currentPlay}")        
         global away_score
         global home_score
         away_score   = currentPlay['result']['awayScore']
         home_score   = currentPlay['result']['homeScore']
+
+    set_status_score()
     
+    while (game_status == "In Progress")  or (( "eview" or "challenge" ) in game_status):
+
         global balls
         global strks
         global outs
@@ -217,7 +227,8 @@ def get_score():
         in_sta        = in_sta[0].upper() + in_sta[1:]
         batter        = get_x_p(currentPlay['matchup']['batter']['fullName'])
         
-        d.clear_fill()
+        #d.clear_fill()
+        clear_leave_outline()
         
         if "Bottom" in in_sta:
             up=f"{home_team} up"
@@ -228,7 +239,7 @@ def get_score():
         
         """ Show the Current Score """
         show_in_progress()
-        in_progress_sleep=7
+        in_progress_sleep=5
         print(f"sleeping {in_progress_sleep} after showing score/in_progress")
         time.sleep(in_progress_sleep)
         gc_status_flush()
@@ -239,23 +250,29 @@ def get_score():
         """ allPlays'][current_play_index] may have it's 'result' => 'description' updated from the 'current' to the final one """
         cur_play  = current_play_data['liveData']['plays']['currentPlay'].get('result', {}).get('description')
         
-        print(f"cur_play {cur_play} previous_play {previous_play}") if DEBUG else None
+        print(f"Plays -  cur_play: {cur_play} previous_play: {previous_play}") if DEBUG else None
         
         if cur_play is not None:
+            
             if cur_play != previous_play:
                 print(f"Play change: {cur_play}")
                 previous_play = cur_play
-                d.fresh_box()
+                ####d.fresh_box()
+                clear_story_area()
                 d.draw_text(5,  start + (0 * delta), f"{in_sta} {inn_cur}{ordinals[inn_cur]} {mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
-                d.scroll_print(text=cur_play, y_pos=60, x_pos=18,
-                               scr_len=18, clear=False, font=d.date_font,
-                               bg=d.drk_grn, fg=d.white)
+                if len(cur_play.split(' ')) > 12:
+                    sp_font=d.sm_font; sp_max_x=300; sp_scr_len=26
+                else:
+                    sp_font=d.date_font; sp_max_x=230; sp_scr_len=18
+                d.scroll_print(text=cur_play, y_pos=60, x_pos=18, scr_len=sp_scr_len, max_x=sp_max_x,
+                               clear=False, font=sp_font, bg=d.drk_grn, fg=d.white)
+                
             else:
                 print(f"Play change: No")
         else:
             print("Play is None")
             
-        play_check_sleep=5
+        play_check_sleep=4
         print(f"Sleeping {play_check_sleep} after Current Play Check/Show")
         time.sleep(play_check_sleep)
         gc_status_flush()
@@ -268,55 +285,61 @@ def get_score():
             show_runners(runners)
         else:
             print('Runners Did not Change')
-        runners_sleep=5
+        runners_sleep=4
         print(f"Sleeping {runners_sleep} after runners")
         time.sleep(runners_sleep)
         gc_status_flush()
-            
+        
+        current_play_data=get_current_play_data()
+        set_status_score()
+        
         if test_regular_season:
             print("Testing Regular Season")
             return 2
         
-        return 1 # Delay another check back for  x more  seconds
+    else:
         
-    elif game_status == "Game Over" or game_status == "Final":
+        current_play_data=get_current_play_data()
+        set_status_score()
+    
+        if game_status == "Game Over" or game_status == "Final":
+            
+            """ Stretch the Game Status to minimize ghost pixelation """
+            """ here and with ZZZ in Warm up  below                  """
+            if test_regular_season:
+                fsleep=5
+            else:
+                fsleep=30            
+            show_final()
+            print(f'sleeping for {fsleep} in  {game_status}') if DEBUG else None
+            time.sleep(fsleep)
+            show_filler_news(show_final, func_sleep=fsleep)
+            return 1
         
-        """ Stretch the Game Status to minimize ghost pixelation """
-        """ here and with ZZZ in Warm up  below                  """
-        if test_regular_season:
-            fsleep=5
-        else:
-            fsleep=30            
-        show_final()
-        print(f'sleeping for {fsleep} in  {game_status}') if DEBUG else None
-        time.sleep(fsleep)
-        show_filler_news(show_final, func_sleep=fsleep)
-        return 1
-    
-    elif game_status == "Scheduled":
-        if test_regular_season:
-            fsleep=5
-        else:
-            fsleep=30            
-        show_scheduled()
-        print(f'sleeping for {fsleep} in  {game_status}') if DEBUG else None
-        time.sleep(fsleep)
-        show_filler_news(show_scheduled, func_sleep=fsleep)
-        return 1
-    
-    
-    elif game_status == "Warmup":
-        show_scheduled()
-        if test_regular_season:
-            return 2
-        return 60 * 2# check back every 2 minutes
-    
-    
-    else:  #"Pre Game / Delayed"
-        show_scheduled()
-        if test_regular_season:
-            return 2
-        return 60 * 10 # check back every 10 minutes
+        elif game_status == "Scheduled":
+            if test_regular_season:
+                fsleep=5
+            else:
+                fsleep=30            
+            show_scheduled()
+            print(f'sleeping for {fsleep} in  {game_status}') if DEBUG else None
+            time.sleep(fsleep)
+            show_filler_news(show_scheduled, func_sleep=fsleep)
+            return 1
+        
+        
+        elif game_status == "Warmup":
+            show_scheduled()
+            if test_regular_season:
+                return 2
+            return 60 * 2# check back every 2 minutes
+        
+        
+        else:  #"Pre Game / Delayed"
+            show_scheduled()
+            if test_regular_season:
+                return 2
+            return 60 * 10 # check back every 10 minutes
 
 def show_in_progress():
     print(f"balls:{balls} strikes:{strks} outs:{outs}")  if DEBUG else None
