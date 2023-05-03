@@ -139,9 +139,9 @@ def cycle_stories(func, news=0, func_sleep=30):
             """ Díaz - í is not supported by the font, make it a simple 'i' """
             story = rm_accents(story)
             d.draw_text(42, 215, "Story at mlb.com", d.sm_font,  d.white , d.drk_grn)
-            d.scroll_print(text=story, y_pos=60, x_pos=18,
+            d.scroll_print(text=story, y_pos=60, x_pos=18, max_x=230,
                            scr_len=18, clear=False, font=d.date_font,
-                           bg=d.drk_grn, fg=d.white)
+                           bg=d.drk_grn, fg=d.white, debug=True)
             """ x_pos for fill_rectangle must be at 1     """
             """ to keep vert lines from being overwritten """
             print(f"Sleeping for {story_sleep} in cycle stories_else {__name__}") if DEBUG else None
