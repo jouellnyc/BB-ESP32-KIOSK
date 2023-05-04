@@ -28,7 +28,7 @@ def utc_to_local(_time):
     # Offset UTC by timezone using 3600 seconds per hour.
     local_time = utc_time + 3600 * timezone
     # Get local time's datetime tuple.
-    yy, mo, dd, hh, mm, ss, wkd, yrd = [d for d in time.localtime(local_time)]
+    yy, mo, dd, hh, mm, ss, wkd, yrd = list(time.localtime(local_time))
     # Set the RTC to local time.  (I don't think the uP docs are exactly right about this.)
 
     if hh >= 13:
@@ -40,14 +40,13 @@ def utc_to_local(_time):
     else:
         am_pm = 'a'
     print('hh', hh)
-    then_time = '%2.2d-%2.2d %1.1d:%2.2d' % (mo, dd, hh, mm, ) + am_pm
-    return then_time
+    return '%2.2d-%2.2d %1.1d:%2.2d' % (mo, dd, hh, mm, ) + am_pm
 
 def main():
     
     import time
     import ntptime
-    print("Local time before synchronization：%s" % str(time.localtime()))
+    print(f"Local time before synchronization：{str(time.localtime())}")
     """ Thing can hang for a really long time if DNS is not working """
     """ https://github.com/micropython/micropython/issues/7137      """
     ntptime.host = "time.google.com"
@@ -69,7 +68,7 @@ def main():
                     machine.reset()
         else:
             print("Set Time to UTC")
-            print("Local time after synchronization：%s" % str(time.localtime()))
+            print(f"Local time after synchronization：{str(time.localtime())}")
             break
     
 if __name__ == "__main__":

@@ -57,13 +57,10 @@ def parse_url(url):
         scheme = ""
 
     psep = loc.find("/")
-    if psep == -1:
-        if scheme:
-            host = loc
-            path = "/"
-        else:
-            path = loc
-    elif psep == 0:
+    if psep == -1 and scheme:
+        host = loc
+        path = "/"
+    elif psep in [-1, 0]:
         path = loc
     else:
         path = loc[psep:]
@@ -93,11 +90,7 @@ class RequestContext:
 
     @property
     def url(self):
-        return "%s://%s%s" % (
-            self.scheme,
-            self.host if self._port is None else ("%s:%s" % (self.host, self.port)),
-            self.path,
-        )
+        return f'{self.scheme}://{self.host if self._port is None else f"{self.host}:{self.port}"}{self.path}'
 
     def set_location(self, status, location):
         if status in (301, 302, 307, 308):
@@ -143,39 +136,35 @@ class Response:
     def read(self, size=MAX_READ_SIZE):
         sf = self.sf
 
-        if self.chunked:
-            if self._chunk_size == 0:
-                l = sf.readline().strip()
+        if not self.chunked:
+            return sf.read(size) if size else sf.read(self._content_size)
+        if self._chunk_size == 0:
+            l = sf.readline().strip()
 
-                if not l:
-                    return b''
+            if not l:
+                return b''
 
-                # ignore chunk extensions
-                l = l.split(b";", 1)[0]
-                self._chunk_size = max(0, int(l, 16))
+            # ignore chunk extensions
+            l = l.split(b";", 1)[0]
+            self._chunk_size = max(0, int(l, 16))
 
-                if self._chunk_size == 0:
-                    # End of message
-                    sep = sf.read(2)
-                    if sep != b"\r\n":
-                        raise ValueError("Expected final chunk separator, read %r instead." % sep)
+        if self._chunk_size == 0:
+            # End of message
+            sep = sf.read(2)
+            if sep != b"\r\n":
+                raise ValueError("Expected final chunk separator, read %r instead." % sep)
 
-                    return b""
+            return b""
 
-            data = sf.read(min(size or MAX_READ_SIZE, self._chunk_size))
-            self._chunk_size -= max(0, len(data))
+        data = sf.read(min(size or MAX_READ_SIZE, self._chunk_size))
+        self._chunk_size -= max(0, len(data))
 
-            if self._chunk_size == 0:
-                sep = sf.read(2)
-                if sep != b"\r\n":
-                    raise ValueError("Expected chunk separator, read %r instead." % sep)
+        if self._chunk_size == 0:
+            sep = sf.read(2)
+            if sep != b"\r\n":
+                raise ValueError("Expected chunk separator, read %r instead." % sep)
 
-            return data
-        else:
-            if size:
-                return sf.read(size)
-            else:
-                return sf.read(self._content_size)
+        return data
 
     def save(self, fn, chunk_size=1024):
         read = 0
@@ -271,7 +260,7 @@ def request(
 
     while True:
         if ctx.scheme not in ("http", "https"):
-            raise ValueError("Protocol scheme %s not supported." % ctx.scheme)
+            raise ValueError(f"Protocol scheme {ctx.scheme} not supported.")
 
         ctx.redirect = False
 
@@ -291,9 +280,7 @@ def request(
                 except ImportError:
                     import ussl as ssl
 
-                # print("Wrapping socket with SSL")
-                create_ctx = getattr(ssl, 'create_default_context', None)
-                if create_ctx:
+                if create_ctx := getattr(ssl, 'create_default_context', None):
                     sock = create_ctx().wrap_socket(sock, server_hostname=ctx.host)
                 else:
                     sock = ssl.wrap_socket(sock, server_hostname=ctx.host)
@@ -301,7 +288,7 @@ def request(
             sf = sock if MICROPY else sock.makefile("rwb")
             sf.write(b"%s %s HTTP/1.1\r\n" % (ctx.method.encode("ascii"), ctx.path.encode("ascii")))
 
-            if not b"Host" in headers:
+            if b"Host" not in headers:
                 sf.write(b"Host: %s\r\n" % ctx.host.encode())
 
             for k, val in headers.items():
@@ -358,15 +345,14 @@ def request(
             sock.close()
             raise
 
-        if ctx.redirect:
-            # print("Redirect to: %s" % ctx.url)
-            sock.close()
-            max_redirects -= 1
-
-            if max_redirects < 0:
-                raise ValueError("Maximum redirection count exceeded.")
-
-        else:
+        if not ctx.redirect:
             break
+
+        # print("Redirect to: %s" % ctx.url)
+        sock.close()
+        max_redirects -= 1
+
+        if max_redirects < 0:
+            raise ValueError("Maximum redirection count exceeded.")
 
     return resp

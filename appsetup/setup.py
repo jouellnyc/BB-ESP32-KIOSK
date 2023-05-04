@@ -22,13 +22,13 @@ try:
         d.draw_outline_box()
         d.draw_text(5, 5,  'Setup Page at',            d.date_font,  d.white , d.drk_grn)
         d.draw_text(5, 65,  f"http://{ip_addr}",       d.date_font,  d.white , d.drk_grn)
-        d.draw_text(5, 125, f"Wifi ssid:",             d.score_font, d.white , d.drk_grn)
+        d.draw_text(5, 125, "Wifi ssid:", d.score_font, d.white, d.drk_grn)
         d.draw_text(5, 165, f"{essid}",                d.score_font, d.white , d.drk_grn)
-        
+
     elif screen == 'oled':
         
         d.text('Setup at '  ,0,0)
-        d.text(f"http://"   ,0,17)
+        d.text("http://", 0, 17)
         d.text(f"{ip_addr}" ,0,34)
         d.show()
 
@@ -38,5 +38,5 @@ try:
 
 except Exception as e:
     """ Dump to the screen """
-    print(str(e))
+    print(e)
     d.scroll_print(text=e, scr_len=30, Error=True)    

@@ -93,8 +93,8 @@ class SH1106(framebuf.FrameBuffer):
         self.width = width
         self.height = height
         self.external_vcc = external_vcc
-        self.flip_en = rotate == 180 or rotate == 270
-        self.rotate90 = rotate == 90 or rotate == 270
+        self.flip_en = rotate in [180, 270]
+        self.rotate90 = rotate in [90, 270]
         self.pages = self.height // 8
         self.bufsize = self.pages * self.width
         self.renderbuf = bytearray(self.bufsize)
@@ -174,10 +174,9 @@ class SH1106(framebuf.FrameBuffer):
     def pixel(self, x, y, color=None):
         if color is None:
             return super().pixel(x, y)
-        else:
-            super().pixel(x, y , color)
-            page = y // 8
-            self.pages_to_update |= 1 << page
+        super().pixel(x, y , color)
+        page = y // 8
+        self.pages_to_update |= 1 << page
 
     def text(self, text, x, y, color=1):
         super().text(text, x, y, color)

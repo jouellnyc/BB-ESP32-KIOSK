@@ -27,10 +27,9 @@ def get_tb_text(err):
 def write_wifi_creds(ssid, pswd):
     """ NOTE spaces in the SSID come over as spaces w/o any need to convert  """
     try:
-        fh=open(wifi_file,'w')
-        fh.write(f"SSID='{ssid}'\n")
-        fh.write(f"PSWD='{pswd}'")
-        fh.close()
+        with open(wifi_file,'w') as fh:
+            fh.write(f"SSID='{ssid}'\n")
+            fh.write(f"PSWD='{pswd}'")
     except Exception as e:
         return f'Cannot open {wifi_file} {str(e)}'
     else:
@@ -53,11 +52,10 @@ def write_team_id(team_id):
         return f'Cannot read {team_file} {str(e)}'
     else:
         try:
-            fh=open(team_file,'w')
-            fh.write(f"team_id={team_id}\n")
-            fh.write(f"team_name={team_name}\n")
-            fh.write(f"team_code={team_code}\n")
-            fh.close()
+            with open(team_file,'w') as fh:
+                fh.write(f"team_id={team_id}\n")
+                fh.write(f"team_name={team_name}\n")
+                fh.write(f"team_code={team_code}\n")
         except Exception as e:
             return get_tb_text(e)
         else:
@@ -167,34 +165,40 @@ def index(request):
 
 @app.route('/setup/', methods=['POST'])
 def setup(req):
-    if req.method == 'POST':
+    if req.method != 'POST':
+        return
+    ssid     = req.form.get('ssid')
+    password = req.form.get('password')
+    team_id  = req.form.get('team_id')
 
-        ssid     = req.form.get('ssid')
-        password = req.form.get('password')
-        team_id  = req.form.get('team_id')
+    if not ssid or not password:
+        return 'Please send Password and SSID', 200, {'Content-Type': 'text/html'}
 
-        if ssid and password:
-            pass
-        else:
-            return 'Please send Password and SSID', 200, {'Content-Type': 'text/html'}
+    result = write_wifi_creds(ssid, password)
+    if result != 0:
+        return (
+            f'<HTML><TITLE>Error</TITLE>{result}</HTML>',
+            200,
+            {'Content-Type': 'text/html'},
+        )
 
-        result = write_wifi_creds(ssid, password)
-        if result == 0:
-            pass
-        else:
-            return '<HTML><TITLE>Error</TITLE>' + result + '</HTML>', 200, {'Content-Type': 'text/html'}
+    result =  write_team_id(team_id)
+    if result != 0:
+        return (
+            f'<HTML><TITLE>Error</TITLE>{result}</HTML>',
+            200,
+            {'Content-Type': 'text/html'},
+        )
 
-        result =  write_team_id(team_id)
-        if result == 0:
-            pass
-        else:
-            return '<HTML><TITLE>Error</TITLE>' + result + '</HTML>', 200, {'Content-Type': 'text/html'}
-
-        result = write_setup_file()
-        if result == 0:
-            return setup_reply_page, 200, {'Content-Type': 'text/html'}
-        else:
-            return '<HTML><TITLE>Error</TITLE>' + result + '</HTML>', 200, {'Content-Type': 'text/html'}
+    result = write_setup_file()
+    if result == 0:
+        return setup_reply_page, 200, {'Content-Type': 'text/html'}
+    else:
+        return (
+            f'<HTML><TITLE>Error</TITLE>{result}</HTML>',
+            200,
+            {'Content-Type': 'text/html'},
+        )
             
 
 @app.route('/reboot/', methods=['GET'])

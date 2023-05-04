@@ -63,8 +63,7 @@ def urldecode(string):
             result.append('%')
         else:
             code = item[:2]
-            result.append(chr(int(code, 16)))
-            result.append(item[2:])
+            result.extend((chr(int(code, 16)), item[2:]))
     return ''.join(result)
 
 
@@ -428,17 +427,17 @@ class Response():
         """
         http_cookie = '{cookie}={value}'.format(cookie=cookie, value=value)
         if path:
-            http_cookie += '; Path=' + path
+            http_cookie += f'; Path={path}'
         if domain:
-            http_cookie += '; Domain=' + domain
+            http_cookie += f'; Domain={domain}'
         if expires:
             if isinstance(expires, str):
-                http_cookie += '; Expires=' + expires
+                http_cookie += f'; Expires={expires}'
             else:
                 http_cookie += '; Expires=' + expires.strftime(
                     '%a, %d %b %Y %H:%M:%S GMT')
         if max_age:
-            http_cookie += '; Max-Age=' + str(max_age)
+            http_cookie += f'; Max-Age={str(max_age)}'
         if secure:
             http_cookie += '; Secure'
         if http_only:
@@ -460,7 +459,7 @@ class Response():
 
         # status code
         reason = self.reason if self.reason is not None else \
-            ('OK' if self.status_code == 200 else 'N/A')
+                ('OK' if self.status_code == 200 else 'N/A')
         stream.write('HTTP/1.0 {status_code} {reason}\r\n'.format(
             status_code=self.status_code, reason=reason).encode())
 
@@ -482,26 +481,25 @@ class Response():
                 if can_flush:  # pragma: no cover
                     stream.flush()
         except OSError as exc:  # pragma: no cover
-            if exc.errno == 32:  # errno.EPIPE
-                pass
-            else:
+            if exc.errno != 32:
                 raise
 
     def body_iter(self):
-        if self.body:
-            if hasattr(self.body, 'read'):
-                while True:
-                    buf = self.body.read(self.send_file_buffer_size)
-                    if len(buf):
-                        yield buf
-                    if len(buf) < self.send_file_buffer_size:
-                        break
-                if hasattr(self.body, 'close'):  # pragma: no cover
-                    self.body.close()
-            elif hasattr(self.body, '__next__'):
-                yield from self.body
-            else:
-                yield self.body
+        if not self.body:
+            return
+        if hasattr(self.body, 'read'):
+            while True:
+                buf = self.body.read(self.send_file_buffer_size)
+                if len(buf):
+                    yield buf
+                if len(buf) < self.send_file_buffer_size:
+                    break
+            if hasattr(self.body, 'close'):  # pragma: no cover
+                self.body.close()
+        elif hasattr(self.body, '__next__'):
+            yield from self.body
+        else:
+            yield self.body
 
     @classmethod
     def redirect(cls, location, status_code=302):
@@ -573,7 +571,7 @@ class URLPattern():
             else:
                 self.pattern += '/{segment}'.format(segment=segment)
         if use_regex:
-            self.pattern = re.compile('^' + self.pattern + '$')
+            self.pattern = re.compile(f'^{self.pattern}$')
 
     def match(self, path):
         if isinstance(self.pattern, str):
@@ -584,23 +582,21 @@ class URLPattern():
         if not g:
             return
         args = {}
-        i = 1
-        for arg in self.args:
+        for i, arg in enumerate(self.args, start=1):
             value = g.group(i)
             if arg['type'] == 'int':
                 value = int(value)
             args[arg['name']] = value
-            i += 1
         return args
 
 
 class HTTPException(Exception):
     def __init__(self, status_code, reason=None):
         self.status_code = status_code
-        self.reason = reason or str(status_code) + ' error'
+        self.reason = reason or f'{str(status_code)} error'
 
     def __repr__(self):  # pragma: no cover
-        return 'HTTPException: {}'.format(self.status_code)
+        return f'HTTPException: {self.status_code}'
 
 
 class Microdot():
@@ -928,11 +924,7 @@ class Microdot():
         return f
 
     def handle_request(self, sock, addr):
-        if not hasattr(sock, 'readline'):  # pragma: no cover
-            stream = sock.makefile("rwb")
-        else:
-            stream = sock
-
+        stream = sock if hasattr(sock, 'readline') else sock.makefile("rwb")
         req = None
         try:
             req = Request.create(self, stream, addr)
@@ -943,9 +935,7 @@ class Microdot():
         try:
             stream.close()
         except OSError as exc:  # pragma: no cover
-            if exc.errno == 32:  # errno.EPIPE
-                pass
-            else:
+            if exc.errno != 32:
                 raise
         if stream != sock:  # pragma: no cover
             sock.close()
@@ -959,10 +949,11 @@ class Microdot():
     def dispatch_request(self, req):
         if req:
             if req.content_length > req.max_content_length:
-                if 413 in self.error_handlers:
-                    res = self.error_handlers[413](req)
-                else:
-                    res = 'Payload too large', 413
+                res = (
+                    self.error_handlers[413](req)
+                    if 413 in self.error_handlers
+                    else ('Payload too large', 413)
+                )
             else:
                 f = self.find_route(req)
                 try:
@@ -1012,11 +1003,10 @@ class Microdot():
                             res = self.error_handlers[500](req)
                         else:
                             res = 'Internal server error', 500
+        elif 400 in self.error_handlers:
+            res = self.error_handlers[400](req)
         else:
-            if 400 in self.error_handlers:
-                res = self.error_handlers[400](req)
-            else:
-                res = 'Bad request', 400
+            res = 'Bad request', 400
 
         if isinstance(res, tuple):
             res = Response(*res)

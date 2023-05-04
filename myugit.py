@@ -33,12 +33,11 @@ def pull(f_path, raw_url):
     headers = {"User-Agent": "ugit-turfptax"}
     # ^^^ Github Requires user-agent header otherwise 403
     if len(token) > 0:
-        headers["authorization"] = "bearer %s" % token
+        headers["authorization"] = f"bearer {token}"
     r = urequests.get(raw_url, headers=headers)
     try:
-        new_file = open(f_path, "w")
-        new_file.write(r.content.decode("utf-8"))
-        new_file.close()
+        with open(f_path, "w") as new_file:
+            new_file.write(r.content.decode("utf-8"))
     except:
         print("decode fail try adding non-code files to .gitignore")
         try:
@@ -50,7 +49,7 @@ def pull(f_path, raw_url):
 def pull_all(tree=call_trees_url, raw=raw):
     main_dirs=['appsetup', 'bbapp','fonts', 'hardware', 'lib']
     log = []
-    
+
     """
     JJO
     """
@@ -61,7 +60,7 @@ def pull_all(tree=call_trees_url, raw=raw):
         except OSError:
             os.mkdir(one_dir)
             log.append(f"Created {one_dir}")
-    
+
     tree = pull_git_tree()
     for i in tree["tree"]:
         print(i['path'])
@@ -80,9 +79,8 @@ def pull_all(tree=call_trees_url, raw=raw):
             log.append(i["path"] + " updated")
         except:
             log.append(i["path"] + " failed to pull")
-    logfile = open(myugit_log, "w")
-    logfile.write(str(log))
-    logfile.close()
+    with open(myugit_log, "w") as logfile:
+        logfile.write(str(log))
     time.sleep(10)
     print("resetting machine in 10: machine.reset()")
     machine.reset()
@@ -91,7 +89,6 @@ def pull_git_tree(tree_url=call_trees_url, raw=raw):
     headers = {"User-Agent": "ugit-turfptax"}
     # ^^^ Github Requires user-agent header otherwise 403
     if len(token) > 0:
-        headers["authorization"] = "bearer %s" % token
+        headers["authorization"] = f"bearer {token}"
     r = urequests.get(tree_url, headers=headers)
-    tree = json.loads(r.content.decode("utf-8"))
-    return tree
+    return json.loads(r.content.decode("utf-8"))

@@ -65,9 +65,7 @@ def schedule(
     r = get("schedule", params)
 
     games = []
-    if r.get("totalItems") == 0:
-        return games  # TODO: ValueError('No games to parse from schedule object.') instead?
-    else:
+    if r.get("totalItems") != 0:
         for date in r.get("dates"):
             for game in date.get("games"):
                 game_info = {
@@ -110,27 +108,29 @@ def schedule(
 
                 if game_info["status"] in ["Final", "Game Over"]:
                     if game.get("isTie"):
-                        game_info.update({"winning_team": "Tie", "losing_Team": "Tie"})
+                        game_info |= {"winning_team": "Tie", "losing_Team": "Tie"}
                     else:
-                        game_info.update(
-                            {
-                                "winning_team": game["teams"]["away"]["team"]["name"]
-                                if game["teams"]["away"].get("isWinner")
-                                else game["teams"]["home"]["team"]["name"],
-                                "losing_team": game["teams"]["home"]["team"]["name"]
-                                if game["teams"]["away"].get("isWinner")
-                                else game["teams"]["away"]["team"]["name"],
-                                "winning_pitcher": game.get("decisions", {})
-                                .get("winner", {})
-                                .get("fullName", ""),
-                                "losing_pitcher": game.get("decisions", {})
-                                .get("loser", {})
-                                .get("fullName", ""),
-                                "save_pitcher": game.get("decisions", {})
-                                .get("save", {})
-                                .get("fullName"),
-                            }
-                        )
+                        game_info |= {
+                            "winning_team": game["teams"]["away"]["team"][
+                                "name"
+                            ]
+                            if game["teams"]["away"].get("isWinner")
+                            else game["teams"]["home"]["team"]["name"],
+                            "losing_team": game["teams"]["home"]["team"][
+                                "name"
+                            ]
+                            if game["teams"]["away"].get("isWinner")
+                            else game["teams"]["away"]["team"]["name"],
+                            "winning_pitcher": game.get("decisions", {})
+                            .get("winner", {})
+                            .get("fullName", ""),
+                            "losing_pitcher": game.get("decisions", {})
+                            .get("loser", {})
+                            .get("fullName", ""),
+                            "save_pitcher": game.get("decisions", {})
+                            .get("save", {})
+                            .get("fullName"),
+                        }
                     summary = (
                         date["date"]
                         + " - "
@@ -145,30 +145,33 @@ def schedule(
                         + game["status"]["detailedState"]
                         + ")"
                     )
-                    game_info.update({"summary": summary})
+                    game_info["summary"] = summary
                 elif game_info["status"] == "In Progress":
-                    game_info.update(
-                        {
-                            "Balls"   : game.get("linescore",{}).get('balls',''),
-                            "Strikes" : game.get("linescore",{}).get('strikes',''),
-                            "Batter"  : game.get("linescore",{}).get('offense',{}).get('batter','').get('fullName',''),
-                            "Outs"    : game.get("linescore",{}).get('outs',''),
-                            "summary": date["date"]
-                            + " - "
-                            + game["teams"]["away"]["team"]["name"]
-                            + " ("
-                            + str(game["teams"]["away"]["score"])
-                            + ") @ "
-                            + game["teams"]["home"]["team"]["name"]
-                            + " ("
-                            + str(game["teams"]["home"]["score"])
-                            + ") ("
-                            + game["linescore"]["inningState"]
-                            + " of the "
-                            + game["linescore"]["currentInningOrdinal"] 
-                            + ")" 
-                        }
-                    )
+                    game_info |= {
+                        "Balls": game.get("linescore", {}).get('balls', ''),
+                        "Strikes": game.get("linescore", {}).get(
+                            'strikes', ''
+                        ),
+                        "Batter": game.get("linescore", {})
+                        .get('offense', {})
+                        .get('batter', '')
+                        .get('fullName', ''),
+                        "Outs": game.get("linescore", {}).get('outs', ''),
+                        "summary": date["date"]
+                        + " - "
+                        + game["teams"]["away"]["team"]["name"]
+                        + " ("
+                        + str(game["teams"]["away"]["score"])
+                        + ") @ "
+                        + game["teams"]["home"]["team"]["name"]
+                        + " ("
+                        + str(game["teams"]["home"]["score"])
+                        + ") ("
+                        + game["linescore"]["inningState"]
+                        + " of the "
+                        + game["linescore"]["currentInningOrdinal"]
+                        + ")",
+                    }
                 else:
                     summary = (
                         date["date"]
@@ -180,11 +183,11 @@ def schedule(
                         + game["status"]["detailedState"]
                         + ")"
                     )
-                    game_info.update({"summary": summary})
+                    game_info["summary"] = summary
 
                 games.append(game_info)
 
-        return games
+    return games  # TODO: ValueError('No games to parse from schedule object.') instead?
 
 
 def get(endpoint, params, force=False):
@@ -196,11 +199,11 @@ def get(endpoint, params, force=False):
     # Lookup endpoint from input parameter
     ep = ENDPOINTS.get(endpoint)
     if not ep:
-        raise ValueError("Invalid endpoint (" + str(endpoint) + ").")
+        raise ValueError(f"Invalid endpoint ({str(endpoint)}).")
 
     url = ep["url"]
     print(url)
-    logger.debug("URL: {}".format(url))
+    logger.debug(f"URL: {url}")
 
     path_params = {}
     query_params = {}
@@ -208,30 +211,27 @@ def get(endpoint, params, force=False):
     # Parse parameters into path and query parameters, and discard invalid parameters
     for p, pv in params.items():
         if ep["path_params"].get(p):
-            logger.debug("Found path param: {}".format(p))
+            logger.debug(f"Found path param: {p}")
             if ep["path_params"][p].get("type") == "bool":
                 if str(pv).lower() == "false":
-                    path_params.update({p: ep["path_params"][p].get("False", "")})
+                    path_params[p] = ep["path_params"][p].get("False", "")
                 elif str(pv).lower() == "true":
-                    path_params.update({p: ep["path_params"][p].get("True", "")})
+                    path_params[p] = ep["path_params"][p].get("True", "")
             else:
-                path_params.update({p: str(pv)})
+                path_params[p] = str(pv)
         elif p in ep["query_params"]:
-            logger.debug("Found query param: {}".format(p))
-            query_params.update({p: str(pv)})
+            logger.debug(f"Found query param: {p}")
+            query_params[p] = str(pv)
+        elif force:
+            logger.debug(
+                f"Found invalid param, forcing into query parameters per force flag: {p}"
+            )
+            query_params[p] = str(pv)
         else:
-            if force:
-                logger.debug(
-                    "Found invalid param, forcing into query parameters per force flag: {}".format(
-                        p
-                    )
-                )
-                query_params.update({p: str(pv)})
-            else:
-                logger.debug("Found invalid param, ignoring: {}".format(p))
+            logger.debug(f"Found invalid param, ignoring: {p}")
 
-    logger.debug("path_params: {}".format(path_params))
-    logger.debug("query_params: {}".format(query_params))
+    logger.debug(f"path_params: {path_params}")
+    logger.debug(f"query_params: {query_params}")
 
     # Replace path parameters with their values
     for k, v in path_params.items():
@@ -242,7 +242,7 @@ def get(endpoint, params, force=False):
             + v
             + ("/" if ep["path_params"][k]["trailing_slash"] else ""),
         )
-        logger.debug("URL: {}".format(url))
+        logger.debug(f"URL: {url}")
 
     while url.find("{") != -1 and url.find("}") > url.find("{"):
         param = url[url.find("{") + 1 : url.find("}")]
@@ -258,26 +258,25 @@ def get(endpoint, params, force=False):
                 url = url.replace(
                     "{" + param + "}", ep["path_params"][param]["default"]
                 )
+            elif force:
+                logger.warning(
+                    "Missing required path parameter {%s}, proceeding anyway per force flag..."
+                    % param
+                )
             else:
-                if force:
-                    logger.warning(
-                        "Missing required path parameter {%s}, proceeding anyway per force flag..."
-                        % param
-                    )
-                else:
-                    raise ValueError("Missing required path parameter {%s}" % param)
+                raise ValueError("Missing required path parameter {%s}" % param)
         else:
             logger.debug("Removing optional param {%s}" % param)
             url = url.replace("{" + param + "}", "")
 
-        logger.debug("URL: {}".format(url))
+        logger.debug(f"URL: {url}")
     # Add query parameters to the URL
-    if len(query_params) > 0:
+    if query_params:
         for k, v in query_params.items():
-            logger.debug("Adding query parameter {}={}".format(k, v))
+            logger.debug(f"Adding query parameter {k}={v}")
             sep = "?" if url.find("?") == -1 else "&"
             url += sep + k + "=" + v
-            logger.debug("URL: {}".format(url))
+            logger.debug(f"URL: {url}")
 
     # Make sure required parameters are present
     satisfied = False
@@ -287,16 +286,12 @@ def get(endpoint, params, force=False):
             satisfied = True
         else:
             missing_params.extend([a for a in x if a not in query_params])
-            if len(missing_params) == 0:
+            if not missing_params:
                 satisfied = True
                 break
 
     if not satisfied and not force:
-        if ep.get("note"):
-            note = "\n--Endpoint note: " + ep.get("note")
-        else:
-            note = ""
-
+        note = "\n--Endpoint note: " + ep.get("note") if ep.get("note") else ""
         raise ValueError(
             "Missing required parameter(s): "
             + ", ".join(missing_params)

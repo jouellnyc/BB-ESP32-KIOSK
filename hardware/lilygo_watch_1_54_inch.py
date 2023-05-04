@@ -97,14 +97,14 @@ class Watch:
         self.clear_fill()
         self.draw_outline_box()
         self.tft.text(self.sm_font, f"{boot_stage}"      , 5,   8, self.white, self.drk_grn)
-        self.tft.text(self.sm_font, f"BB Kiosk"          , 5,  65, self.white, self.drk_grn)
+        self.tft.text(self.sm_font, "BB Kiosk", 5, 65, self.white, self.drk_grn)
         self.tft.text(self.sm_font, f"Version {version}" , 5, 105, self.white, self.drk_grn)
         
     def print_err(self, boot_stage):
         self.clear_fill()
         self.draw_outline_box()
         self.tft.text(self.sm_font, f"{boot_stage}"      , 5,   8, self.white, self.drk_grn)
-        self.tft.text(self.sm_font, f"BB Kiosk"          , 5,  65, self.white, self.drk_grn)
+        self.tft.text(self.sm_font, "BB Kiosk", 5, 65, self.white, self.drk_grn)
         self.tft.text(self.sm_font, f"Version {version}" , 5, 105, self.white, self.drk_grn)
 
 display = Watch()

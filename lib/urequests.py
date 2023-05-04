@@ -44,7 +44,7 @@ def request(method, url, data=None, json=None, headers={}, stream=None):
         import ussl
         port = 443
     else:
-        raise ValueError("Unsupported protocol: " + proto)
+        raise ValueError(f"Unsupported protocol: {proto}")
 
     if ":" in host:
         host, port = host.split(":", 1)
@@ -59,7 +59,7 @@ def request(method, url, data=None, json=None, headers={}, stream=None):
         if proto == "https:":
             s = ussl.wrap_socket(s, server_hostname=host)
         s.write(b"%s /%s HTTP/1.0\r\n" % (method, path))
-        if not "Host" in headers:
+        if "Host" not in headers:
             s.write(b"Host: %s\r\n" % host)
         # Iterate over keys to avoid tuple alloc
         for k in headers:
@@ -82,9 +82,7 @@ def request(method, url, data=None, json=None, headers={}, stream=None):
         #print(l)
         l = l.split(None, 2)
         status = int(l[1])
-        reason = ""
-        if len(l) > 2:
-            reason = l[2].rstrip()
+        reason = l[2].rstrip() if len(l) > 2 else ""
         while True:
             l = s.readline()
             if not l or l == b"\r\n":
@@ -92,7 +90,7 @@ def request(method, url, data=None, json=None, headers={}, stream=None):
             #print(l)
             if l.startswith(b"Transfer-Encoding:"):
                 if b"chunked" in l:
-                    raise ValueError("Unsupported " + l)
+                    raise ValueError(f"Unsupported {l}")
             elif l.startswith(b"Location:") and not 200 <= status <= 299:
                 raise NotImplementedError("Redirects not yet supported")
     except OSError:

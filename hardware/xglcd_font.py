@@ -60,15 +60,15 @@ class XglcdFont(object):
             for line in f:
                 # Skip lines that do not start with hex values
                 line = line.strip()
-                if len(line) == 0 or line[0:2] != '0x':
+                if len(line) == 0 or line[:2] != '0x':
                     continue
                 # Remove comments
                 comment = line.find('//')
                 if comment != -1:
-                    line = line[0:comment].strip()
+                    line = line[:comment].strip()
                 # Remove trailing commas
                 if line.endswith(','):
-                    line = line[0:len(line) - 1]
+                    line = line[:-1]
                 # Convert hex strings to bytearray and insert in to letters
                 mv[offset: offset + bytes_per_letter] = bytearray(
                     int(b, 16) for b in line.split(','))
@@ -97,7 +97,7 @@ class XglcdFont(object):
         letter_ord = ord(letter) - self.start_letter
         # Confirm font contains letter
         if letter_ord >= self.letter_count:
-            print('Font does not contain character: ' + letter)
+            print(f'Font does not contain character: {letter}')
             return b'', 0, 0
         bytes_per_letter = self.bytes_per_letter
         offset = letter_ord * bytes_per_letter

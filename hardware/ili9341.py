@@ -208,10 +208,7 @@ class Display(object):
         w = self.width
         h = self.height
         # Clear display in 1024 byte blocks
-        if color:
-            line = color.to_bytes(2, 'big') * (w * 8)
-        else:
-            line = bytearray(w * 16)
+        line = color.to_bytes(2, 'big') * (w * 8) if color else bytearray(w * 16)
         for y in range(0, h, 8):
             self.block(0, y, w - 1, y + 7, line)
 
@@ -351,7 +348,7 @@ class Display(object):
             chunk_size = chunk_height * w * 2
             chunk_y = y
             if chunk_count:
-                for c in range(0, chunk_count):
+                for _ in range(0, chunk_count):
                     buf = f.read(chunk_size)
                     self.block(x, chunk_y,
                                x2, chunk_y + chunk_height - 1,
@@ -388,9 +385,9 @@ class Display(object):
             self.block(x, y,
                        x + h - 1, y + w - 1,
                        buf)
+        elif self.is_off_grid(x, y, x + w - 1, y + h - 1):
+            return 0, 0
         else:
-            if self.is_off_grid(x, y, x + w - 1, y + h - 1):
-                return 0, 0
             self.block(x, y,
                        x + w - 1, y + h - 1,
                        buf)
@@ -662,7 +659,7 @@ class Display(object):
         dy = -r - r
         x = 0
         y = r
-        self.draw_vline(x0, y0 - r, 2 * r + 1, color)
+        self.draw_vline(x0, y0 - y, 2 * y + 1, color)
         while x < y:
             if f >= 0:
                 y -= 1
@@ -746,7 +743,7 @@ class Display(object):
         chunk_y = y
         if chunk_count:
             buf = color.to_bytes(2, 'big') * chunk_size
-            for c in range(0, chunk_count):
+            for _ in range(0, chunk_count):
                 self.block(x, chunk_y,
                            x + w - 1, chunk_y + chunk_height - 1,
                            buf)
@@ -839,15 +836,9 @@ class Display(object):
             # Calcualte minimum and maximum x values
             for x in range(x1, x2 + 1):
                 if is_steep:
-                    if x in xdict:
-                        xdict[x] = [min(y, xdict[x][0]), max(y, xdict[x][1])]
-                    else:
-                        xdict[x] = [y, y]
+                    xdict[x] = [min(y, xdict[x][0]), max(y, xdict[x][1])] if x in xdict else [y, y]
                 else:
-                    if y in xdict:
-                        xdict[y] = [min(x, xdict[y][0]), max(x, xdict[y][1])]
-                    else:
-                        xdict[y] = [x, x]
+                    xdict[y] = [min(x, xdict[y][0]), max(x, xdict[y][1])] if y in xdict else [x, x]
                 error -= abs(dy)
                 if error < 0:
                     y += ystep
@@ -875,7 +866,7 @@ class Display(object):
         chunk_x = x
         if chunk_count:
             buf = color.to_bytes(2, 'big') * chunk_size
-            for c in range(0, chunk_count):
+            for _ in range(0, chunk_count):
                 self.block(chunk_x, y,
                            chunk_x + chunk_width - 1, y + h - 1,
                            buf)
@@ -998,7 +989,7 @@ class Display(object):
         self.spi.write(bytearray([command]))
         self.cs(1)
         # Handle any passed data
-        if len(args) > 0:
+        if args:
             self.write_data(bytearray(args))
 
     def write_cmd_cpy(self, command, *args):
@@ -1017,7 +1008,7 @@ class Display(object):
         self.spi.unlock()
         self.cs.value = True
         # Handle any passed data
-        if len(args) > 0:
+        if args:
             self.write_data(bytearray(args))
 
     def write_data_mpy(self, data):

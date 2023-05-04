@@ -163,11 +163,11 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
         and instance of an error or a string                                        """
     if clear:
         display.fresh_box()        
-    
+
     """ 5 is already tight, 6 partly off the screen """
     max_rows = 6
     scr_len  = scr_len
-        
+
     def proc_text(text):
         """ Here's where we do the processing of the 'text' """
             
@@ -177,21 +177,21 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
                 ["Celebrate Aaron's", "birthday with 13 s","tats that show his greatness"] """
             _text=_text.strip()
             return [ _text[i : i + scr_len] for i in range(0, len(_text), scr_len)]
-        
+
         def mv_parts(text):
             """ Cycle through / Get the 'raw' 'parts' of  'text', convert each to a list.
                 Then align() each item/push characters to the next part if needed. 
                 
                 Return a list of strings that do no 'run on', but still need to be processed for length.
                 Ex. ["Celebrate Aaron's ", 'birthday with 13 ', 'stats that show his', ' greatness']   """
-            
+
             print(f"Text: {text}") if debug else None
             raw_parts = get_raw_parts(text)
-            
+
             if debug:
                 for _each in raw_parts:
                     print(f"Raw Part: {_each} -  Raw tsum: {get_tsum(_each)}")  
-            
+
             max_num_raw_parts = len(raw_parts)-2
             start=0
             while start <= max_num_raw_parts:
@@ -203,7 +203,7 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
                 print(f"Parts after round {start} {raw_parts}") if debug else None
                 start+=1
             return raw_parts
-        
+
         def align(_t1, _t2):
             """ Given the first 2 portions of the text converted to lists,
                 see if the end of the 1st list and the start of the 2nd list are
@@ -222,36 +222,33 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
                 _t2.insert(0,_t1.pop(-1))                                                                                                                                                     
                 _t1, _t2 = align(_t1,_t2)
             return ''.join(_t1), ''.join(_t2)
-            
-        
+
+
         def run_on(_t1, _t2):
             """ check for align() """
-            if _t1[-1] != ' ' and _t2[0] != ' ':
-                return True
-            return False
-        
-            
+            return _t1[-1] != ' ' and _t2[0] != ' '        
+
         def get_tsum(thing, def_size=15):
             """ Given the footprint of each character, return the sum(), "tsum" of it
                 whether it's a string or a list, to determine how to postion the text """
             if isinstance(thing, list):
-                return sum([ apnt2.get(x,def_size) for x in ' '.join(thing)])
+                return sum(apnt2.get(x,def_size) for x in ' '.join(thing))
             if isinstance(thing, str):
-                return sum([ apnt2.get(x,def_size) for x in thing ])
-        
+                return sum(apnt2.get(x,def_size) for x in thing)
+
         def rm_space(_parts):
             """ rm final / inital spaces of each part of given list """
             [ x.pop()  for x in _parts if x[-1] == ' ' ]
             [ x.pop(0) for x in _parts if x[0]  == ' ' ]
             return _parts
-            
+
         def sw_parts(parts):
             """ Swap parts like
                 from ['One series to ', "circle on each team's ", "schedule in '23"  ]
                 to
                      ['One series to ', "circle on each  ", " team's schedule in '23"]
                 if their pixel footprint (tsum) breaks past the screen's max           """
-            
+
             def bump(each, tsum):
                 """ Insert strategically into a list (push to a non existing 'part'/list to create it)
                     for the last 'each', or into an (already existing 'each'/list) inside a list         """
@@ -264,60 +261,60 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
                     tsum = get_tsum(_pparts[each])
                     print(f"New _pparts each {_pparts[each]} new tsum {tsum}") if debug else None
                     bump(each, tsum)
-                
+
             """ Given the aligned parts(strings), convert each to list to rm space easily """
             _parts = [ list(x) for x in parts ]
             print(f"_parts list comp {_parts}") if debug else None
-            
+
             """ There is no need for beg/end spaces at all right now, rm them """
             _parts = rm_space(_parts)
             print(f"_parts list rm_space {_parts}") if debug else None
-            
+
             """ join them all back to get words back """
             _parts = [ ''.join(x) for x in _parts ]
             print(f"_parts Current joined  {_parts}") if debug else None
-            
+
             """ make each part a list in a new candidate list for easy bumping of a full word/string """
             _pparts = [ x.split(' ') for x in _parts ]
             print(f"_pparts Current list cand to bump {_pparts}") if debug else None
             print(f"lp {len(_parts)}") if debug else None
-                        
+
             for each in range(0, len(_parts)):
                 if debug:        
                     print(f"---- Each {each}") 
                     print(f"-- each _parts  {each}: {_parts[each]}  {  get_tsum(_parts[each]) }") 
                     print(f"-- each _pparts {each}: {_pparts[each]} { get_tsum(_pparts[each]) }") 
                 bump(each, get_tsum(_pparts[each]))              
-            
+
             print(f"Final swapped but unjoined _pparts {_pparts}") if debug else None
             if debug:
                 for each in _pparts:
                     print(get_tsum(each)) 
-               
+
             _parts = [ ' '.join(x) for x in _pparts ]
             print(f"Final joined _parts {_parts}") if debug else None
             if debug:
                 for each in _parts:
                     print(get_tsum(each)) if debug else None
-                
+
             return _parts
-        
+
         return sw_parts(mv_parts(text))
-    
+
     """ If an error instance, pull out the text other process the beast ...   """
 
     if Error:
-        
+
         _text = get_tb_text(text)
         print(f"_text: {text} type: {type(_text)}, len: {len(_text)}") if debug else None
         procd_parts =   [ _text[-150:-125], _text[-125:-100],
                           _text[-100:-75],   _text[-75:-50],
                           _text[-50:-25],    _text[-25:-1] ]
     else:
-        
+
         procd_parts = proc_text(text)
-    
-    
+
+
     print(f"Final procd_parts parts {procd_parts}") if debug else None
 
     count=0
@@ -325,9 +322,8 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
         """ sm font = 25, date font =30  """
         if count > max_rows:
             break
-        else:
-            display.draw_text(x_pos, y_pos, each_text, font=font, color=fg,  background=bg)
-            print(f"{each_text}") #This will be each story or the error message
+        display.draw_text(x_pos, y_pos, each_text, font=font, color=fg,  background=bg)
+        print(f"{each_text}") #This will be each story or the error message
         count+=1
         y_pos+=30
 

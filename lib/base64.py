@@ -39,7 +39,9 @@ def _bytes_from_decode_data(s):
     elif isinstance(s, bytes_types):
         return s
     else:
-        raise TypeError("argument should be bytes or ASCII string, not %s" % s.__class__.__name__)
+        raise TypeError(
+            f"argument should be bytes or ASCII string, not {s.__class__.__name__}"
+        )
 
 
 
@@ -56,13 +58,12 @@ def b64encode(s, altchars=None):
     The encoded byte string is returned.
     """
     if not isinstance(s, bytes_types):
-        raise TypeError("expected bytes, not %s" % s.__class__.__name__)
+        raise TypeError(f"expected bytes, not {s.__class__.__name__}")
     # Strip off the trailing newline
     encoded = binascii.b2a_base64(s)[:-1]
     if altchars is not None:
         if not isinstance(altchars, bytes_types):
-            raise TypeError("expected bytes, not %s"
-                            % altchars.__class__.__name__)
+            raise TypeError(f"expected bytes, not {altchars.__class__.__name__}")
         assert len(altchars) == 2, repr(altchars)
         return encoded.translate(bytes.maketrans(b'+/', altchars))
     return encoded
@@ -163,7 +164,7 @@ def b32encode(s):
     s is the byte string to encode.  The encoded byte string is returned.
     """
     if not isinstance(s, bytes_types):
-        raise TypeError("expected bytes, not %s" % s.__class__.__name__)
+        raise TypeError(f"expected bytes, not {s.__class__.__name__}")
     quanta, leftover = divmod(len(s), 5)
     # Pad the last quantum with zero bits if necessary
     if leftover:
@@ -284,7 +285,7 @@ def b16encode(s):
     s is the byte string to encode.  The encoded byte string is returned.
     """
     if not isinstance(s, bytes_types):
-        raise TypeError("expected bytes, not %s" % s.__class__.__name__)
+        raise TypeError(f"expected bytes, not {s.__class__.__name__}")
     return binascii.hexlify(s).upper()
 
 
@@ -322,10 +323,10 @@ def encode(input, output):
         if not s:
             break
         while len(s) < MAXBINSIZE:
-            ns = input.read(MAXBINSIZE-len(s))
-            if not ns:
+            if ns := input.read(MAXBINSIZE - len(s)):
+                s += ns
+            else:
                 break
-            s += ns
         line = binascii.b2a_base64(s)
         output.write(line)
 
@@ -344,7 +345,7 @@ def encodebytes(s):
     """Encode a bytestring into a bytestring containing multiple lines
     of base-64 data."""
     if not isinstance(s, bytes_types):
-        raise TypeError("expected bytes, not %s" % s.__class__.__name__)
+        raise TypeError(f"expected bytes, not {s.__class__.__name__}")
     pieces = []
     for i in range(0, len(s), MAXBINSIZE):
         chunk = s[i : i + MAXBINSIZE]
@@ -362,7 +363,7 @@ def encodestring(s):
 def decodebytes(s):
     """Decode a bytestring of base-64 data into a bytestring."""
     if not isinstance(s, bytes_types):
-        raise TypeError("expected bytes, not %s" % s.__class__.__name__)
+        raise TypeError(f"expected bytes, not {s.__class__.__name__}")
     return binascii.a2b_base64(s)
 
 def decodestring(s):
