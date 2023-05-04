@@ -48,7 +48,6 @@ class BBKiosk:
         return wrapper
 
             
-    #@timing_decorator        
     def check_season(self):
         if (int(mt) in [04, 05, 06, 07, 08, 09, 10]) or \
            (int(mt) == 3 and (int(dy) == 30 or int(dy) == 31)):
@@ -58,27 +57,28 @@ class BBKiosk:
             print("Off Season")
             self.off_season()
 
-    #@timing_decorator
+    def get_todays_games(self):
+        if test_regular_season is True:
+            self.regular_season_test()
+        else:
+            print("Connecting to MLB live sched data") if DEBUG else None
+            self.games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
+            if len(self.games) > 1:
+                print("More that one game Today!")
+                if self.games[0]['status'] == "Final":
+                    self.games[0]=self.games[1]
+            self.game_id=self.games[0].get('game_id','NA')
+
     def reg_season(self):
+        self.get_todays_games()
         self.check_if_game()
         
     def check_if_game(self):
-        self.get_todays_games()
         if not self.games:
             self.no_gm()
         else:
             self.show_gm(sleep=7)
-
-    #@timing_decorator
-    def get_todays_games(self):
-        print("Connecting to MLB live sched data") if DEBUG else None
-        self.games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
-        if len(self.games) > 1:
-            print("More that one game Today!")
-            if self.games[0]['status'] == "Final":
-                self.games[0]=self.games[1]
-        self.game_id=self.games[0].get('game_id','NA')
-
+        
     def show_gm(self, sleep=7):
         print(f"> Game: {self.games[0]}")
         print(f"Status: {self.games[0]['status']}")
@@ -106,7 +106,7 @@ class BBKiosk:
             print('Who: We are the home team')
         else:
             print('We are the away team')
-        
+            
     def set_team_colors(self):
         self.home_team = str([x["teamCode"] for x in __all_team_ids["teams"] if x["id"] == self.home_id][0]).upper()
         self.away_team = str([x["teamCode"] for x in __all_team_ids["teams"] if x["id"] == self.away_id][0]).upper()
@@ -140,9 +140,9 @@ class BBKiosk:
                 time.sleep(func_sleep)
                 self.clear_story_area()
             else:
-                d.draw_text(5, start + (0 * delta), f"MLB News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
+                d.draw_text(5, self.start + (0 * self.delta), f"MLB News: {mt}-{dy}-{short_yr}" , d.date_font,  d.white , d.drk_grn)
                 """ Díaz - í is not supported by the font, make it a simple 'i' """
-                story = rm_accents(story)
+                story = self.rm_accents(story)
                 d.draw_text(42, 215, "Story at mlb.com", d.sm_font,  d.white , d.drk_grn)
                 d.scroll_print(text=story, y_pos=60, x_pos=18,
                                scr_len=18, clear=False, font=d.date_font,
@@ -168,13 +168,11 @@ class BBKiosk:
         pn = fi + '.' + ln
         return pn        
     
-    #@timing_decorator
     def get_current_game_data(self):
         url=f"https://statsapi.mlb.com/api/v1.1/game/{self.game_id}/feed/live?fields=gamePk,liveData,plays,currentPlay,result,description,awayScore,homeScore,about,batter,count,inning,halfInning,balls,strikes,outs,matchup,postOnFirst,postOnSecond,postOnThird,fullName,gameData,status,detailedState,decisions,winner,loser"
         print(f"Connecting to MLB live data at {url}") if DEBUG else None
         self.current_game_data = ujson.loads(urequests.get(url).text)
         print('current_game_data', self.current_game_data) if DEBUG else None
-       
                                                    
     def set_game_status(self):
         """ Status Check - Statuses are one of:
@@ -201,21 +199,22 @@ class BBKiosk:
         self.away_score  = self.currentPlay['result']['awayScore']
         self.home_score  = self.currentPlay['result']['homeScore']
         
-    #@timing_decorator
     def show_current_game(self):
 
         def exec_game_details():
             self.get_current_game_data()
             self.gc_status_flush()
             self.set_game_status()
-            self.set_current_play()
-            self.set_scores()
+            
         
         """ All of the statuses need at least some of these methods """
         exec_game_details()
         
         while (self.game_status == "In Progress")  or (( "eview" or "challenge" ) in self.game_status):
 
+            self.set_current_play()
+            self.set_scores()
+            
             self.balls    = self.currentPlay['count']['balls']
             self.strks    = self.currentPlay['count']['strikes']
             self.outs     = self.currentPlay['count']['outs']
@@ -319,7 +318,7 @@ class BBKiosk:
                 self.show_scheduled()
                 print(f'sleeping for {fsleep} in  {self.game_status}') if DEBUG else None
                 time.sleep(fsleep)
-                self.show_filler_news(show_scheduled, func_sleep=fsleep)
+                self.show_filler_news(self.show_scheduled, func_sleep=fsleep)
                 return 1
             
             
@@ -347,13 +346,13 @@ class BBKiosk:
         self.show_runners_front()
         d.draw_outline_box()
             
-    def no_gm(sleep=7):
+    def no_gm(self, sleep=7):
         self.show_no_gm()
         print(f"Sleeping for {sleep} seconds in show_no_gm")
         time.sleep(sleep)
         self.show_filler_news(show_no_gm)    
 
-    def off_season(sleep=30):
+    def off_season(self, sleep=30):
         print("start off season") if DEBUG else None
         self.opening_day_screen()
         print(f"Sleeping for {sleep} seconds in off_season")
@@ -362,7 +361,7 @@ class BBKiosk:
         show_filler_news(opening_day_screen)
         gc.collect()
 
-    def opening_day_screen():
+    def opening_day_screen(self):
         print("start opening_day_screen") if DEBUG else None
         d.fresh_box()
         self.show_logo()
@@ -372,17 +371,17 @@ class BBKiosk:
         d.draw_text(65,   self.start + (3 * self.delta) + 25 ,f"{opening_day}"       , d.score_font, d.white , d.drk_grn)
 
 
-    def regular_season_test():
+    def regular_season_test(self):
         #If no game that day games will be empty, not undefined
         from .test_games import games
         print(f"Games {games}")
         for x in games:
             self.games = [x]
-            check_if_game()
+            self.check_if_game()
         self.games = []
         self.check_if_game()
 
-    def rm_accents(story):
+    def rm_accents(self, story):
         """ Replace Accent Accent aigu, grave, and unicode apostrophes """
         return story.replace('\xed','i').replace('\xe9','e').replace('\xc0','A')\
                     .replace('\xe8','e').replace('\xec','i').replace('\xd2','O')\
@@ -552,10 +551,16 @@ while True:
     
     """ Game Time to query  MLB API for game data using timezone in ntp_setup.py """
     yr, mt, dy, hr, mn, *_ = [  f"{x:02d}" for x in utime.localtime(utime.mktime(utime.localtime()) + (int(timezone)*3600)) ]
-    gm_dt = f"{mt}/{dy}/{yr}"
+    gyr, gmt, gdy, ghr, gmn, *_ = [  f"{x:02d}" for x in utime.gmtime() ]
+    
+    gm_dt  = f"{mt}/{dy}/{yr}"
+    gmm_dt = f"{gmt}/{gdy}/{gyr}"
+    
     short_yr = f"{int( str(yr)[2:]):02d}"
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
-    print(f"Today's Local Game Date: {gm_dt}")
+    
+    print(f"Today's Local Game Date:   {gm_dt} - {hr}:{mn}")
+    print(f"Today's Local Game GMDate: {gmm_dt} - {ghr}:{gmn}")
     
     news_file = f"news.{mt}-{dy}-{yr}.txt"
     n = News(news_file)
