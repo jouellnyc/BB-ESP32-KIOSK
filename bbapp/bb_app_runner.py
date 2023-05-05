@@ -396,7 +396,7 @@ class BBKiosk:
                     .replace('\xf9','u').replace('\xc9','E').replace('\xe1','a')\
                     .replace('\xcd','I').replace('\xf3','o').replace('\xda','U')\
                     .replace(u"\u2018", "'").replace(u"\u2019", "'")\
-                    .replace(u'\xa0', u' ').replace(u'\xc1','A')
+                    .replace(u'\xa0', u' ').replace(u'\xc1','A').replace('\xf1','n')
 
     def runners_changed(self, runners):
         
