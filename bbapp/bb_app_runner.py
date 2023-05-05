@@ -57,6 +57,10 @@ class BBKiosk:
             print("Off Season")
             self.off_season()
 
+    def reg_season(self):
+        self.get_todays_games()
+        self.check_if_game()
+        
     def get_todays_games(self):
         if test_regular_season is True:
             self.regular_season_test()
@@ -69,10 +73,6 @@ class BBKiosk:
                     self.games[0]=self.games[1]
             self.game_id=self.games[0].get('game_id','NA')
 
-    def reg_season(self):
-        self.get_todays_games()
-        self.check_if_game()
-        
     def check_if_game(self):
         if not self.games:
             self.no_gm()
@@ -83,6 +83,7 @@ class BBKiosk:
         print(f"> Game: {self.games[0]}")
         print(f"Status: {self.games[0]['status']}")
         self.set_teams()
+        self.set_game_data_from_initial()
         what_sleep=self.show_current_game()
         print(f" Sleeping {what_sleep} seconds after get_score") if DEBUG else None
         time.sleep(what_sleep)
@@ -114,6 +115,17 @@ class BBKiosk:
         self.home_team_color = color565(_r, _g, _b)
         _r, _g, _b = TEAM_COLORS[self.away_team]
         self.away_team_color = color565(_r, _g, _b)
+        
+    def set_game_data_from_initial(self):
+        if team_id == self.home_id:
+            print('We are the home team')
+        self.game_status = self.games[0]['status']
+        self.home_score  = self.games[0].get("home_score",'NA')
+        self.away_score  = self.games[0].get("away_score",'NA')
+        self.home_rec    = self.games[0].get('home_rec','NA')
+        self.away_rec    = self.games[0].get('away_rec','NA')
+        self.lp          = self.games[0]['losing_pitcher']
+        self.wp          = self.games[0]['winning_pitcher']
         
     def clear_story_area(self):
         d.fill_rectangle(1, 41, 318, 198, d.drk_grn)
@@ -201,19 +213,16 @@ class BBKiosk:
         
     def show_current_game(self):
 
-        def exec_game_details():
-            self.get_current_game_data()
-            self.gc_status_flush()
-            self.set_game_status()
-            
-        
-        """ All of the statuses need at least some of these methods """
-        exec_game_details()
-        
         while (self.game_status == "In Progress")  or (( "eview" or "challenge" ) in self.game_status):
 
-            self.set_current_play()
-            self.set_scores()
+            def exec_game_details():
+                self.get_current_game_data()
+                self.gc_status_flush()
+                self.set_game_status()
+                self.set_scores()
+                self.set_current_play()
+        
+            exec_game_details()
             
             self.balls    = self.currentPlay['count']['balls']
             self.strks    = self.currentPlay['count']['strikes']
@@ -291,15 +300,14 @@ class BBKiosk:
                 print("Testing Regular Season")
                 return 2
             
-            exec_game_details()
-            
         else:
             
-        
             if self.game_status == "Game Over" or self.game_status == "Final":
                 
-                """ Stretch the Game Status to minimize ghost pixelation """
-                """ here and with ZZZ in Warm up  below                  """
+                #TBD
+                self.get_todays_games()
+                self.set_game_data_from_initial()
+                
                 if test_regular_season:
                     fsleep=5
                 else:
@@ -423,8 +431,8 @@ class BBKiosk:
 
     def show_final(self):
         self.game_status = "Final Score"
-        self.lp = self.get_x_p(self.current_game_data['liveData']['decisions']['winner']['fullName']) 
-        self.wp = self.get_x_p(self.current_game_data['liveData']['decisions']['loser']['fullName'])
+        #self.lp = self.get_x_p(self.current_game_data['liveData']['decisions']['winner']['fullName']) 
+        #self.wp = self.get_x_p(self.current_game_data['liveData']['decisions']['loser']['fullName'])
         d.clear_fill()
         d.draw_text(5, self.start + (0 * self.delta), f"{self.game_status} {mt}-{dy}-{short_yr}"              , d.date_font,  d.white , d.drk_grn)
         d.draw_text(5, self.start + (1 * self.delta), f"{self.home_team}:{self.home_score} H {self.home_rec}" , d.score_font, d.white , self.home_team_color)
