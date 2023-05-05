@@ -1,3 +1,3 @@
-team_id=111
-team_name= 'Red Sox' 
-team_code= 'bos' 
+team_id=110
+team_name='Orioles'
+team_code='BAL'
