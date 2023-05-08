@@ -124,8 +124,9 @@ class BBKiosk:
         self.away_score  = self.games[0].get("away_score",'NA')
         self.home_rec    = self.games[0].get('home_rec','NA')
         self.away_rec    = self.games[0].get('away_rec','NA')
-        self.lp          = self.games[0]['losing_pitcher']
-        self.wp          = self.games[0]['winning_pitcher']
+        if self.game_status == "Game Over" or self.game_status == "Final":
+            self.lp          = self.games[0]['losing_pitcher']
+            self.wp          = self.games[0]['winning_pitcher']
         
     def clear_story_area(self):
         d.fill_rectangle(1, 41, 318, 198, d.drk_grn)
@@ -219,8 +220,8 @@ class BBKiosk:
                 self.get_current_game_data()
                 self.gc_status_flush()
                 self.set_game_status()
-                self.set_scores()
                 self.set_current_play()
+                self.set_scores()
         
             exec_game_details()
             
