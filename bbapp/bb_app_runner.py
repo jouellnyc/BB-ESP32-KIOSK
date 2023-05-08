@@ -289,7 +289,7 @@ class BBKiosk:
             runners = self.current_game_data['liveData']['plays']['currentPlay']['matchup']
             if self.runners_changed(runners):
                 print('Runners Changed')
-                self.show_runners(runners)
+                self.show_runners(front=False)
             else:
                 print('Runners Did not Change')
             runners_sleep=4
@@ -352,7 +352,7 @@ class BBKiosk:
         d.draw_text(5, self.start + (2 * self.delta) + 5, f"{self.away_team}:{self.home_score} A {self.away_rec}" , d.score_font, d.white , self.away_team_color)
         d.draw_text(5, self.start + (3 * self.delta) + 5, f"AB: {self.batter}"                                    , d.sm_font,    d.white , d.drk_grn)
         d.draw_text(10,self.start + (4 * self.delta) + 5, f"B: {self.balls} S: {self.strks} O: {self.outs }"      , d.sm_font,    d.white , d.drk_grn)
-        self.show_runners_front()
+        self.show_runners_front(front=True)
         d.draw_outline_box()
             
     def no_gm(self, sleep=7):
@@ -454,72 +454,51 @@ class BBKiosk:
         d.draw_text(40, 75,  f"No {team_name}" , d.score_font, d.white, your_team_color)
         d.draw_text(40, 125, f"Game Today!"    , d.score_font, d.white, your_team_color)
 
-    def show_runners_front(self):
+    
+    def onbase(self, ax, bx, cx, dx):
+        d.fill_polygon(ax, bx, cx, dx, d.white, rotate=0)
 
-        def onbase():
-            d.fill_polygon(ax, bx, cx, dx, d.white, rotate=0)
-
-        def empty():
-            d.draw_polygon(ax, bx, cx, dx, d.white, rotate=0)
-
-        ax=4; bx=275; cx=200; dx=10
-        if self.bases['1st']:
-            onbase()
-        else:
-            empty()
+    def empty(self, ax, bx, cx, dx):
+        d.draw_polygon(ax, bx, cx, dx, d.white, rotate=0)
             
-        ax=4; bx=250; cx=165; dx=10
-        if self.bases['2nd']:
-            onbase()
-        else:
-            empty()
+    def show_runners(self, front=False):
+        
+        if front:
             
-        ax=4; bx=225; cx=200; dx=10   
-        if self.bases['3rd']:
-            onbase()
+            print('Show Runners bases Front',self.bases)
+            diamonds = { '1st' : [4, 275, 200,10],
+                         '2nd' : [4, 250, 165,10] ,
+                         '3rd' : [4, 225, 200,10] }
         else:
-            empty()
-
-
-    def show_runners(self, runners):
-        
-        
-        def onbase():
-            d.fill_polygon(ax, bx, cx, dx, d.white, rotate=0)
-
-        def empty():
-            d.draw_polygon(ax, bx, cx, dx, d.white, rotate=0)
-
-        d.clear_fill()
-        d.draw_outline_box()
-        #d.draw_text(5,  start + (0 * self.delta), f"{in_sta} {inn_cur}{ordinals[inn_cur]} {mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
-        d.draw_text(5, self.start + (0 * self.delta),     f"{self.in_sta} {self.inn_cur}{ordinals[self.inn_cur]} {self.up}", d.date_font,  d.white , d.drk_grn)
-        
-        fn='fullName'
-        what='postOnFirst'
-        print('Show Runners bases ',self.bases)
-        ax=4; bx=215; cx=150; dx=15
-        if self.bases['1st']:
-            d.draw_text(195, 180, self.get_x_p(self.bases['1st']), d.sm_font,    d.white , d.drk_grn) 
-            onbase()
+    
+            print('Show Runners bases Large',self.bases)
+            diamonds = { '1st' : [4, 215, 150,15],
+                         '2nd' : [4, 155, 75, 15] ,
+                         '3rd' : [4, 95, 150, 15] }
             
-        else:
-            empty()
+            text = {  '1st' : [195, 180 ],
+                       '2nd' : [95, 100 ],
+                       '3rd' : [2, 180] }
         
-        ax=4; bx=155; cx=75; dx=15
-        if self.bases['2nd']:
-            onbase()
-            d.draw_text( 95, 100, self.get_x_p(self.bases['2nd']), d.sm_font,    d.white , d.drk_grn)
-        else:
-            empty()
+            d.fresh_box()
+            d.draw_text(5, self.start + (0 * self.delta),
+                        f"{self.in_sta} {self.inn_cur}{ordinals[self.inn_cur]} {self.up}",
+                        d.date_font,  d.white , d.drk_grn)
         
-        ax=4; bx=95; cx=150; dx=15
-        if self.bases['3rd']:
-            onbase()
-            d.draw_text(  2, 180, self.get_x_p(self.bases['3rd']), d.sm_font,    d.white , d.drk_grn)
-            
-        else:
-            empty()
+        for one_base in diamonds.values():
+
+            if self.bases[one_base]:
+                
+                self.onbase(ax=diamonds[one_base][0], bx=diamonds[one_base][1],
+                            cx=diamonds[one_base][2], dx=diamonds[one_base][3])
+                if front is False:
+                    d.draw_text(text[[one_base]][0], text[[one_base]][1],
+                                self.get_x_p(self.bases[one_base]), d.sm_font, d.white , d.drk_grn)
+                
+            else:
+                self.empty(ax=diamonds[one_base][0], bx=diamonds[one_base][1],
+                           cx=diamonds[one_base][2], dx=diamonds[one_base][3])
+        
 
     def show_scheduled(self):
         gm_time=self.games[0].get('game_datetime','NA')
