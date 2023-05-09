@@ -4,7 +4,6 @@
 from hardware.screen_runner import display as d
 
 """ Python Imports """
-import sys
 import utime
 import time
 import urequests
