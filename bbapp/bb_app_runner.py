@@ -199,6 +199,9 @@ class BBKiosk:
             "Delayed"
             "Manager challenge: XXX"""
         self.game_status = self.current_game_data['gameData']['status']['detailedState']
+        if 'challenge' in self.game_status:
+            self.game_status = 'Manager challenge'
+        
         
     def set_current_play(self):
         try:
@@ -225,9 +228,6 @@ class BBKiosk:
         
             exec_game_details()
             
-            if 'challenge' in self.game_status:
-                self.game_status = 'Manager challenge'
-            
             self.balls    = self.currentPlay['count']['balls']
             self.strks    = self.currentPlay['count']['strikes']
             self.outs     = self.currentPlay['count']['outs']
@@ -236,7 +236,6 @@ class BBKiosk:
             self.in_sta   = self.in_sta[0].upper() + self.in_sta[1:]
             self.batter   = self.get_x_p(self.currentPlay['matchup']['batter']['fullName'])
             
-            #d.clear_fill()
             self.clear_leave_outline()
             
             if "Bottom" in self.in_sta:
@@ -266,9 +265,7 @@ class BBKiosk:
                 if self.cur_play_res != self.previous_play:
                     print(f"Play change: {self.cur_play_res}")
                     self.previous_play = self.cur_play_res
-                    ####d.fresh_box()
                     self.clear_story_area()
-                    #d.draw_text(5,  start + (0 * delta), f"{in_sta} {inn_cur}{ordinals[inn_cur]} {mt}-{dy}-{short_yr}", d.date_font,  d.white , d.drk_grn)
                     d.draw_text(5, self.start + (0 * self.delta), f"{self.in_sta} {self.inn_cur}{ordinals[self.inn_cur]} {self.up}", d.date_font,  d.white , d.drk_grn)
                     if len(self.cur_play_res.split(' ')) > 12:
                         sp_font=d.sm_font; sp_max_x=300; sp_scr_len=26
