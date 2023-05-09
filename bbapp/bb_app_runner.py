@@ -221,6 +221,7 @@ class BBKiosk:
         
             exec_game_details()
             
+            
             self.balls    = self.currentPlay['count']['balls']
             self.strks    = self.currentPlay['count']['strikes']
             self.outs     = self.currentPlay['count']['outs']

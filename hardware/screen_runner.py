@@ -145,7 +145,7 @@ def get_tb_text(err):
     print(buf.getvalue()[35:])
     return buf.getvalue()[35:]
 
-def gc_status_flush(self):
+def gc_status_flush():
         print("Mem: ", gc.mem_free()) if MEM_DEBUG else None
         gc.collect()
         print("Mem: ", gc.mem_free()) if MEM_DEBUG else None
