@@ -244,7 +244,7 @@ class BBKiosk:
             in_progress_sleep=5
             print(f"sleeping {in_progress_sleep} after showing score/in_progress")
             time.sleep(in_progress_sleep)
-            d.gc_status_flush()()
+            d.gc_status_flush()
             
             self.cur_play_res  = self.currentPlay.get('result', {}).get('description')
 
