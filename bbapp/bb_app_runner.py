@@ -165,11 +165,6 @@ class BBKiosk:
                 self.clear_story_area()
             story_count+=1
 
-    def gc_status_flush(self):
-        print("Mem: ", gc.mem_free()) if MEM_DEBUG else None
-        gc.collect()
-        print("Mem: ", gc.mem_free()) if MEM_DEBUG else None
-    
     def get_x_p(self, pname):
         """ Given 'John Smith (Jr.)'  """
         """ return 'J.Smith'          """
@@ -219,7 +214,7 @@ class BBKiosk:
 
             def exec_game_details():
                 self.get_current_game_data()
-                self.gc_status_flush()
+                d.gc_status_flush()
                 self.set_game_status()
                 self.set_current_play()
                 self.set_scores()
@@ -248,7 +243,7 @@ class BBKiosk:
             in_progress_sleep=5
             print(f"sleeping {in_progress_sleep} after showing score/in_progress")
             time.sleep(in_progress_sleep)
-            self.gc_status_flush()
+            d.gc_status_flush()()
             
             self.cur_play_res  = self.currentPlay.get('result', {}).get('description')
 
@@ -275,14 +270,12 @@ class BBKiosk:
                 else:
                     print(f"Play change: No")
             else:
-                #Set to none in case the play repeats itself (mound visit followed by a mound visit)
-                self.previous_play = None
                 print("Play is None")
                 
             play_check_sleep=4
             print(f"Sleeping {play_check_sleep} after Current Play Check/Show")
             time.sleep(play_check_sleep)
-            self.gc_status_flush()
+            d.gc_status_flush()
                         
             
             """ Now, Check Runners """
@@ -295,7 +288,7 @@ class BBKiosk:
             runners_sleep=4
             print(f"Sleeping {runners_sleep} after runners")
             time.sleep(runners_sleep)
-            self.gc_status_flush()
+            d.gc_status_flush()
             
             if test_regular_season:
                 print("Testing Regular Season")

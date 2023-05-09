@@ -144,6 +144,11 @@ def get_tb_text(err):
     #Remove the word Traceback/etc
     print(buf.getvalue()[35:])
     return buf.getvalue()[35:]
+
+def gc_status_flush(self):
+        print("Mem: ", gc.mem_free()) if MEM_DEBUG else None
+        gc.collect()
+        print("Mem: ", gc.mem_free()) if MEM_DEBUG else None
     
 def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
                  Error=False, clear=True, font=sm_font,
@@ -348,3 +353,4 @@ display.scroll_print     = scroll_print
 display.check_upgrade    = check_upgrade
 display.fresh_box        = fresh_box
 display.crash_burn       = crash_burn
+display.gc_status_flush  = gc_status_flush
