@@ -275,6 +275,8 @@ class BBKiosk:
                 else:
                     print(f"Play change: No")
             else:
+                #Set to none in case the play repeats itself (mound visit followed by a mound visit)
+                self.previous_play = None
                 print("Play is None")
                 
             play_check_sleep=4
