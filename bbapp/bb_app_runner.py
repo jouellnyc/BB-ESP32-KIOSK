@@ -225,6 +225,9 @@ class BBKiosk:
         
             exec_game_details()
             
+            if 'challenge' in self.game_status:
+                self.game_status = 'Manager challenge'
+            
             self.balls    = self.currentPlay['count']['balls']
             self.strks    = self.currentPlay['count']['strikes']
             self.outs     = self.currentPlay['count']['outs']
@@ -352,7 +355,7 @@ class BBKiosk:
         d.draw_text(5, self.start + (2 * self.delta) + 5, f"{self.away_team}:{self.home_score} A {self.away_rec}" , d.score_font, d.white , self.away_team_color)
         d.draw_text(5, self.start + (3 * self.delta) + 5, f"AB: {self.batter}"                                    , d.sm_font,    d.white , d.drk_grn)
         d.draw_text(10,self.start + (4 * self.delta) + 5, f"B: {self.balls} S: {self.strks} O: {self.outs }"      , d.sm_font,    d.white , d.drk_grn)
-        self.show_runners_front(front=True)
+        self.show_runners(front=True)
         d.draw_outline_box()
             
     def no_gm(self, sleep=7):
@@ -485,14 +488,15 @@ class BBKiosk:
                         f"{self.in_sta} {self.inn_cur}{ordinals[self.inn_cur]} {self.up}",
                         d.date_font,  d.white , d.drk_grn)
         
-        for one_base in diamonds.values():
+        for one_base in diamonds.keys():
 
             if self.bases[one_base]:
                 
                 self.onbase(ax=diamonds[one_base][0], bx=diamonds[one_base][1],
                             cx=diamonds[one_base][2], dx=diamonds[one_base][3])
+                
                 if front is False:
-                    d.draw_text(text[[one_base]][0], text[[one_base]][1],
+                    d.draw_text(text[one_base][0], text[one_base][1],
                                 self.get_x_p(self.bases[one_base]), d.sm_font, d.white , d.drk_grn)
                 
             else:
