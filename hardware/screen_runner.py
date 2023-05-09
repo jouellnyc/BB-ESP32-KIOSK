@@ -6,6 +6,7 @@ from bbapp.version import version
 from .config import screen
 from .font_runner import sm_font, score_font, date_font
 from .ili9341 import color565
+import gc
 
 """ Break Down of Individual Personalities                """
 if 'ili' in screen:
