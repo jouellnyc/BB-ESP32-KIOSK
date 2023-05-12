@@ -21,7 +21,7 @@
 
    <img src="images/in_progress.jpg"   width="200"/>
 
-  - then show any 'event' (hit/walk/timeout/homerun/etc) using mlb stats http calls:
+  - then show any 'event' (hit/walk/timeout/homerun/etc):
    <img src="images/home_run.jpg"    width="200"/>
 
   - then show runners on base if they have changed:
@@ -32,7 +32,9 @@
    <img src="images/final.jpg"    width="200"/>
 
 - If no game 'today',  it will wait a few hours and retry.
+
 - If it's the offseason, it will tell you when open day is.
+
 - Stories from mlb.com will display afterward for 7 seconds and rotate
 
 #### Requirements (if you are building your own)
