@@ -35,9 +35,11 @@
 
    <img src="images/no_game.jpg"    width="200"/>
 
-- If it's the offseason, it will tell you when open day is.
+- Afterwards, stories from mlb.com will display for 7 seconds and rotate:
 
-- Stories from mlb.com will display afterward for 7 seconds and rotate
+   <img src="images/news.jpg"    width="200"/>
+
+- If it's the offseason, it will tell you when open day is.
 
 #### Requirements (if you are building your own)
 
