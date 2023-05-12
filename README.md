@@ -29,7 +29,7 @@
  
 - If the game is over, it show you the final score:
 
-   <img src="images/final.jpg.jpg"    width="200"/>
+   <img src="images/final.jpg"    width="200"/>
 
 - If no game 'today',  it will wait a few hours and retry.
 - If it's the offseason, it will tell you when open day is.
