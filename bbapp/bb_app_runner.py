@@ -125,7 +125,7 @@ class BBKiosk:
         if self.game_status == "Game Over" or self.game_status == "Final":
             self.lp          = self.games[0]['losing_pitcher']
             self.wp          = self.games[0]['winning_pitcher']
-        
+            
     def clear_story_area(self):
         d.fill_rectangle(1, 41, 318, 198, d.drk_grn)
 
@@ -299,7 +299,6 @@ class BBKiosk:
             
             if self.game_status == "Game Over" or self.game_status == "Final":
                 
-                #TBD
                 self.get_todays_games()
                 self.set_game_data_from_initial()
                 
@@ -307,6 +306,7 @@ class BBKiosk:
                     fsleep=5
                 else:
                     fsleep=30            
+                
                 self.show_final()
                 print(f'sleeping for {fsleep} in  {self.game_status}') if DEBUG else None
                 time.sleep(fsleep)
@@ -425,9 +425,6 @@ class BBKiosk:
         self.cycle_stories(func, news, func_sleep=30)
 
     def show_final(self):
-        self.game_status = "Final Score"
-        #self.lp = self.get_x_p(self.current_game_data['liveData']['decisions']['winner']['fullName']) 
-        #self.wp = self.get_x_p(self.current_game_data['liveData']['decisions']['loser']['fullName'])
         d.clear_fill()
         d.draw_text(5, self.start + (0 * self.delta), f"{self.game_status} {mt}-{dy}-{short_yr}"              , d.date_font,  d.white , d.drk_grn)
         d.draw_text(5, self.start + (1 * self.delta), f"{self.home_team}:{self.home_score} H {self.home_rec}" , d.score_font, d.white , self.home_team_color)
@@ -519,8 +516,6 @@ http_headers= { 'User-Agent': ua }
 force_offseason = False
 test_regular_season = False
 DEBUG = True
-MEM_DEBUG = True
-
 
 bb=BBKiosk()
 bb.set_team_color()
@@ -544,9 +539,8 @@ while True:
     
     print(f"Today's Local Game Date:   {gm_dt} - {hr}:{mn}")
     print(f"Today's Local Game GMDate: {gmm_dt} - {ghr}:{gmn}")
-    
-    news_file = f"news.{mt}-{dy}-{yr}.txt"
-    n = News(news_file)
+  
+    n = News(f"{yr}-{mt}-{dy}")
  
     try:
         if force_offseason:
