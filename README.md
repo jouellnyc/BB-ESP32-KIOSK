@@ -31,7 +31,9 @@
 
    <img src="images/final.jpg"    width="200"/>
 
-- If no game 'today',  it will wait a few hours and retry.
+- If no game 'today', it will show you and and retry later:.
+
+   <img src="images/no_game.jpg"    width="200"/>
 
 - If it's the offseason, it will tell you when open day is.
 

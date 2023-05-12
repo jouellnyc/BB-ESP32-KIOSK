@@ -65,11 +65,14 @@ class BBKiosk:
         else:
             print("Connecting to MLB live sched data") if DEBUG else None
             self.games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
+            if self.games:
+                self.game_id=self.games[0].get('game_id','NA')
+            print("Games", self.games)
             if len(self.games) > 1:
                 print("More that one game Today!")
                 if self.games[0]['status'] == "Final":
                     self.games[0]=self.games[1]
-            self.game_id=self.games[0].get('game_id','NA')
+            
 
     def check_if_game(self):
         if not self.games:
@@ -353,7 +356,7 @@ class BBKiosk:
         self.show_no_gm()
         print(f"Sleeping for {sleep} seconds in show_no_gm")
         time.sleep(sleep)
-        self.show_filler_news(show_no_gm)    
+        self.show_filler_news(self.show_no_gm)    
 
     def off_season(self, sleep=30):
         print("start off season") if DEBUG else None
@@ -441,9 +444,10 @@ class BBKiosk:
         yr, mt, dy, hr, mn, s1, s2, s3 = time.localtime()
         d.fresh_box()
         d.draw_text(5,   5,  gm_dt, d.date_font, d.white, d.drk_grn)
+        self.set_team_color()
         self.show_logo()
-        d.draw_text(40, 75,  f"No {team_name}" , d.score_font, d.white, your_team_color)
-        d.draw_text(40, 125, f"Game Today!"    , d.score_font, d.white, your_team_color)
+        d.draw_text(40, 75,  f"No {team_name}" , d.score_font, d.white, self.your_team_color)
+        d.draw_text(40, 125, f"Game Today!"    , d.score_font, d.white, self.your_team_color)
 
     
     def onbase(self, ax, bx, cx, dx):
