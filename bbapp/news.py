@@ -1,15 +1,16 @@
 import os
 import re
+import time
 import mrequests as requests
 
 class News:
     
-    def __init__(self, news_file):
+    def __init__(self, news_day):
         self.news=[]
-        self.DEBUG=False
+        self.DEBUG=True
         self.news_fail_count=0
-        self.news_file=news_file
-        self.news_url="https://www.mlb.com/news/"
+        self.news_file= f"{news_day}.txt"
+        self.news_url="https://www.mlbsss.com/news/"
         if self.DEBUG:
             print(f"News File: {self.news_file}")
     
@@ -54,8 +55,15 @@ class News:
                     self.news = self.get_news_from_file()
                     return self.news
         
+        
+        
     def get_news_from_file(self):
-        print(f"Getting news from {self.news_file} as news file") if self.DEBUG else None
+        errors = ["ENOENT", "40", "50" ]
+        if any([x in self.news[1] for x in errors]):
+            return self.news
+        else:
+            print(f"Getting news from {self.news_file} as news file") if self.DEBUG else None
+    
         try:
             with open(self.news_file) as fh:
                 for line in fh:
@@ -63,39 +71,41 @@ class News:
                     if story is not None:
                         self.news.append(story.group(1))
         except OSError as e:
-            print(f"News Error {e}")
+            return [f"News Error", f"Error {str(e)}"] 
         else:
             print(f"news=[] len: {len(self.news)} stories") if self.DEBUG else None
             return self.news
 
     def get_news_from_web(self):
-        
-        def fail_news():
-            self.news_fail_count+=1
-            print(f"Request failed: {str(e)}, fail count: {self.news_fail_count}")
-            if self.news_fail_count > 4:
-                #d.crash_burn(f"Fatal NEWS Error: http code: {self.request.status_code}")
-                print('crash burn')
-                time.sleep(10)
-                
+            
         def msg(state):
             print(f"HTTP Request {state} -  http code: {self.request.status_code}")
-                
-        while True:
+            
+        while self.news_fail_count < 3:
+            
             try:
                 print(f"Connecting to {self.news_url}")
                 self.request = requests.get(self.news_url, headers={b"accept": b"text/html"})
             except OSError as e:
-                fail_news()    
+                print(str(e))
+                self.news_fail_count+=1
+                self.news = ["News Error", str(e)]
+                time.sleep(3)
             else:
                 if self.request.status_code != 200:
                     msg("Failed")
-                    fail_news()
+                    self.news_fail_count+=1
+                    self.news = ["News Error", str(self.request.status_code)]
+                    time.sleep(3)
+                    print(self.news)
                 else:
                     msg("Success")
                     self.cleanup_news_files()
                     break
+        else:
+            print("Too many errors")
             
+                
     def len_news_file_is_non_zero(self):
         if os.stat(self.news_file)[6] == 0:
             return False

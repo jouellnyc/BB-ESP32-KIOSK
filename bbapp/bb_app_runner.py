@@ -71,7 +71,7 @@ class BBKiosk:
             if len(self.games) > 1:
                 print("More that one game Today!")
                 if self.games[0]['status'] == "Final":
-                    self.games[0]=self.games[1]
+                    self.games[0]=self.games[1]        
             
 
     def check_if_game(self):
@@ -197,7 +197,6 @@ class BBKiosk:
         self.game_status = self.current_game_data['gameData']['status']['detailedState']
         if 'challenge' in self.game_status:
             self.game_status = 'Manager challenge'
-        
         
     def set_current_play(self):
         try:
