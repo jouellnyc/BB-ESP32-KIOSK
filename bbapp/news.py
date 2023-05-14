@@ -11,6 +11,7 @@ class News:
         self.news_fail_count=0
         self.news_file= f"{news_day}.txt"
         self.news_url="https://www.mlb.com/news/"
+        self.news_error = None
         if self.DEBUG:
             print(f"News File: {self.news_file}")
     
@@ -58,12 +59,10 @@ class News:
         
         
     def get_news_from_file(self):
-        errors = ["ENOENT", "40", "50" ]
-        if any([x in self.news[1] for x in errors]):
+        if self.news_error:
             return self.news
-        else:
-            print(f"Getting news from {self.news_file} as news file") if self.DEBUG else None
-    
+        
+        print(f"Getting news from {self.news_file} as news file") if self.DEBUG else None
         try:
             with open(self.news_file) as fh:
                 for line in fh:
@@ -89,13 +88,13 @@ class News:
             except OSError as e:
                 print(str(e))
                 self.news_fail_count+=1
-                self.news = ["News Error", str(e)]
+                self.news_error = str(e)
                 time.sleep(3)
             else:
                 if self.request.status_code != 200:
                     msg("Failed")
                     self.news_fail_count+=1
-                    self.news = ["News Error", str(self.request.status_code)]
+                    self.news_error = self.request.status_code
                     time.sleep(3)
                     print(self.news)
                 else:
@@ -103,6 +102,7 @@ class News:
                     self.cleanup_news_files()
                     break
         else:
+            self.news = ["News Error", self.news_error]
             print("Too many errors")
             
                 
