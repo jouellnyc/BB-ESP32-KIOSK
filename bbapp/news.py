@@ -10,7 +10,7 @@ class News:
         self.DEBUG=True
         self.news_fail_count=0
         self.news_file= f"{news_day}.txt"
-        self.news_url="https://www.mlbsss.com/news/"
+        self.news_url="https://www.mlb.com/news/"
         if self.DEBUG:
             print(f"News File: {self.news_file}")
     
