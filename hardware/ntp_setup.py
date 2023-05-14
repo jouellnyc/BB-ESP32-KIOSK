@@ -39,7 +39,6 @@ def utc_to_local(_time):
         am_pm = 'p'
     else:
         am_pm = 'a'
-    print('hh', hh)
     then_time = '%2.2d-%2.2d %1.1d:%2.2d' % (mo, dd, hh, mm, ) + am_pm
     return then_time
 

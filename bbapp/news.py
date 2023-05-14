@@ -9,15 +9,16 @@ class News:
         self.news=[]
         self.DEBUG=True
         self.news_fail_count=0
-        self.news_file= f"{news_day}.txt"
+        self.news_file= f"news-{news_day}.txt"
         self.news_url="https://www.mlb.com/news/"
         self.news_error = None
         if self.DEBUG:
             print(f"News File: {self.news_file}")
     
     def cleanup_news_files(self):
-        if self.save_news_file():
-            self.rm_old_news()
+        self.rm_old_news()
+        self.save_news_file()
+        
     
     def get_latest_news(self):
             if self.news:
@@ -126,7 +127,7 @@ class News:
 
     def rm_old_news(self):
         
-        old_files = [ x for x in os.listdir('/') if 'news' in x and  self.news_file not in x ]
+        old_files = [ x for x in os.listdir('/') if 'news' in x ]
         print('old_files ',old_files)
         
         if len(old_files) > 0:
