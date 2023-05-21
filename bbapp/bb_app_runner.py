@@ -153,7 +153,7 @@ class BBKiosk:
             print(f"== {story_count}")
             if story_count > 0 and story_count % 7 == 0:
                 func()
-                print(f"Sleeping for {func_sleep} in cycle stories for {func.__name__}") if DEBUG else None
+                print(f"Sleeping for {func_sleep} in cycle stories for {func.__name__}") 
                 time.sleep(func_sleep)
                 self.clear_story_area()
             else:
