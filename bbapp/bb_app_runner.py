@@ -400,6 +400,41 @@ class BBKiosk:
 
     def rm_accents(self, story):
         """ Replace Accent Accent aigu, grave, and unicode apostrophes """
+        
+        """ First Pass thanks to ChatGPT """
+        replacements = {
+            "à": "a",
+            "â": "a",
+            "ç": "c",
+            "é": "e",
+            "è": "e",
+            "ê": "e",
+            "ë": "e",
+            "î": "i",
+            "ï": "i",
+            "ô": "o",
+            "ù": "u",
+            "û": "u",
+            "ü": "u",
+            "À": "A",
+            "Â": "A",
+            "Ç": "C",
+            "É": "E",
+            "È": "E",
+            "Ê": "E",
+            "Ë": "E",
+            "Î": "I",
+            "Ï": "I",
+            "Ô": "O",
+            "Ù": "U",
+            "Û": "U",
+            "Ü": "U",
+        }
+
+        for accented, non_accented in replacements.items():
+            story = story.replace(accented, non_accented)
+    
+        """ Second Pass thanks to Empirical Evidence """
         return story.replace('\xed','i').replace('\xe9','e').replace('\xc0','A')\
                     .replace('\xe8','e').replace('\xec','i').replace('\xd2','O')\
                     .replace('\xf9','u').replace('\xc9','E').replace('\xe1','a')\
