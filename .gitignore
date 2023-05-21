@@ -1,3 +1,13 @@
 *.jpg
 *.png
 *team_id*
+.idea/
+.sourcery.yaml
+_filler/
+bbapp/__pycache__/
+bbapp/bak/
+bbapp/time_funcs.py
+huh.txt
+issue
+screen_fixes.txt
+tests/

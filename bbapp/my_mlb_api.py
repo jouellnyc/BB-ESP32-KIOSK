@@ -199,7 +199,7 @@ def get(endpoint, params, force=False):
         raise ValueError("Invalid endpoint (" + str(endpoint) + ").")
 
     url = ep["url"]
-    print(url)
+    ###print(url) - https://statsapi.mlb.com/api/{ver}/schedule 
     logger.debug("URL: {}".format(url))
 
     path_params = {}

@@ -13,7 +13,8 @@ import ujson
 from bbapp.team_id import team_id, team_name, team_code
 from bbapp.team_colors import TEAM_COLORS
 from hardware.ili9341 import color565
-from hardware.ntp_setup import utc_to_local, timezone, tz_name
+from .time_funcs import utc_to_local, tz_name
+
 from . import my_mlb_api
 from .news import News
 from .version import version
@@ -29,11 +30,13 @@ __all_team_ids = get_all_team_ids()
 class BBKiosk:
 
     def __init__(self):
-        self.bases = {'1st':None, '2nd': None, '3rd':None }
-        self.previous_play  = None
         self.start= 5 
         self.delta= 45
-
+        self.previous_play  = None
+        self.runners_not_changed = False
+        self.play_not_changed_or_no_play = False
+        self.bases = {'1st':None, '2nd': None, '3rd':None }
+        
     def timing_decorator(func):
         def wrapper(*args, **kwargs):
             print(f"    >>  {func.__name__} start")
@@ -67,7 +70,7 @@ class BBKiosk:
             self.games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
             if self.games:
                 self.game_id=self.games[0].get('game_id','NA')
-            print("Games", self.games)
+                print("Games", self.games) if DEBUG else None
             if len(self.games) > 1:
                 print("More that one game Today!")
                 if self.games[0]['status'] == "Final":
@@ -105,9 +108,9 @@ class BBKiosk:
         self.away_id = self.games[0].get("away_id",'NA')
         """ These are both strings - Reminder """
         if team_id == self.home_id:
-            print('Who: We are the home team')
+            print('Who: We are the home team - set teams') if DEBUG else None
         else:
-            print('We are the away team')
+            print('Who: We are the away team - set teams') if DEBUG else None
             
     def set_team_colors(self):
         self.home_team = str([x["teamCode"] for x in __all_team_ids["teams"] if x["id"] == self.home_id][0]).upper()
@@ -119,7 +122,7 @@ class BBKiosk:
         
     def set_game_data_from_initial(self):
         if team_id == self.home_id:
-            print('We are the home team')
+            print('We are the home team - init')
         self.game_status = self.games[0]['status']
         self.home_score  = self.games[0].get("home_score",'NA')
         self.away_score  = self.games[0].get("away_score",'NA')
@@ -167,15 +170,16 @@ class BBKiosk:
                 time.sleep(story_sleep)
                 self.clear_story_area()
             story_count+=1
-
+    
     def get_x_p(self, pname):
         """ Given 'John Smith (Jr.)'  """
         """ return 'J.Smith'          """
         print("pname", pname) if DEBUG else None
-        fn,ln, *_ = pname.split(' ')
-        fi = list(fn.split(' ')[0])[0]
+        fn, *ln = pname.split(' ')
+        fi = fn[0]
+        ln = ' '.join(ln)
         pn = fi + '.' + ln
-        return pn        
+        return pn
     
     def get_current_game_data(self):
         url=f"https://statsapi.mlb.com/api/v1.1/game/{self.game_id}/feed/live?fields=gamePk,liveData,plays,currentPlay,result,description,awayScore,homeScore,about,batter,count,inning,halfInning,balls,strikes,outs,matchup,postOnFirst,postOnSecond,postOnThird,fullName,gameData,status,detailedState,decisions,winner,loser"
@@ -216,7 +220,7 @@ class BBKiosk:
 
             def exec_game_details():
                 self.get_current_game_data()
-                d.gc_status_flush()
+                d.gc_status_flush(MEM_DEBUG=False)
                 self.set_game_status()
                 self.set_current_play()
                 self.set_scores()
@@ -244,9 +248,14 @@ class BBKiosk:
             """ Show the Current Score """
             self.show_in_progress()
             in_progress_sleep=5
-            print(f"sleeping {in_progress_sleep} after showing score/in_progress")
+            if self.play_not_changed_or_no_play: 
+                in_progress_sleep+=1
+            if self.runners_not_changed:
+                in_progress_sleep+=1
+                
+            print(f"#### sleeping {in_progress_sleep} after showing score/in_progress")
             time.sleep(in_progress_sleep)
-            d.gc_status_flush()
+            d.gc_status_flush(MEM_DEBUG=False)
             
             self.cur_play_res  = self.currentPlay.get('result', {}).get('description')
 
@@ -259,7 +268,7 @@ class BBKiosk:
             if self.cur_play_res is not None:
                 
                 if self.cur_play_res != self.previous_play:
-                    print(f"Play change: {self.cur_play_res}")
+                    print(f"#### Play change: {self.cur_play_res}")
                     self.previous_play = self.cur_play_res
                     self.clear_story_area()
                     d.draw_text(5, self.start + (0 * self.delta), f"{self.in_sta} {self.inn_cur}{ordinals[self.inn_cur]} {self.up}", d.date_font,  d.white , d.drk_grn)
@@ -269,29 +278,32 @@ class BBKiosk:
                         sp_font=d.date_font; sp_max_x=230; sp_scr_len=18
                     d.scroll_print(text=self.cur_play_res, y_pos=60, x_pos=18, scr_len=sp_scr_len, max_x=sp_max_x,
                                    clear=False, font=sp_font, bg=d.drk_grn, fg=d.white)
+                    play_check_sleep=4
+                    print(f"# Sleeping {play_check_sleep} after Current Play change")
+                    time.sleep(play_check_sleep)
                     
                 else:
-                    print(f"Play change: No")
+                    print(f"# Play change: No")
+                    self.play_not_changed_or_no_play = True
             else:
-                print("Play is None")
+                self.play_not_changed_or_no_play = True
+                print("# Play is None")
                 
-            play_check_sleep=4
-            print(f"Sleeping {play_check_sleep} after Current Play Check/Show")
-            time.sleep(play_check_sleep)
-            d.gc_status_flush()
+            d.gc_status_flush(MEM_DEBUG=False)
                         
             
             """ Now, Check Runners """
             runners = self.current_game_data['liveData']['plays']['currentPlay']['matchup']
             if self.runners_changed(runners):
-                print('Runners Changed')
+                print('#### Runners Changed')
                 self.show_runners(front=False)
+                runners_sleep=4
+                print(f"Sleeping {runners_sleep} after runners change")
+                time.sleep(runners_sleep)
             else:
                 print('Runners Did not Change')
-            runners_sleep=4
-            print(f"Sleeping {runners_sleep} after runners")
-            time.sleep(runners_sleep)
-            d.gc_status_flush()
+                self.runners_not_changed = True
+            d.gc_status_flush(MEM_DEBUG=False)
             
             if test_regular_season:
                 print("Testing Regular Season")
@@ -422,7 +434,6 @@ class BBKiosk:
         print('In show_filler_news') if DEBUG else None
         self.say_fetching("Fetching News")
         news = n.get_latest_news()
-        print(n.news) if DEBUG else None
         d.fresh_box()
         self.cycle_stories(func, news, func_sleep=30)
 
@@ -518,33 +529,21 @@ http_headers= { 'User-Agent': ua }
 """ Debug Options """
 force_offseason = False
 test_regular_season = False
-DEBUG = True
+DEBUG = False
 
 bb=BBKiosk()
 bb.set_team_color()
+n = News()
 
 while True:
+
+    from .time_funcs import gm_dt, dy, mt, short_yr
+    params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
     
     import gc
     gc.collect()
-    
     print(f"==== Version: {version}")
     
-    """ Game Time to query  MLB API for game data using timezone in ntp_setup.py """
-    yr, mt, dy, hr, mn, *_ = [  f"{x:02d}" for x in utime.localtime(utime.mktime(utime.localtime()) + (int(timezone)*3600)) ]
-    gyr, gmt, gdy, ghr, gmn, *_ = [  f"{x:02d}" for x in utime.gmtime() ]
-    
-    gm_dt  = f"{mt}/{dy}/{yr}"
-    gmm_dt = f"{gmt}/{gdy}/{gyr}"
-    
-    short_yr = f"{int( str(yr)[2:]):02d}"
-    params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
-    
-    print(f"Today's Local Game Date:   {gm_dt} - {hr}:{mn}")
-    print(f"Today's Local Game GMDate: {gmm_dt} - {ghr}:{gmn}")
-  
-    n = News(f"{yr}-{mt}-{dy}")
- 
     try:
         if force_offseason:
             #Will go on infinitely ...

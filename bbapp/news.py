@@ -3,15 +3,18 @@ import re
 import time
 import mrequests as requests
 
+from .time_funcs import game_day_now, yr, mt, dy, gm_dt, short_yr
+
 class News:
     
-    def __init__(self, news_day):
-        self.news=[]
-        self.DEBUG=True
+    def __init__(self):
+        self.news= set()
+        self.DEBUG=False
         self.news_fail_count=0
-        self.news_file= f"news-{news_day}.txt"
+        self.news_file= f"news-{yr}-{mt}-{dy}.txt"
         self.news_url="https://www.mlb.com/news/"
-        self.news_error = None
+        self.os_news_error = None
+        self.http_news_error = None
         if self.DEBUG:
             print(f"News File: {self.news_file}")
     
@@ -21,60 +24,66 @@ class News:
         
     
     def get_latest_news(self):
+        
             if self.news:
                 """ I. Articles are  in news[] """
+                
                 if self.news_file_is_current():
                     """ A. File date matches today's date """
                     print('News in news[] and file appears current') if self.DEBUG else None
-                    return self.news
+                    pass
                 else:
                     """ B. File date does not match today's date """
-                    print('No news in news[]') if self.DEBUG else None
+                    print('News in news[] and file is out of date') if self.DEBUG else None
                     self.get_news_from_web()
-                    self.news = self.get_news_from_file()
-                    return self.news
+                    self.get_news_from_file()
             else:
+                
+                print('No News in news[]')
+                
                 """ II. No Articles in news[] """
                 if self.news_file_is_current():
+                    
                     """ A. File date matches today's date """
                     print('News file appears current ') if self.DEBUG else None
+                    
                     if self.len_news_file_is_non_zero():
+                        
                         """ 1. Articles in  News File """
                         print('News file is non zero') if self.DEBUG else None
-                        self.news=self.get_news_from_file()
-                        return self.news
+                        self.get_news_from_file()
+                        
                     else:
                         
                         """ 2. 0 Articles in  News File """
                         print('News file zero length') if self.DEBUG else None
                         self.get_news_from_web()
-                        self.news = self.get_news_from_file()
-                        return self.news
+                        self.get_news_from_file()
+                        
                 else:
                     """ B. File date does not match today's date """
                     print('News file appears out of date or does not exist') if self.DEBUG else None
                     self.get_news_from_web()
-                    self.news = self.get_news_from_file()
-                    return self.news
-        
+                    self.get_news_from_file()
+            
+            return self.news
+                    
         
         
     def get_news_from_file(self):
-        if self.news_error:
-            return self.news
-        
         print(f"Getting news from {self.news_file} as news file") if self.DEBUG else None
         try:
             with open(self.news_file) as fh:
                 for line in fh:
                     story = re.search('data-headline="(.*?)"',line)
                     if story is not None:
-                        self.news.append(story.group(1))
+                        self.news.add(story.group(1))
         except OSError as e:
-            return [f"News Error", f"Error {str(e)}"] 
+            self.os_news_error = [f"OS News Error", f"Error {str(e)}"] 
         else:
             print(f"news=[] len: {len(self.news)} stories") if self.DEBUG else None
-            return self.news
+            print("self.news",self.news) if self.DEBUG else None
+            
 
     def get_news_from_web(self):
             
@@ -89,21 +98,21 @@ class News:
             except OSError as e:
                 print(str(e))
                 self.news_fail_count+=1
-                self.news_error = str(e)
+                self.os_news_error = [f"HTTP OS News Error", f"Error {str(e)}"]
                 time.sleep(3)
             else:
                 if self.request.status_code != 200:
                     msg("Failed")
                     self.news_fail_count+=1
-                    self.news_error = self.request.status_code
+                    self.http_news_error = self.request.status_code
                     time.sleep(3)
-                    print(self.news)
+                    print(self.news) if self.DEBUG else None
                 else:
                     msg("Success")
                     self.cleanup_news_files()
                     break
         else:
-            self.news = ["News Error", self.news_error]
+            self.news = ["HTTP News Error", self.news_error]
             print("Too many errors")
             
                 
@@ -114,11 +123,14 @@ class News:
     
     def news_file_is_current(self):
         print(f"Checking {self.news_file} as news file") if self.DEBUG else None
+        print(f"news-{game_day_now()}.txt", self.news_file) if self.DEBUG else None    
         try:
             if os.stat(self.news_file):
                 print(f"{os.stat(self.news_file)[6]/1024} k") if self.DEBUG else None
                 print('News File Exists: OK') if self.DEBUG else None
-                return True
+                if f"news-{game_day_now()}.txt" == self.news_file:
+                    print(f"{self.news_file} is current") if self.DEBUG else None
+                    return True
         except OSError as e:
             print(f"{self.news_file} - Error: {e}")
             return False
@@ -128,7 +140,7 @@ class News:
     def rm_old_news(self):
         
         old_files = [ x for x in os.listdir('/') if 'news' in x ]
-        print('old_files ',old_files)
+        print('old_files ',old_files) if self.DEBUG else None
         
         if len(old_files) > 0:
             for x in old_files:
@@ -149,3 +161,4 @@ class News:
         else:
             print(f"{self.news_file} - news saved OK")
             return True
+        
