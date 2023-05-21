@@ -13,8 +13,6 @@ class News:
         self.news_fail_count=0
         self.news_file= f"news-{yr}-{mt}-{dy}.txt"
         self.news_url="https://www.mlb.com/news/"
-        self.os_news_error = None
-        self.http_news_error = None
         if self.DEBUG:
             print(f"News File: {self.news_file}")
     
@@ -98,13 +96,13 @@ class News:
             except OSError as e:
                 print(str(e))
                 self.news_fail_count+=1
-                self.os_news_error = [f"HTTP OS News Error", f"Error {str(e)}"]
+                self.news = [f"OS News Error", f"Error {str(e)}"]
                 time.sleep(3)
             else:
                 if self.request.status_code != 200:
                     msg("Failed")
                     self.news_fail_count+=1
-                    self.http_news_error = self.request.status_code
+                    self.news = ["HTTP News Error", str(self.request.status_code)]
                     time.sleep(3)
                     print(self.news) if self.DEBUG else None
                 else:
@@ -112,7 +110,6 @@ class News:
                     self.cleanup_news_files()
                     break
         else:
-            self.news = ["HTTP News Error", self.news_error]
             print("Too many errors")
             
                 

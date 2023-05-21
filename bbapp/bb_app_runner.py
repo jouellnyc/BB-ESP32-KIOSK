@@ -529,7 +529,7 @@ http_headers= { 'User-Agent': ua }
 """ Debug Options """
 force_offseason = False
 test_regular_season = False
-DEBUG = False
+DEBUG = True
 
 bb=BBKiosk()
 bb.set_team_color()

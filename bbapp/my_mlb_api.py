@@ -14,6 +14,9 @@ logger = logging.getLogger("statsapi")
 ### JJO - logger.setLevel(logging.DEBUG)
 ### JJO - import copy
 
+class HTTP_ERR:
+    pass
+
 BASE_URL = endpoints.BASE_URL
 """Base MLB Stats API URL"""
 ENDPOINTS = endpoints.ENDPOINTS
@@ -311,7 +314,8 @@ def get(endpoint, params, force=False):
     # Make the request
     r = requests.get(url,headers=http_headers)
     if r.status_code not in [200, 201]:
-        r.raise_for_status()
+        #r.raise_for_status()
+        HTTP_ERR("HTTP", r.status_code)
     else:
         return r.json()
 
