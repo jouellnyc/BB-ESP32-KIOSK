@@ -66,7 +66,7 @@ class BBKiosk:
         if test_regular_season is True:
             self.regular_season_test()
         else:
-            print("Connecting to MLB live sched data") if DEBUG else None
+            print("##### Connecting to MLB live sched data") if DEBUG else None
             self.games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
             if self.games:
                 self.game_id=self.games[0].get('game_id','NA')
@@ -183,7 +183,7 @@ class BBKiosk:
     
     def get_current_game_data(self):
         url=f"https://statsapi.mlb.com/api/v1.1/game/{self.game_id}/feed/live?fields=gamePk,liveData,plays,currentPlay,result,description,awayScore,homeScore,about,batter,count,inning,halfInning,balls,strikes,outs,matchup,postOnFirst,postOnSecond,postOnThird,fullName,gameData,status,detailedState,decisions,winner,loser"
-        print(f"Connecting to MLB live data at {url}") if DEBUG else None
+        print(f"##### Connecting to MLB live play data") if DEBUG else None
         self.current_game_data = ujson.loads(urequests.get(url).text)
         print('current_game_data', self.current_game_data) if DEBUG else None
                                                    
@@ -201,6 +201,7 @@ class BBKiosk:
         self.game_status = self.current_game_data['gameData']['status']['detailedState']
         if 'challenge' in self.game_status:
             self.game_status = 'Manager challenge'
+        print("GS: ", self.game_status) if DEBUG else None
         
     def set_current_play(self):
         try:
