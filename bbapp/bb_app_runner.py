@@ -164,7 +164,7 @@ class BBKiosk:
                 d.draw_text(42, 215, "Story at mlb.com", d.sm_font,  d.white , d.drk_grn)
                 d.scroll_print(text=story, y_pos=60, x_pos=18,
                                scr_len=18, clear=False, font=d.date_font,
-                               bg=d.drk_grn, fg=d.white, debug=True) 
+                               bg=d.drk_grn, max_x=232, fg=d.white, debug=True) 
                 """ x_pos for fill_rectangle must be at 1     """
                 """ to keep vert lines from being overwritten """
                 print(f"Sleeping for {story_sleep} in cycle stories_else {__name__}") if DEBUG else None
