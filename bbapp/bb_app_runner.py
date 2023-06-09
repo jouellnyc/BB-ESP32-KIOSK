@@ -66,6 +66,7 @@ class BBKiosk:
         if test_regular_season is True:
             self.regular_season_test()
         else:
+            print("\n")                                          if DEBUG else None
             print("##### Connecting to MLB live sched data") if DEBUG else None
             self.games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
             if self.games:
@@ -163,7 +164,7 @@ class BBKiosk:
                 d.draw_text(42, 215, "Story at mlb.com", d.sm_font,  d.white , d.drk_grn)
                 d.scroll_print(text=story, y_pos=60, x_pos=18,
                                scr_len=18, clear=False, font=d.date_font,
-                               bg=d.drk_grn, fg=d.white)
+                               bg=d.drk_grn, fg=d.white, debug=True) 
                 """ x_pos for fill_rectangle must be at 1     """
                 """ to keep vert lines from being overwritten """
                 print(f"Sleeping for {story_sleep} in cycle stories_else {__name__}") if DEBUG else None
@@ -199,8 +200,10 @@ class BBKiosk:
             "Delayed"
             "Manager challenge: XXX"""
         self.game_status = self.current_game_data['gameData']['status']['detailedState']
-        if 'challenge' in self.game_status:
+        if 'hallenge' in self.game_status:
             self.game_status = 'Manager challenge'
+        if 'eview' in self.game_status:
+            self.game_status = 'Umpire Review'
         print("GS: ", self.game_status) if DEBUG else None
         
     def set_current_play(self):
@@ -217,8 +220,9 @@ class BBKiosk:
         
     def show_current_game(self):
 
-        while (self.game_status == "In Progress")  or (( "eview" or "challenge" ) in self.game_status):
+        while any([x in self.game_status for x in ["eview", "hallenge", "In Progress"]]):
 
+            print('self.game_status', self.game_status) if DEBUG else None
             def exec_game_details():
                 self.get_current_game_data()
                 d.gc_status_flush(MEM_DEBUG=False)
@@ -247,7 +251,10 @@ class BBKiosk:
                 self.up=f"{mt}-{dy}-{short_yr}"
             
             """ Show the Current Score """
-            self.show_in_progress()
+            if any(x in self.game_status for x in ["hallenge", "eview"]):
+                self.show_in_progress(Time_Out_Status=True)
+            else:
+                self.show_in_progress()
             in_progress_sleep=5
             if self.play_not_changed_or_no_play: 
                 in_progress_sleep+=1
@@ -353,10 +360,13 @@ class BBKiosk:
                     return 2
                 return 60 * 10 # check back every 10 minutes
 
-    def show_in_progress(self):
+    def show_in_progress(self, Time_Out_Status=False):
         print(f"balls:{self.balls} strikes:{self.strks} outs:{self.outs}")  if DEBUG else None
         print(f"{self.in_sta} {self.inn_cur}{ordinals[self.inn_cur]} {self.up}")           if DEBUG else None
-        d.draw_text(5, self.start + (0 * self.delta),     f"{self.in_sta} {self.inn_cur}{ordinals[self.inn_cur]} {self.up}", d.date_font,  d.white , d.drk_grn)
+        if Time_Out_Status:
+            d.draw_text(5, self.start + (0 * self.delta),     f"{self.game_status}", d.date_font,  d.white , d.drk_grn)
+        else:
+            d.draw_text(5, self.start + (0 * self.delta),     f"{self.in_sta} {self.inn_cur}{ordinals[self.inn_cur]} {self.up}", d.date_font,  d.white , d.drk_grn)
         d.draw_text(5, self.start + (1 * self.delta) + 5, f"{self.home_team}:{self.away_score} H {self.home_rec}" , d.score_font, d.white , self.home_team_color)
         d.draw_text(5, self.start + (2 * self.delta) + 5, f"{self.away_team}:{self.home_score} A {self.away_rec}" , d.score_font, d.white , self.away_team_color)
         d.draw_text(5, self.start + (3 * self.delta) + 5, f"AB: {self.batter}"                                    , d.sm_font,    d.white , d.drk_grn)
