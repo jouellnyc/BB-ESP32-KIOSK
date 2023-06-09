@@ -66,7 +66,7 @@ class BBKiosk:
         if test_regular_season is True:
             self.regular_season_test()
         else:
-            print("\n")                                          if DEBUG else None
+            print("\n")                                      if DEBUG else None
             print("##### Connecting to MLB live sched data") if DEBUG else None
             self.games = my_mlb_api.schedule(start_date=gm_dt, end_date=gm_dt, team=team_id, params=params)
             if self.games:
@@ -222,7 +222,6 @@ class BBKiosk:
 
         while any([x in self.game_status for x in ["eview", "hallenge", "In Progress"]]):
 
-            print('self.game_status', self.game_status) if DEBUG else None
             def exec_game_details():
                 self.get_current_game_data()
                 d.gc_status_flush(MEM_DEBUG=False)
@@ -231,7 +230,7 @@ class BBKiosk:
                 self.set_scores()
         
             exec_game_details()
-            
+            print('self.game_status', self.game_status) if DEBUG else None
             
             self.balls    = self.currentPlay['count']['balls']
             self.strks    = self.currentPlay['count']['strikes']
@@ -296,9 +295,8 @@ class BBKiosk:
             else:
                 self.play_not_changed_or_no_play = True
                 print("# Play is None")
-                
+            
             d.gc_status_flush(MEM_DEBUG=False)
-                        
             
             """ Now, Check Runners """
             runners = self.current_game_data['liveData']['plays']['currentPlay']['matchup']
@@ -312,6 +310,9 @@ class BBKiosk:
                 print('Runners Did not Change')
                 self.runners_not_changed = True
             d.gc_status_flush(MEM_DEBUG=False)
+            
+            #New line to separate the plays is easier on the eyes, just before "Connecting to MLB ..."
+            print()
             
             if test_regular_season:
                 print("Testing Regular Season")
