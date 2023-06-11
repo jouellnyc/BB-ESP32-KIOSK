@@ -281,11 +281,12 @@ class BBKiosk:
                     d.draw_text(5, self.start + (0 * self.delta), f"{self.in_sta} {self.inn_cur}{ordinals[self.inn_cur]} {self.up}", d.date_font,  d.white , d.drk_grn)
                     if len(self.cur_play_res.split(' ')) > 12:
                         sp_font=d.sm_font; sp_max_x=300; sp_scr_len=26
+                        play_check_sleep=7
                     else:
                         sp_font=d.date_font; sp_max_x=230; sp_scr_len=18
+                        play_check_sleep=4
                     d.scroll_print(text=self.cur_play_res, y_pos=60, x_pos=18, scr_len=sp_scr_len, max_x=sp_max_x,
                                    clear=False, font=sp_font, bg=d.drk_grn, fg=d.white)
-                    play_check_sleep=4
                     print(f"# Sleeping {play_check_sleep} after Current Play change")
                     time.sleep(play_check_sleep)
                     
