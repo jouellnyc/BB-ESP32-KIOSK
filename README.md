@@ -89,9 +89,11 @@ BB-ESP32-KIOSK will go through 3 stages:
 <img src="images/setup_setup.png" width="200"/>
 
 
-BB-ESP32-KIOSK will then launch a temporary wifi SSID named 'bbkiosk32' with a wifi password of '123456789'.
+If you see the "Setup Page at" Screen, that means BB-ESP32-KIOSK  launched a temporary wifi SSID named 'bbkiosk32'.
 
-Connect your mobile phone/PC  to that SSID temporarily.
+The  password is '123456789'.
+
+Connect your mobile phone/PC to that SSID using the password.
 
 There will be no Internet Access via this ssid:
 
