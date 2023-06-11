@@ -81,9 +81,10 @@ Connect your mobile phone/PC  to that SSID temporarily.
 There will be no Internet Access via this ssid:
 
 <img src="images/6_wifi.png" width="200"/>
+
 Navigate to http://192.168.4.1
 
-Now, enter the name the Wifi SSID and Credentials you want BB-Kiosk to use permanently:
+Enter the name of your Wifi SSID and the password. 
 
 <img src="images/1_setup.jpg" width="200"/>
 
