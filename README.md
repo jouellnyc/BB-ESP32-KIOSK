@@ -115,7 +115,7 @@ Click Reboot if Successful
 
 <img src="images/4_setup_reboot.jpg" width="200"/>
 
-The page will NOT Refesh (This is OK and expected):
+The page will NOT Refresh (This is OK and expected):
 
 <img src="images/5_setup_ok_no_connect.jpg" width="200"/>
 
@@ -125,7 +125,7 @@ The kiosk should boot and show startup mesages:
 
 <img src="images/7_boot.jpg" width="200"/>
 
-Once Done, it will show you status of Your Team's Game if in progress.
+Once done, BBKiosk will display the status of Your Team's Game if in progress.
 
 For more details of the flow of information see the <a href="https://github.com/jouellnyc/BB-ESP32-KIOSK/tree/main/images/slideshow">slideshow</A>.
 
