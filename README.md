@@ -73,6 +73,8 @@ git clone https://github.com/jouellnyc/BB-ESP32-KIOSK
 
 To connect the esp32 to an ili9341, you can follow https://www.youtube.com/watch?v=rq5yPJbX_uk
 
+- edit the 'screen' variable in hardware/config.py to match your selected device/hardware:
+
 #### Setup
 
 Plug in BB-ESP32-KIOSK with a USB-C cable.
