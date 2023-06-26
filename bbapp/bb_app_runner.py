@@ -185,7 +185,7 @@ class BBKiosk:
     def get_current_game_data(self):
         url=f"https://statsapi.mlb.com/api/v1.1/game/{self.game_id}/feed/live?fields=gamePk,liveData,plays,currentPlay,result,description,awayScore,homeScore,about,batter,count,inning,halfInning,balls,strikes,outs,matchup,postOnFirst,postOnSecond,postOnThird,fullName,gameData,status,detailedState,decisions,winner,loser"
         print(f"##### Connecting to MLB live play data") if DEBUG else None
-        self.current_game_data = ujson.loads(urequests.get(url).text)
+        self.current_game_data = ujson.loads(urequests.get(url, headers=headers).text)
         print('current_game_data', self.current_game_data) if DEBUG else None
                                                    
     def set_game_status(self):
