@@ -199,6 +199,7 @@ class BBKiosk:
             "Game Over"
             "Delayed"
             "Manager challenge: XXX"""
+            "Postponed"
         self.game_status = self.current_game_data['gameData']['status']['detailedState']
         if 'hallenge' in self.game_status:
             self.game_status = 'Manager challenge'
@@ -356,7 +357,7 @@ class BBKiosk:
                 return 60 * 2# check back every 2 minutes
             
             
-            else:  #"Pre Game / Delayed"
+            else:  #"Pre Game / Delayed / Postponed"
                 self.show_scheduled()
                 if test_regular_season:
                     return 2
