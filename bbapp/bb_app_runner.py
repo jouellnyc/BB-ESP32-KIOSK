@@ -198,8 +198,9 @@ class BBKiosk:
             "Final"
             "Game Over"
             "Delayed"
-            "Manager challenge: XXX"""
             "Postponed"
+            "Manager challenge: XXX"
+        """
         self.game_status = self.current_game_data['gameData']['status']['detailedState']
         if 'hallenge' in self.game_status:
             self.game_status = 'Manager challenge'
