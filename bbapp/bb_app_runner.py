@@ -26,7 +26,6 @@ def get_all_team_ids():
 
 __all_team_ids = get_all_team_ids()
 
-
 class BBKiosk:
 
     def __init__(self):
@@ -609,3 +608,11 @@ while True:
         if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(e):
             import machine
             machine.reset()
+    except ValueError as e:
+        if 'BadStatusLine' in str(e):
+            d.fresh_box(); secs=60
+            msg=f"HTTP bad status line: sleeping for {secs} seconds"
+            d.scroll_print(msg, y_pos=80, x_pos=18, scr_len=18,
+                           clear=False, font=d.date_font, bg=d.drk_grn,
+                           max_x=232, fg=d.white, debug=True)
+            time.sleep(secs)
