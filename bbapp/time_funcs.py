@@ -3,7 +3,8 @@ import utime
 
 """
     We calculate the non-UTC local date (NULD) using 'timezone' to find out what 'today' is.
-    We submit *that* date to MLB API to find the games for today and there start times (in UTC (z) )
+    We submit *that day* (f"{mt}/{dy}/{yr}") to MLB API to find the games start times for today 
+    MLB will reply with  them in UTC time (z).
     We convert *that* ('game_datetime': '2023-04-06T17:10:00Z') to NULT to display the upcoming game time
 """ 
 
@@ -20,9 +21,11 @@ gmm_dt = f"{gmt}/{gdy}/{gyr}"
 
 short_yr = f"{int( str(yr)[2:]):02d}"
 
-def game_day_now():
+
+def game_day_now_nult():
+    """ Obtain the Game Day for 'now' in Non-UTC Local Time """ 
     yr, mt, dy, hr, mn, *_ = [  f"{x:02d}" for x in utime.localtime(utime.mktime(utime.localtime()) + (int(timezone)*3600)) ]
-    return f"{yr}-{mt}-{dy}"
+    return f"{mt}/{dy}/{yr}"
 
 def utc_to_local(_time):
     

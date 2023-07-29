@@ -3,7 +3,7 @@ import re
 import time
 import mrequests as requests
 
-from .time_funcs import game_day_now, yr, mt, dy, gm_dt, short_yr
+from .time_funcs import game_day_now_nult, yr, mt, dy, gm_dt, short_yr
 
 class News:
     
@@ -120,12 +120,12 @@ class News:
     
     def news_file_is_current(self):
         print(f"Checking {self.news_file} as news file") if self.DEBUG else None
-        print(f"news-{game_day_now()}.txt", self.news_file) if self.DEBUG else None    
+        print(f"news-{game_day_now_nult}.txt", self.news_file) if self.DEBUG else None    
         try:
             if os.stat(self.news_file):
                 print(f"{os.stat(self.news_file)[6]/1024} k") if self.DEBUG else None
                 print('News File Exists: OK') if self.DEBUG else None
-                if f"news-{game_day_now()}.txt" == self.news_file:
+                if f"news-{game_day_now_nult}.txt" == self.news_file:
                     print(f"{self.news_file} is current") if self.DEBUG else None
                     return True
         except OSError as e:

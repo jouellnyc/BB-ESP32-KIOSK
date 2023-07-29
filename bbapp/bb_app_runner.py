@@ -586,8 +586,9 @@ n = News()
 
 while True:
 
-    from .time_funcs import dy, mt, short_yr, game_day_now
-    gm_dt = game_day_now()
+    from .time_funcs import dy, mt, short_yr, game_day_now_nult
+    gm_dt = game_day_now_nult()
+    print("gm_dt", gm_dt)
     
     params = {'teamId': team_id, 'startDate': gm_dt, 'endDate': gm_dt, 'sportId': '1', 'hydrate': 'decisions,linescore'}
     
