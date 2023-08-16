@@ -370,8 +370,8 @@ class BBKiosk:
             d.draw_text(5, self.start + (0 * self.delta),     f"{self.game_status}", d.date_font,  d.white , d.drk_grn)
         else:
             d.draw_text(5, self.start + (0 * self.delta),     f"{self.in_sta} {self.inn_cur}{ordinals[self.inn_cur]} {self.up}", d.date_font,  d.white , d.drk_grn)
-        d.draw_text(5, self.start + (1 * self.delta) + 5, f"{self.home_team}:{self.away_score} H {self.home_rec}" , d.score_font, d.white , self.home_team_color)
-        d.draw_text(5, self.start + (2 * self.delta) + 5, f"{self.away_team}:{self.home_score} A {self.away_rec}" , d.score_font, d.white , self.away_team_color)
+        d.draw_text(5, self.start + (1 * self.delta) + 5, f"{self.home_team}:{self.home_score} H {self.home_rec}" , d.score_font, d.white , self.home_team_color)
+        d.draw_text(5, self.start + (2 * self.delta) + 5, f"{self.away_team}:{self.away_score} A {self.away_rec}" , d.score_font, d.white , self.away_team_color)
         d.draw_text(5, self.start + (3 * self.delta) + 5, f"AB: {self.batter}"                                    , d.sm_font,    d.white , d.drk_grn)
         d.draw_text(10,self.start + (4 * self.delta) + 5, f"B: {self.balls} S: {self.strks} O: {self.outs }"      , d.sm_font,    d.white , d.drk_grn)
         self.show_runners(front=True)
