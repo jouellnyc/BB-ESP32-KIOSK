@@ -389,7 +389,7 @@ class BBKiosk:
         print(f"Sleeping for {sleep} seconds in off_season")
         time.sleep(sleep)
         gc.collect()
-        show_filler_news(opening_day_screen)
+        self.show_filler_news(self.opening_day_screen)
         gc.collect()
 
     def opening_day_screen(self):
