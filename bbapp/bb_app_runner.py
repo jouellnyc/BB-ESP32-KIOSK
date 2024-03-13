@@ -53,6 +53,10 @@ class BBKiosk:
            (int(mt) == 3 and (int(dy) == 30 or int(dy) == 31)):
             print("It's the Regular Season") 
             self.reg_season()
+        elif (int(mt) == 2 and int(dy) in [29, 28, 27, 26, 25, 24, 23]) or \
+               (int(mt) == 3 and int(dy) < 30):
+                print("It's probably Spring Training")     
+                self.reg_season()
         else:
             print("Off Season")
             self.off_season()
