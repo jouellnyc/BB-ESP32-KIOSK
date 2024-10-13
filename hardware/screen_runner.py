@@ -181,6 +181,8 @@ def scroll_print(text='NA',x_pos=5, y_pos=5, scr_len=30,
             """ Split 'text' to list[] in scr_len increments as a first pass
                 return a list of 'raw' parts like this:
                 ["Celebrate Aaron's", "birthday with 13 s","tats that show his greatness"] """
+            #Break apart words like 'position-by-position'
+            _text=_text.replace('-',' ')
             _text=_text.strip()
             return [ _text[i : i + scr_len] for i in range(0, len(_text), scr_len)]
         
