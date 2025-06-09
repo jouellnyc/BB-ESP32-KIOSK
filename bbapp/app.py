@@ -3,7 +3,6 @@
 import utime
 import time
 import gc
-from typing import Optional, Dict
 
 from hardware.screen_runner import display as d
 from .config.constants import (
@@ -30,15 +29,15 @@ class BBKiosk:
         self.mlb_service = MLBApiService(team_id)
         self.news_service = NewsService()
         self.previous_play = None
-        self.game_state: Optional[GameState] = None
+        self.game_state = None
         self._setup_team_colors()
 
-    def _setup_team_colors(self) -> None:
+    def _setup_team_colors(self):
         """Set up team colors for display."""
         r, g, b = TEAM_COLORS[team_code.upper()]
         self.team_color = d.color565(r, g, b)
 
-    def check_season(self) -> None:
+    def check_season(self):
         """Check the current MLB season status and handle accordingly."""
         if ((int(mt) in [4, 5, 6, 7, 8, 9, 10]) or
             (int(mt) == 3 and int(dy) in [30, 31])):
@@ -52,7 +51,7 @@ class BBKiosk:
             print("Off Season") if DEBUG else None
             self.run_off_season()
 
-    def run_regular_season(self) -> None:
+    def run_regular_season(self):
         """Handle regular season game display and updates."""
         games = self.mlb_service.get_schedule(game_day_now_nult())
 
@@ -79,12 +78,12 @@ class BBKiosk:
                     self.show_filler_news()
                     time.sleep(60 * 5)  # Check back in 5 minutes
 
-            except (OSError, ValueError) as e:
+            except Exception as e:
                 print(f"Error updating game: {e}")
                 self.handle_error(e)
                 break
 
-    def show_in_progress_game(self) -> None:
+    def show_in_progress_game(self):
         """Display current game state for in-progress game."""
         if not self.game_state:
             return
@@ -107,7 +106,7 @@ class BBKiosk:
             )
             self.previous_play = current_play
 
-    def show_final_game(self) -> None:
+    def show_final_game(self):
         """Display final game results."""
         if not self.game_state:
             return
@@ -117,7 +116,7 @@ class BBKiosk:
             {"home": self.team_color, "away": self.team_color}
         )
 
-    def show_scheduled_game(self, game_data: Dict) -> None:
+    def show_scheduled_game(self, game_data):
         """Display scheduled game information."""
         game_time = utc_to_local(game_data.get('game_datetime', 'NA'))
 
@@ -137,7 +136,7 @@ class BBKiosk:
             self.display.drk_grn
         )
 
-    def show_no_game(self) -> None:
+    def show_no_game(self):
         """Display no game scheduled message."""
         self.display.clear_screen()
         self.display.draw_text(
@@ -150,7 +149,7 @@ class BBKiosk:
         time.sleep(7)
         self.show_filler_news()
 
-    def run_off_season(self) -> None:
+    def run_off_season(self):
         """Handle off-season display."""
         self.display.clear_screen()
         self.display.draw_text(
@@ -163,7 +162,7 @@ class BBKiosk:
         time.sleep(30)
         self.show_filler_news()
 
-    def show_filler_news(self) -> None:
+    def show_filler_news(self):
         """Show news stories during downtime."""
         try:
             stories = self.news_service.get_latest_news()
@@ -181,13 +180,14 @@ class BBKiosk:
         except Exception as e:
             print(f"Error showing news: {e}")
 
-    def handle_error(self, error: Exception) -> None:
+    def handle_error(self, error):
         """Handle various error conditions."""
-        if 'MBEDTLS_ERR_SSL_CONN_EOF' in str(error):
+        error_str = str(error)
+        if 'MBEDTLS_ERR_SSL_CONN_EOF' in error_str:
             # Known ESP32 SSL issue - requires reboot
             import machine
             machine.reset()
-        elif 'BadStatusLine' in str(error):
+        elif 'BadStatusLine' in error_str:
             self.display.clear_screen()
             self.display.draw_text(
                 5, 80,
@@ -200,7 +200,7 @@ class BBKiosk:
         else:
             print(f"Unhandled error: {error}")
 
-    def run(self) -> None:
+    def run(self):
         """Main application loop."""
         print(f"==== Version: {version}")
 
