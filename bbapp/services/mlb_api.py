@@ -2,30 +2,18 @@
 
 import urequests
 import ujson
-from typing import Dict, List, Optional
 from ..models.game import GameState
 from ..config.constants import MLB_API_BASE_URL, HTTP_HEADERS
 
 class MLBApiService:
     """Service for interacting with the MLB API."""
 
-    def __init__(self, team_id: str):
+    def __init__(self, team_id):
         """Initialize the service with a team ID."""
         self.team_id = team_id
 
-    def get_game_data(self, game_id: str) -> GameState:
-        """Get current game state from MLB API.
-
-        Args:
-            game_id: MLB game identifier
-
-        Returns:
-            GameState object with current game information
-
-        Raises:
-            OSError: If connection fails
-            ValueError: If response parsing fails
-        """
+    def get_game_data(self, game_id):
+        """Get current game state from MLB API."""
         url = (f"{MLB_API_BASE_URL}/api/v1.1/game/{game_id}/feed/live?"
                "fields=gamePk,liveData,plays,currentPlay,result,description,"
                "awayScore,homeScore,about,matchup,count,inning,halfInning")
@@ -50,7 +38,7 @@ class MLBApiService:
             '3rd': runners.get('postOnThird', {}).get('fullName')
         }
 
-        return GameState(
+        game_state = GameState(
             home_score=current_play['result']['homeScore'],
             away_score=current_play['result']['awayScore'],
             inning=current_play['about']['inning'],
@@ -61,16 +49,11 @@ class MLBApiService:
             bases=bases,
             status=game_status
         )
+        game_state.current_play = current_play['result'].get('description', '')
+        return game_state
 
-    def get_schedule(self, date: str) -> List[Dict]:
-        """Get team's schedule for a specific date.
-
-        Args:
-            date: Date in YYYY-MM-DD format
-
-        Returns:
-            List of scheduled games
-        """
+    def get_schedule(self, date):
+        """Get team's schedule for a specific date."""
         params = {
             'teamId': self.team_id,
             'startDate': date,

@@ -1,30 +1,16 @@
 """News service for BB-ESP32-KIOSK."""
 
 import urequests
-from typing import List
 from ..config.constants import MLB_NEWS_URL, HTTP_HEADERS
 
 class NewsService:
     """Service for fetching MLB news."""
 
-    def get_latest_news(self, max_stories: int = 10) -> List[str]:
-        """Get latest MLB news stories.
-
-        Args:
-            max_stories: Maximum number of stories to return
-
-        Returns:
-            List of news story headlines/descriptions
-
-        Raises:
-            OSError: If connection fails
-            ValueError: If response parsing fails
-        """
+    def get_latest_news(self, max_stories=10):
+        """Get latest MLB news stories."""
         response = urequests.get(MLB_NEWS_URL, headers=HTTP_HEADERS)
 
         # Parse the response and extract headlines
-        # This is a simplified version - you might need to adjust based on
-        # the actual MLB news feed format
         stories = []
         try:
             data = response.json()
@@ -41,15 +27,8 @@ class NewsService:
 
         return stories
 
-    def format_story(self, story: str) -> str:
-        """Format a story for display by removing unsupported characters.
-
-        Args:
-            story: Raw story text
-
-        Returns:
-            Formatted story text
-        """
+    def format_story(self, story):
+        """Format a story for display by removing unsupported characters."""
         replacements = {
             'à': 'a', 'â': 'a', 'ç': 'c', 'é': 'e', 'è': 'e',
             'ê': 'e', 'ë': 'e', 'î': 'i', 'ï': 'i', 'ô': 'o',
