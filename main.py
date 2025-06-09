@@ -48,7 +48,7 @@ try:
 
         """ Run BB APP """
         d.print_setup("Launch BB Kiosk ")
-        import bbapp.bb_app_runner
+        import bbapp.app.py
 
     else:
         """ Run the Setup """
