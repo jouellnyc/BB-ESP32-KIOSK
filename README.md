@@ -1,5 +1,4 @@
 # BB-ESP32-KIOSK
-
 #### ESP32 Game Day BaseBall Kiosk
 
 
@@ -130,6 +129,10 @@ The kiosk should boot and show startup mesages:
 Once done, BBKiosk will display the status of Your Team's Game if in progress.
 
 For more details of the flow of information see the <a href="https://github.com/jouellnyc/BB-ESP32-KIOSK/tree/main/images/slideshow">slideshow</A>.
+
+### Upgrading Manually (without the ESP32-S3-BOX)
+<img src="images/upgrade_off_host.png" width="200"/>
+
 
 ### Video
 [Video -- BBKiosk in Action ](https://www.youtube.com/watch?v=aep2s7Il-oY)
