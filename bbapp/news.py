@@ -2,6 +2,7 @@ import os
 import re
 import time
 import urequests as requests
+import gc
 
 from .time_funcs import game_day_now_nult, yr, mt, dy, gm_dt, short_yr
 
@@ -25,7 +26,7 @@ class News:
     
     def cleanup_news_files(self):
         self.rm_old_news()
-        self.save_news_file()
+        self.save_news_file_streaming()
         
     
     def get_latest_news(self):
@@ -105,6 +106,16 @@ class News:
         
         def msg(state):
             print("HTTP Request", state, "- http code:", self.request.status_code)
+        
+        # Check memory before making request
+        gc.collect()
+        free_mem = gc.mem_free()
+        if self.DEBUG:
+            print(f"Free memory before request: {free_mem} bytes")
+        
+        if free_mem < 400000:  # Less than 400KB free
+            print("Insufficient memory for news download - skipping")
+            return False
             
         self.news_fail_count = 0  # Reset counter for each attempt
         
@@ -113,12 +124,18 @@ class News:
             try:
                 if self.DEBUG:
                     print("Connecting to", self.news_url)
+                # Force garbage collection before request
+                gc.collect()
                 self.request = requests.get(self.news_url, headers={"accept": "text/html"})
             except OSError as e:
                 print("Connection error:", str(e))
                 self.news_fail_count += 1
                 if self.news_fail_count < self.max_retries:
                     time.sleep(self.retry_delay)
+            except MemoryError as e:
+                print("Memory error during request:", str(e))
+                gc.collect()
+                return False
             else:
                 if self.request.status_code != 200:
                     msg("Failed")
@@ -211,7 +228,64 @@ class News:
                         
         except OSError as e:
             print("Error listing directory:", e)
+
+    def save_news_file_streaming(self):
+        """Stream the response content to file instead of loading it all into memory"""
+        if self.request is None:
+            print("No request object available to save")
+            return False
+            
+        try:
+            if self.DEBUG:
+                print("Trying to save news to", self.news_file, "(streaming)")
+            
+            # Open file for writing
+            with open(self.news_file, 'w') as f:
+                # Process the response content in chunks to avoid memory issues
+                try:
+                    # Try to get content in chunks if possible
+                    if hasattr(self.request, 'iter_content'):
+                        for chunk in self.request.iter_content(chunk_size=1024, decode_unicode=True):
+                            if chunk:
+                                f.write(chunk)
+                                gc.collect()  # Clean up after each chunk
+                    else:
+                        # Fallback: try to access raw content in smaller pieces
+                        # This is a workaround for urequests
+                        content = self.request.text
+                        chunk_size = 2048
+                        for i in range(0, len(content), chunk_size):
+                            chunk = content[i:i+chunk_size]
+                            f.write(chunk)
+                            if i % 8192 == 0:  # Collect garbage every 8KB
+                                gc.collect()
+                        del content  # Free the memory
+                        
+                except MemoryError as e:
+                    print("Memory error while saving:", str(e))
+                    # Try to save what we can or return False
+                    f.close()
+                    try:
+                        os.remove(self.news_file)  # Remove partial file
+                    except:
+                        pass
+                    return False
                     
+        except OSError as e:
+            print(self.news_file, "- news save Failed:", e)
+            return False
+        else:
+            if self.DEBUG:
+                print(self.news_file, "- news saved OK")
+            # Clean up the request object to free memory
+            if self.request:
+                self.request.close() if hasattr(self.request, 'close') else None
+                del self.request
+                self.request = None
+                gc.collect()
+            return True
+    
+    # Keep the old method as backup
     def save_news_file(self):
         if self.request is None:
             print("No request object available to save")
@@ -228,6 +302,10 @@ class News:
         except OSError as e:
             print(self.news_file, "- news save Failed:", e)
             return False
+        except MemoryError as e:
+            print("Memory error in save_news_file:", str(e))
+            # Fall back to streaming method
+            return self.save_news_file_streaming()
         else:
             if self.DEBUG:
                 print(self.news_file, "- news saved OK")
