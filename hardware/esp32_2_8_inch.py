@@ -1,4 +1,4 @@
-""" These values are for an ESP32 connecting direclty to an ili9341 """
-dc=2
-cs=15
-rst=4
+#### ESP32 s3 ZERO ###
+dc=3
+cs=1
+rst=2
