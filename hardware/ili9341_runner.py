@@ -4,6 +4,11 @@
 from machine import Pin, SPI
 spi = SPI(2, baudrate=51200000, sck=Pin(18), mosi=Pin(23))
 
+################## ESP32  s3 zero ##########
+from machine import Pin, SPI
+spi = SPI(2, baudrate=51200000, sck=Pin(5), mosi=Pin(4))
+#####################
+
 from .ili9341_no_madctl import Display
 
 from .config import case, wires, screen
